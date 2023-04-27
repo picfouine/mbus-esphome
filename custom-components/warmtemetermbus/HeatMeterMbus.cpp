@@ -26,12 +26,12 @@ namespace esphome
 
       if (receivedCorrectAnswer)
       {
-        ESP_LOGV(TAG, "Received correct answer to SND_NKE");
+        ESP_LOGI(TAG, "Received correct answer to SND_NKE");
         test_temperature_sensor_->publish_state(1);
       }
       else
       {
-        ESP_LOGV(TAG, "Did not receive an answer, or incorrect answer to SND_NKE");
+        ESP_LOGI(TAG, "Did not receive an answer, or incorrect answer to SND_NKE");
         test_temperature_sensor_->publish_state(2);
       }
     }
