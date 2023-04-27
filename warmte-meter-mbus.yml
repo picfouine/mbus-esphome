@@ -1,0 +1,46 @@
+esphome:
+  name: warmte-meter-mbus
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+  baud_rate: 0
+  level: VERBOSE 
+  logs:
+    sensor: INFO
+    daalderop.sensor: INFO
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "zNl2pyDP9b2FT8q3wr4WWXns6JwDNDZGs89+paai5kA="
+
+ota:
+  password: "b5d652a894dfc6c6a5f183136d63ab8c"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Warmte-Meter-Mbus"
+    password: "QWGrqto4ksG1"
+
+uart:
+  baud_rate: 2400
+  tx_pin: 17
+  rx_pin: 16
+  data_bits: 8
+  parity: EVEN
+  stop_bits: 1
+
+sensor:
+  - platform: warmtemetermbus
+    test_temperature:
+      name: test_temperature
+    
