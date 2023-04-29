@@ -7,7 +7,7 @@ static const char * TAG = "Kamstrup303WA02";
 
 
 bool Kamstrup303WA02::readData(Kamstrup303WA02::MeterData* data) {
-  ESP_LOGI(TAG, "readData - enter");
+  ESP_LOGD(TAG, "readData - enter");
   bool isSuccessful = false;
 	DataLinkLayer::TelegramData telegramData;
 	if (!dataLinkLayer.reqUd2(0x01, &telegramData)) {
@@ -258,13 +258,13 @@ bool Kamstrup303WA02::readData(Kamstrup303WA02::MeterData* data) {
 			break;
 		}
 		case 0x3:
-			ESP_LOGI(TAG, "Static data response");
+			ESP_LOGD(TAG, "Static data response");
 			break;
 		default:
-      ESP_LOGI(TAG, "Unknown response to REQ_UD2");
+      ESP_LOGW(TAG, "Unknown response to REQ_UD2");
 			break;
 	}
-  ESP_LOGI(TAG, "readData - exit");
+  ESP_LOGD(TAG, "readData - exit");
 	return isSuccessful;	
 }
 
@@ -378,24 +378,24 @@ void Kamstrup303WA02::copyDataToTargetBuffer(VariableDataRecord* dataRecord, voi
 }
 
 bool Kamstrup303WA02::DataLinkLayer::reqUd2(uint8_t address, Kamstrup303WA02::DataLinkLayer::TelegramData * const dataBuffer) {
-  ESP_LOGI(TAG, "reqUd2 - enter");
+  ESP_LOGD(TAG, "reqUd2 - enter");
 	bool success = false;
 	// Initialize slave if required, and check for successful init
 	if (!slaveInitialized) {
 		slaveInitialized = sndNke(address);
 		if (!slaveInitialized) {
-      ESP_LOGI(TAG, "SND_NKE: No or no correct answer!");
+      ESP_LOGE(TAG, "SND_NKE: No or no correct answer!");
 			return false;
 		} else {
-      ESP_LOGI(TAG, "SND_NKE: Success");
+      ESP_LOGD(TAG, "SND_NKE: Success");
     }
 	}
 
 	// Short Frame, expect RSP_UD
 	uint8_t c = (1 << CFieldBitDirection) | (nextReqUd2Fcb << CFieldBitFCB) | (1 << CFieldBitFCV) | (CFieldFunctionReqUd2);
-  ESP_LOGI(TAG, "About to send short frame");
+  ESP_LOGD(TAG, "About to send short frame");
 	bool dataIsReceived = trySendShortFrame(c, address);
-	ESP_LOGI(TAG, "returned from sending short frame");
+	ESP_LOGD(TAG, "returned from sending short frame");
 
 	if (dataIsReceived) {
 		// We expect either a Control Frame, or a Long Frame. Handle as the same!
@@ -404,10 +404,10 @@ bool Kamstrup303WA02::DataLinkLayer::reqUd2(uint8_t address, Kamstrup303WA02::Da
 		uint8_t receivedByte {0};
     uartDevice->read_byte(&receivedByte);
 		if (StartByteControlAndLongFrame != receivedByte) {
-      ESP_LOGI(TAG, "Incorrect start byte! %dX", receivedByte);
+      ESP_LOGE(TAG, "Incorrect start byte! %dX", receivedByte);
 			return false;
 		}
-    ESP_LOGI(TAG, "Correct start byte");
+    ESP_LOGD(TAG, "Correct start byte");
 
 		uint8_t receivedL {0};
     if (!readNextByte(&receivedL)) {
@@ -430,39 +430,22 @@ bool Kamstrup303WA02::DataLinkLayer::reqUd2(uint8_t address, Kamstrup303WA02::Da
       return false;
     }
 
-    //ESP_LOGI(TAG, "Read up until CI field: Length = %d, A = 0x%X, C = 0x%X, CI = 0x%X", receivedL, dataBuffer->a, dataBuffer->c, dataBuffer->ci);
-    //return false;
-		//ESP_LOGI(TAG, "Bytes available: %d", uartDevice->available());
-    // We expect the following bytes: L - 3 + checksum + stop byte = L - 1
-    // for (uint8_t i = 0; i < 50; ++i) {
-    //   delay(20);
-    //   uint8_t nrAvailable = uartDevice->available();
-    //   if (nrAvailable == receivedL - 1) {
-    //     ESP_LOGI(TAG, "CORRECT BYTE COUNT AVAILABLE");
-    //     break;
-    //   } else {
-    //     ESP_LOGI(TAG, "Bytes available: %d", nrAvailable);
-    //   }
-    // }
-    ESP_LOGI(TAG, "Reading telegram data bytes");
+    ESP_LOGD(TAG, "Reading telegram data bytes");
     for (uint8_t userDataByteIdx = 0; userDataByteIdx < receivedL - 3; ++userDataByteIdx) {
-      //ESP_LOGI(TAG, "Reading next byte");
 			if (!readNextByte(&dataBuffer->data[userDataByteIdx])) {
-        ESP_LOGI(TAG, "Could not read next byte");
+        ESP_LOGE(TAG, "Could not read next byte");
         return false;
       }
-      //ESP_LOGI(TAG, "Just read byte: %X", dataBuffer->data[userDataByteIdx]);
 		}
-    
 
 		uint8_t calculatedChecksum = calculateChecksum(reinterpret_cast<uint8_t*>(dataBuffer), receivedL);
 		uint8_t receivedChecksum {0};
 		if (!readNextByte(&receivedChecksum) || calculatedChecksum != receivedChecksum) {
-      ESP_LOGI(TAG, "Received checksum: %X, calculated checksum: %X", receivedChecksum, calculatedChecksum);
+      ESP_LOGE(TAG, "Received (or not) checksum: %X, calculated checksum: %X", receivedChecksum, calculatedChecksum);
 			return false;
 		}
 		if (!readNextByte(&receivedByte) || StopByte != receivedByte) {
-      ESP_LOGI(TAG, "Received stop byte: %X", receivedByte);
+      ESP_LOGE(TAG, "Received (or not) stop byte: %X", receivedByte);
 			return false;
 		}
 		
@@ -478,7 +461,7 @@ bool Kamstrup303WA02::DataLinkLayer::readNextByte(uint8_t* pReceivedByte) {
 	while (uartDevice->available() == 0) {
     delay(1);
     if (millis() - timeBeforeStartingToWait > 150) {
-      ESP_LOGI(TAG, "NO DATA AVAILABLE AFTER TIMEOUT");
+      ESP_LOGE(TAG, "NO DATA AVAILABLE AFTER TIMEOUT");
       return false;
     }
   }
@@ -513,10 +496,10 @@ bool Kamstrup303WA02::DataLinkLayer::trySendShortFrame(uint8_t c, uint8_t a) {
   flushRxBuffer();
   for (uint8_t transmitAttempt = 0; transmitAttempt < 3 && !dataIsReceived; ++transmitAttempt) {
     if (transmitAttempt > 0) {
-      ESP_LOGI(TAG, "RETRY TRANSMIT SHORT FRAME");
+      ESP_LOGD(TAG, "RETRY TRANSMIT SHORT FRAME");
     }
     sendShortFrame(c, a);
-    ESP_LOGI(TAG, "Sent short frame. Now waiting for incoming data");
+    ESP_LOGD(TAG, "Sent short frame. Now waiting for incoming data");
     dataIsReceived = waitForIncomingData();
   }
   success = dataIsReceived;
@@ -545,14 +528,14 @@ bool Kamstrup303WA02::DataLinkLayer::waitForIncomingData() {
   bool dataReceived = false;
   // 330 bits + 50ms = 330 * 1000 / 2400 + 50 ms = 187,5 ms
   delay(138);
-  ESP_LOGI(TAG, "waitForIncomingData - after long delay");
+  ESP_LOGD(TAG, "waitForIncomingData - after long delay");
   for (uint16_t i = 0; i < 500; ++i) {
     if (uartDevice->available() > 0) {
       dataReceived = true;
-      ESP_LOGI(TAG, "waitForIncomingData - data received!");
+      ESP_LOGD(TAG, "waitForIncomingData - data received!");
       break;
     } else {
-      //ESP_LOGI(TAG, "waitForIncomingData - NO data received...");
+      ESP_LOGE(TAG, "waitForIncomingData - NO data received...");
     }
     delay(1);
   }
