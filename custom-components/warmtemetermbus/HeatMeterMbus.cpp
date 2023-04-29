@@ -20,18 +20,19 @@ namespace esphome
 
     void HeatMeterMbus::update()
     {
-      // Let's send SND_NKE, and wait for its results :-)
-      Kamstrup303WA02 k(this);
-      bool receivedCorrectAnswer = k.sndNke(0x01);
+      // Let's request data, and wait for its results :-)
+      Kamstrup303WA02::MeterData meterData;
+      ESP_LOGI(TAG, "About to readData");
+      bool readSuccessful = kamstrup.readData(&meterData);
 
-      if (receivedCorrectAnswer)
+      if (readSuccessful)
       {
-        ESP_LOGI(TAG, "Received correct answer to SND_NKE");
+        ESP_LOGI(TAG, "Successfully read meter data");
         test_temperature_sensor_->publish_state(1);
       }
       else
       {
-        ESP_LOGI(TAG, "Did not receive an answer, or incorrect answer to SND_NKE");
+        ESP_LOGI(TAG, "Did not successfully read meter data");
         test_temperature_sensor_->publish_state(2);
       }
     }

@@ -3,6 +3,7 @@
 #include "esphome/core/component.h"
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/uart/uart.h"
+#include "Kamstrup303WA02.h"
 
 namespace esphome {
 namespace warmtemetermbus {
@@ -16,7 +17,7 @@ namespace warmtemetermbus {
 
 class HeatMeterMbus : public PollingComponent, public uart::UARTDevice {
   public:  
-    HeatMeterMbus() : PollingComponent(10000) {}
+    HeatMeterMbus() : PollingComponent(10000), kamstrup(this) {}
     
     HEATMETERMBUS_METER_SENSOR(test_temperature)
 
@@ -26,6 +27,9 @@ class HeatMeterMbus : public PollingComponent, public uart::UARTDevice {
     void update() override;
     void dump_config() override;
     float get_setup_priority() const override;
+
+  private:
+    Kamstrup303WA02 kamstrup;
 };
 
 } //namespace warmtemetermbus
