@@ -16,6 +16,7 @@ heatmetermbus_ns = cg.esphome_ns.namespace("warmtemetermbus")
 heatmetermbus = heatmetermbus_ns.class_("HeatMeterMbus", cg.PollingComponent, uart.UARTDevice)
 
 CONF_TEST_TEMPERATURE = "test_temperature"
+CONF_T1_ACTUAL = "t1_actual"
 CONF_INFO_V1_AIR = "info_v1_air"
 
 SENSORS = {
@@ -25,9 +26,15 @@ SENSORS = {
         device_class=DEVICE_CLASS_TEMPERATURE,
         state_class=STATE_CLASS_MEASUREMENT,
         icon=ICON_THERMOMETER
+    ),
+    CONF_T1_ACTUAL: sensor.sensor_schema(
+        unit_of_measurement=UNIT_CELSIUS,
+        accuracy_decimals=2,
+        device_class=DEVICE_CLASS_TEMPERATURE,
+        state_class=STATE_CLASS_MEASUREMENT,
+        icon=ICON_THERMOMETER
     )
 }
-
 
 CONFIG_SCHEMA = (
     cv.Schema(

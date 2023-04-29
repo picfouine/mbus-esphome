@@ -1,4 +1,5 @@
 #include "esphome/core/log.h"
+#include <math.h>
 #include "HeatMeterMbus.h"
 #include "Kamstrup303WA02.h"
 
@@ -29,6 +30,11 @@ namespace esphome
       {
         ESP_LOGI(TAG, "Successfully read meter data");
         test_temperature_sensor_->publish_state(1);
+        ESP_LOGD(TAG, "Raw t1Actual value (decimal): %d", meterData.t1Actual.value);
+        ESP_LOGD(TAG, "t1Actual tenPower (decimal): %d", meterData.t1Actual.tenPower);
+        float t1ActualValue = pow(10, meterData.t1Actual.tenPower) * meterData.t1Actual.value;
+        ESP_LOGD(TAG, "Calculated t1Actual value (decimal): %f", t1ActualValue);
+        t1_actual_sensor_->publish_state(t1ActualValue);
       }
       else
       {

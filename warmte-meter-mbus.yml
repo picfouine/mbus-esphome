@@ -43,4 +43,5 @@ sensor:
   - platform: warmtemetermbus
     test_temperature:
       name: test_temperature
-    
+    t1_actual:
+      name: t1_actual

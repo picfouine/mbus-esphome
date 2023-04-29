@@ -20,6 +20,7 @@ class HeatMeterMbus : public PollingComponent, public uart::UARTDevice {
     HeatMeterMbus() : PollingComponent(10000), kamstrup(this) {}
     
     HEATMETERMBUS_METER_SENSOR(test_temperature)
+    HEATMETERMBUS_METER_SENSOR(t1_actual)
 
 //    HEATMETERMBUS_METER_BINARYSENSOR(info_v1_air)
 
