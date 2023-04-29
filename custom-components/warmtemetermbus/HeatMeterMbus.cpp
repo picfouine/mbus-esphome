@@ -32,7 +32,7 @@ namespace esphome
       }
       else
       {
-        ESP_LOGI(TAG, "Did not successfully read meter data");
+        ESP_LOGE(TAG, "Did not successfully read meter data");
         test_temperature_sensor_->publish_state(2);
       }
     }

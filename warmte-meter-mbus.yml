@@ -9,7 +9,7 @@ esp32:
 # Enable logging
 logger:
   baud_rate: 0
-  level: VERBOSE 
+  level: INFO 
   logs:
     sensor: INFO
     daalderop.sensor: INFO

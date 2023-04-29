@@ -532,12 +532,15 @@ bool Kamstrup303WA02::DataLinkLayer::waitForIncomingData() {
   for (uint16_t i = 0; i < 500; ++i) {
     if (uartDevice->available() > 0) {
       dataReceived = true;
-      ESP_LOGD(TAG, "waitForIncomingData - data received!");
+      ESP_LOGD(TAG, "waitForIncomingData - loop - data received!");
       break;
     } else {
-      ESP_LOGE(TAG, "waitForIncomingData - NO data received...");
+      ESP_LOGD(TAG, "waitForIncomingData - loop - NO data received");
     }
     delay(1);
+  }
+  if (!dataReceived) {
+    ESP_LOGE(TAG, "waitForIncomingData - exit - NO data received...");
   }
   return dataReceived;
 }
