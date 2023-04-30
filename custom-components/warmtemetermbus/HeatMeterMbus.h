@@ -26,6 +26,11 @@ class HeatMeterMbus : public PollingComponent, public uart::UARTDevice {
     HEATMETERMBUS_METER_SENSOR(operating_hours)
     HEATMETERMBUS_METER_SENSOR(error_hour_counter)
     HEATMETERMBUS_METER_SENSOR(t1_actual)
+    HEATMETERMBUS_METER_SENSOR(t2_actual)
+    HEATMETERMBUS_METER_SENSOR(t1_minus_t2)
+    HEATMETERMBUS_METER_SENSOR(power_e1_over_e3)
+    HEATMETERMBUS_METER_SENSOR(power_max_month)
+    
 //    HEATMETERMBUS_METER_BINARYSENSOR(info_v1_air)
 
     void setup() override;

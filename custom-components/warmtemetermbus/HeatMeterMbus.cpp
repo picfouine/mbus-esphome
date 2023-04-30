@@ -57,7 +57,6 @@ namespace esphome
         // Source unit can be seconds, minutes, hours or days
         // TODO: Check source unit. For now, assume hours, convert to days
         // No ten power
-        ESP_LOGI(TAG, "Operating hours raw value at top level: %d", meterData.operatingHours.value);
         float operatingHoursValueInDays = meterData.operatingHours.value / 24.0;
         operating_hours_sensor_->publish_state(operatingHoursValueInDays);
 
@@ -69,8 +68,31 @@ namespace esphome
         error_hour_counter_sensor_->publish_state(errorHourCounterValueInDays);
 
         // T1 actual
+        // Source unit is always degrees Celsius
         float t1ActualValue = pow(10, meterData.t1Actual.tenPower) * meterData.t1Actual.value;
         t1_actual_sensor_->publish_state(t1ActualValue);
+        
+        // T2 actual
+        // Source unit is always degrees Celsius
+        float t2ActualValue = pow(10, meterData.t2Actual.tenPower) * meterData.t2Actual.value;
+        t2_actual_sensor_->publish_state(t2ActualValue);
+
+        // T1 - T2
+        // Source unit is always degrees Celcius
+        float t1MinusT2Value = pow(10, meterData.diffT1T2.tenPower) * meterData.diffT1T2.value;
+        t1_minus_t2_sensor_->publish_state(t1MinusT2Value);
+
+        // Power E1 / E3
+        // Source unit can be W or J/h
+        // TODO: Check source unit. For now, assume W
+        float powerE1OverE3Value = pow(10, meterData.powerE1OverE3Actual.tenPower) * meterData.powerE1OverE3Actual.value;
+        power_e1_over_e3_sensor_->publish_state(powerE1OverE3Value);
+
+        // Power Max Month
+        // Source unit can be W or J/h
+        // TODO: Check source unit. For now, assume W
+        float powerMaxMonthValue = pow(10, meterData.powerMaxMonth.tenPower) * meterData.powerMaxMonth.value;
+        power_max_month_sensor_->publish_state(powerMaxMonthValue);
       }
       else
       {
@@ -94,6 +116,11 @@ namespace esphome
       LOG_SENSOR("  ", "Energy E9 Outlet", this->energy_e9_outlet_sensor_);
       LOG_SENSOR("  ", "Operating Hours", this->operating_hours_sensor_);
       LOG_SENSOR("  ", "Error Hour Counter", this->error_hour_counter_sensor_);
+      LOG_SENSOR("  ", "T1 Actual", this->t1_actual_sensor_);
+      LOG_SENSOR("  ", "T2 Actual", this->t2_actual_sensor_);
+      LOG_SENSOR("  ", "T1 - T2", this->t1_minus_t2_sensor_);
+      LOG_SENSOR("  ", "Power E1 / E3", this->power_e1_over_e3_sensor_);
+      LOG_SENSOR("  ", "Power Max Month", this->power_max_month_sensor_);
     }
 
   } // namespace warmtemetermbus

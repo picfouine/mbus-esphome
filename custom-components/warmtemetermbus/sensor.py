@@ -8,11 +8,13 @@ from esphome.const import  (
     DEVICE_CLASS_DURATION,
     DEVICE_CLASS_ENERGY,
     DEVICE_CLASS_HEAT,
+    DEVICE_CLASS_POWER,
     DEVICE_CLASS_TEMPERATURE,
     DEVICE_CLASS_VOLUME,
     ICON_THERMOMETER,
     ICON_WATER,
     UNIT_CELSIUS, 
+    UNIT_KILOWATT,
     UNIT_KILOWATT_HOURS,
     STATE_CLASS_MEASUREMENT,
 )
@@ -31,11 +33,17 @@ CONF_ENERGY_E9_OUTLET = "energy_e9_outlet"
 CONF_OPERATING_HOURS = "operating_hours"
 CONF_ERROR_HOUR_COUNTER = "error_hour_counter"
 CONF_T1_ACTUAL = "t1_actual"
+CONF_T2_ACTUAL = "t2_actual"
+CONF_T1_MINUS_T2 = "t1_minus_t2"
+CONF_POWER_E1_OVER_E3 = "power_e1_over_e3"
+CONF_POWER_MAX_MONTH = "power_max_month"
 CONF_INFO_V1_AIR = "info_v1_air"
 
-ICON_HEAT_WAVE = "mdi:heat-wave"
 ICON_CLOCK_ALERT_OUTLINE = "mdi:clock-alert-outline"
 ICON_CLOCK_OUTLINE = "mdi:clock-outline"
+ICON_HEAT_WAVE = "mdi:heat-wave"
+ICON_THERMOMETER_MINUS = "mdi:thermometer-minus"
+ICON_WATER_THERMOMETER_OUTLINE = "mdi:water-thermometer-outline"
 
 UNIT_CUBIC_METER_TIMES_DEG_CELCIUS = "m³ * °C"
 UNIT_DAYS = "days"
@@ -89,7 +97,35 @@ SENSORS = {
         accuracy_decimals=2,
         device_class=DEVICE_CLASS_TEMPERATURE,
         state_class=STATE_CLASS_MEASUREMENT,
-        icon=ICON_THERMOMETER
+        icon=ICON_WATER_THERMOMETER_OUTLINE
+    ),
+    CONF_T2_ACTUAL: sensor.sensor_schema(
+        unit_of_measurement=UNIT_CELSIUS,
+        accuracy_decimals=2,
+        device_class=DEVICE_CLASS_TEMPERATURE,
+        state_class=STATE_CLASS_MEASUREMENT,
+        icon=ICON_WATER_THERMOMETER_OUTLINE
+    ),
+    CONF_T1_MINUS_T2: sensor.sensor_schema(
+        unit_of_measurement=UNIT_CELSIUS,
+        accuracy_decimals=2,
+        device_class=DEVICE_CLASS_TEMPERATURE,
+        state_class=STATE_CLASS_MEASUREMENT,
+        icon=ICON_THERMOMETER_MINUS
+    ),
+    CONF_POWER_E1_OVER_E3: sensor.sensor_schema(
+        unit_of_measurement=UNIT_KILOWATT,
+        accuracy_decimals=0,
+        device_class=DEVICE_CLASS_POWER,
+        state_class=STATE_CLASS_MEASUREMENT,
+        icon=ICON_HEAT_WAVE
+    ),
+    CONF_POWER_MAX_MONTH: sensor.sensor_schema(
+        unit_of_measurement=UNIT_KILOWATT,
+        accuracy_decimals=0,
+        device_class=DEVICE_CLASS_POWER,
+        state_class=STATE_CLASS_MEASUREMENT,
+        icon=ICON_HEAT_WAVE
     )
 }
 

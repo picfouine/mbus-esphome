@@ -73,7 +73,6 @@ bool Kamstrup303WA02::readData(Kamstrup303WA02::MeterData* data) {
       // To prevent garbage values, set the value to zero first.
       data->operatingHours.value = 0;
       copyDataToTargetBuffer(&dataRecord, &(data->operatingHours.value));
-      ESP_LOGI(TAG, "Operating hours raw value after copying to buffer: %d", data->operatingHours.value);
       
       // Error hour counter
       readDataRecord(&dataRecord, &telegramData, &startOfDataRecordIdx);

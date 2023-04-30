@@ -55,4 +55,11 @@ sensor:
       name: error_hour_counter
     t1_actual:
       name: t1_actual
-    
+    t2_actual:
+      name: t2_actual
+    t1_minus_t2:
+      name: t1_minus_t2
+    power_e1_over_e3:
+      name: power_e1_over_e3
+    power_max_month:
+      name: power_max_month
