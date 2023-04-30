@@ -29,7 +29,13 @@ namespace esphome
       if (readSuccessful)
       {
         ESP_LOGI(TAG, "Successfully read meter data");
-        test_temperature_sensor_->publish_state(1);
+
+        // Heat energy E1
+        // Use tenPower - 3 to convert from Wh to kWh
+        float heatEnergyE1Value = pow(10, meterData.heatEnergyE1.tenPower - 3) * meterData.heatEnergyE1.value;
+        heat_energy_e1_sensor_->publish_state(heatEnergyE1Value);
+
+        // T1 actual
         ESP_LOGD(TAG, "Raw t1Actual value (decimal): %d", meterData.t1Actual.value);
         ESP_LOGD(TAG, "t1Actual tenPower (decimal): %d", meterData.t1Actual.tenPower);
         float t1ActualValue = pow(10, meterData.t1Actual.tenPower) * meterData.t1Actual.value;
@@ -39,7 +45,6 @@ namespace esphome
       else
       {
         ESP_LOGE(TAG, "Did not successfully read meter data");
-        test_temperature_sensor_->publish_state(2);
       }
     }
 
@@ -52,7 +57,8 @@ namespace esphome
     void HeatMeterMbus::dump_config()
     {
       ESP_LOGCONFIG(TAG, "HeatMeterMbus sensor");
-      LOG_SENSOR("  ", "Test Temperature", this->test_temperature_sensor_);
+      LOG_SENSOR("  ", "T1 Actual", this->t1_actual_sensor_);
+      LOG_SENSOR("  ", "Heat Energy E1", this->heat_energy_e1_sensor_);
     }
 
   } // namespace warmtemetermbus
