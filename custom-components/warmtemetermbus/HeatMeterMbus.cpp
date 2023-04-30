@@ -43,6 +43,11 @@ namespace esphome
         float volumeV1Value = pow(10, meterData.volumeV1.tenPower + 3) * meterData.volumeV1.value;
         volume_v1_sensor_->publish_state(volumeV1Value);
 
+        // Energy E8 Inlet
+        // Source unit is always m3 * deg Celcius
+        float energyE8InletValue = pow(10, meterData.energyE8.tenPower) * meterData.energyE8.value;
+        energy_e8_inlet_sensor_->publish_state(energyE8InletValue);
+
         // T1 actual
         ESP_LOGD(TAG, "Raw t1Actual value (decimal): %d", meterData.t1Actual.value);
         ESP_LOGD(TAG, "t1Actual tenPower (decimal): %d", meterData.t1Actual.tenPower);

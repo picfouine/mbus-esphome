@@ -19,9 +19,10 @@ class HeatMeterMbus : public PollingComponent, public uart::UARTDevice {
   public:  
     HeatMeterMbus() : PollingComponent(10000), kamstrup(this) {}
     
-    HEATMETERMBUS_METER_SENSOR(t1_actual)
     HEATMETERMBUS_METER_SENSOR(heat_energy_e1)
     HEATMETERMBUS_METER_SENSOR(volume_v1)
+    HEATMETERMBUS_METER_SENSOR(energy_e8_inlet)
+    HEATMETERMBUS_METER_SENSOR(t1_actual)
 //    HEATMETERMBUS_METER_BINARYSENSOR(info_v1_air)
 
     void setup() override;

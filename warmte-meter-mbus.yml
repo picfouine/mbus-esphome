@@ -45,6 +45,8 @@ sensor:
       name: heat_energy_e1
     volume_v1:
       name: volume_v1
+    energy_e8_inlet:
+      name: energy_e8_inlet
     t1_actual:
       name: t1_actual
     

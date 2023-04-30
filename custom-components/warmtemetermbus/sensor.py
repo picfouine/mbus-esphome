@@ -6,6 +6,7 @@ from esphome.components import uart
 from esphome.const import  (
     CONF_ID, 
     DEVICE_CLASS_ENERGY,
+    DEVICE_CLASS_HEAT,
     DEVICE_CLASS_TEMPERATURE,
     DEVICE_CLASS_VOLUME,
     ICON_THERMOMETER,
@@ -24,11 +25,13 @@ binary_sensor_ns = cg.esphome_ns.namespace("binary_sensor")
 
 CONF_HEAT_ENERGY_E1 = "heat_energy_e1"
 CONF_VOLUME_V1 = "volume_v1"
+CONF_ENERGY_E8_INLET = "energy_e8_inlet"
 CONF_T1_ACTUAL = "t1_actual"
 CONF_INFO_V1_AIR = "info_v1_air"
 
 ICON_HEAT_WAVE = "mdi:heat-wave"
 
+UNIT_CUBIC_METER_TIMES_DEG_CELCIUS = "m³ * °C"
 UNIT_LITER = "l"
 
 SENSORS = {
@@ -45,6 +48,13 @@ SENSORS = {
         device_class=DEVICE_CLASS_VOLUME,
         state_class=STATE_CLASS_MEASUREMENT,
         icon=ICON_WATER
+    ),
+    CONF_ENERGY_E8_INLET: sensor.sensor_schema(
+        unit_of_measurement=UNIT_CUBIC_METER_TIMES_DEG_CELCIUS,
+        accuracy_decimals=0,
+        device_class=DEVICE_CLASS_ENERGY,#DEVICE_CLASS_HEAT,
+        state_class=STATE_CLASS_MEASUREMENT,
+        icon=ICON_HEAT_WAVE
     ),
     CONF_T1_ACTUAL: sensor.sensor_schema(
         unit_of_measurement=UNIT_CELSIUS,
