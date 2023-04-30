@@ -31,9 +31,17 @@ namespace esphome
         ESP_LOGI(TAG, "Successfully read meter data");
 
         // Heat energy E1
+        // Source unit can be Wh or J
+        // TODO: Check source unit. For now, assume Wh
         // Use tenPower - 3 to convert from Wh to kWh
         float heatEnergyE1Value = pow(10, meterData.heatEnergyE1.tenPower - 3) * meterData.heatEnergyE1.value;
         heat_energy_e1_sensor_->publish_state(heatEnergyE1Value);
+
+        // Volume V1
+        // Source unit is always m3
+        // Use tenPower + 3 to convert to liters
+        float volumeV1Value = pow(10, meterData.volumeV1.tenPower + 3) * meterData.volumeV1.value;
+        volume_v1_sensor_->publish_state(volumeV1Value);
 
         // T1 actual
         ESP_LOGD(TAG, "Raw t1Actual value (decimal): %d", meterData.t1Actual.value);

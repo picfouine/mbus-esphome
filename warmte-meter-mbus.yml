@@ -41,7 +41,10 @@ uart:
 
 sensor:
   - platform: warmtemetermbus
-    t1_actual:
-      name: t1_actual
     heat_energy_e1:
       name: heat_energy_e1
+    volume_v1:
+      name: volume_v1
+    t1_actual:
+      name: t1_actual
+    

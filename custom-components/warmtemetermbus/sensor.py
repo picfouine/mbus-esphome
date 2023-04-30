@@ -7,7 +7,9 @@ from esphome.const import  (
     CONF_ID, 
     DEVICE_CLASS_ENERGY,
     DEVICE_CLASS_TEMPERATURE,
+    DEVICE_CLASS_VOLUME,
     ICON_THERMOMETER,
+    ICON_WATER,
     UNIT_CELSIUS, 
     UNIT_KILOWATT_HOURS,
     STATE_CLASS_MEASUREMENT,
@@ -21,10 +23,13 @@ heatmetermbus = heatmetermbus_ns.class_("HeatMeterMbus", cg.PollingComponent, ua
 binary_sensor_ns = cg.esphome_ns.namespace("binary_sensor")
 
 CONF_HEAT_ENERGY_E1 = "heat_energy_e1"
+CONF_VOLUME_V1 = "volume_v1"
 CONF_T1_ACTUAL = "t1_actual"
 CONF_INFO_V1_AIR = "info_v1_air"
 
 ICON_HEAT_WAVE = "mdi:heat-wave"
+
+UNIT_LITER = "l"
 
 SENSORS = {
     CONF_HEAT_ENERGY_E1: sensor.sensor_schema(
@@ -33,6 +38,13 @@ SENSORS = {
         device_class=DEVICE_CLASS_ENERGY,
         state_class=STATE_CLASS_MEASUREMENT,
         icon=ICON_HEAT_WAVE
+    ),
+    CONF_VOLUME_V1: sensor.sensor_schema(
+        unit_of_measurement=UNIT_LITER,
+        accuracy_decimals=0,
+        device_class=DEVICE_CLASS_VOLUME,
+        state_class=STATE_CLASS_MEASUREMENT,
+        icon=ICON_WATER
     ),
     CONF_T1_ACTUAL: sensor.sensor_schema(
         unit_of_measurement=UNIT_CELSIUS,
