@@ -47,6 +47,12 @@ sensor:
       name: volume_v1
     energy_e8_inlet:
       name: energy_e8_inlet
+    energy_e9_outlet:
+      name: energy_e9_outlet
+    operating_hours:
+      name: operating_hours
+    error_hour_counter:
+      name: error_hour_counter
     t1_actual:
       name: t1_actual
     

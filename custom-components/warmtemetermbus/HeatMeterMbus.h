@@ -22,6 +22,9 @@ class HeatMeterMbus : public PollingComponent, public uart::UARTDevice {
     HEATMETERMBUS_METER_SENSOR(heat_energy_e1)
     HEATMETERMBUS_METER_SENSOR(volume_v1)
     HEATMETERMBUS_METER_SENSOR(energy_e8_inlet)
+    HEATMETERMBUS_METER_SENSOR(energy_e9_outlet)
+    HEATMETERMBUS_METER_SENSOR(operating_hours)
+    HEATMETERMBUS_METER_SENSOR(error_hour_counter)
     HEATMETERMBUS_METER_SENSOR(t1_actual)
 //    HEATMETERMBUS_METER_BINARYSENSOR(info_v1_air)
 

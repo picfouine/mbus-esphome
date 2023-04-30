@@ -69,7 +69,11 @@ bool Kamstrup303WA02::readData(Kamstrup303WA02::MeterData* data) {
       // Operating hours
       readDataRecord(&dataRecord, &telegramData, &startOfDataRecordIdx);
       data->operatingHours.unit = static_cast<DurationUnit>(dataRecord.unitAndMultiplier & 0x03);
+      // this value is stored as 32-bit. But the meter sends a 24-bit value.
+      // To prevent garbage values, set the value to zero first.
+      data->operatingHours.value = 0;
       copyDataToTargetBuffer(&dataRecord, &(data->operatingHours.value));
+      ESP_LOGI(TAG, "Operating hours raw value after copying to buffer: %d", data->operatingHours.value);
       
       // Error hour counter
       readDataRecord(&dataRecord, &telegramData, &startOfDataRecordIdx);
@@ -360,6 +364,10 @@ void Kamstrup303WA02::readDataRecord(VariableDataRecord* dataRecord, DataLinkLay
   
   // Read data
   // For now store at max 8 bytes
+  // Initialize data to 0!
+  for (uint8_t i = 0; i < 8; ++i) {
+    dataRecord->data[i] = 0;
+  }
   for (uint8_t i = 0; i < dataLength; ++i) {
       uint8_t currentByte = userData->data[dataIdx + i];
       if (i < 8) {

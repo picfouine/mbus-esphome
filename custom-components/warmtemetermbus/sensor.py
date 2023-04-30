@@ -4,7 +4,8 @@ from esphome.components import sensor
 from esphome.components import binary_sensor
 from esphome.components import uart
 from esphome.const import  (
-    CONF_ID, 
+    CONF_ID,
+    DEVICE_CLASS_DURATION,
     DEVICE_CLASS_ENERGY,
     DEVICE_CLASS_HEAT,
     DEVICE_CLASS_TEMPERATURE,
@@ -26,12 +27,18 @@ binary_sensor_ns = cg.esphome_ns.namespace("binary_sensor")
 CONF_HEAT_ENERGY_E1 = "heat_energy_e1"
 CONF_VOLUME_V1 = "volume_v1"
 CONF_ENERGY_E8_INLET = "energy_e8_inlet"
+CONF_ENERGY_E9_OUTLET = "energy_e9_outlet"
+CONF_OPERATING_HOURS = "operating_hours"
+CONF_ERROR_HOUR_COUNTER = "error_hour_counter"
 CONF_T1_ACTUAL = "t1_actual"
 CONF_INFO_V1_AIR = "info_v1_air"
 
 ICON_HEAT_WAVE = "mdi:heat-wave"
+ICON_CLOCK_ALERT_OUTLINE = "mdi:clock-alert-outline"
+ICON_CLOCK_OUTLINE = "mdi:clock-outline"
 
 UNIT_CUBIC_METER_TIMES_DEG_CELCIUS = "m³ * °C"
+UNIT_DAYS = "days"
 UNIT_LITER = "l"
 
 SENSORS = {
@@ -56,6 +63,27 @@ SENSORS = {
         state_class=STATE_CLASS_MEASUREMENT,
         icon=ICON_HEAT_WAVE
     ),
+    CONF_ENERGY_E9_OUTLET: sensor.sensor_schema(
+        unit_of_measurement=UNIT_CUBIC_METER_TIMES_DEG_CELCIUS,
+        accuracy_decimals=0,
+        device_class=DEVICE_CLASS_ENERGY,#DEVICE_CLASS_HEAT,
+        state_class=STATE_CLASS_MEASUREMENT,
+        icon=ICON_HEAT_WAVE
+    ), 
+    CONF_OPERATING_HOURS: sensor.sensor_schema(
+        unit_of_measurement=UNIT_DAYS,
+        accuracy_decimals=0,
+        device_class=DEVICE_CLASS_DURATION,
+        state_class=STATE_CLASS_MEASUREMENT,
+        icon=ICON_CLOCK_OUTLINE
+    ), 
+    CONF_ERROR_HOUR_COUNTER: sensor.sensor_schema(
+        unit_of_measurement=UNIT_DAYS,
+        accuracy_decimals=0,
+        device_class=DEVICE_CLASS_DURATION,
+        state_class=STATE_CLASS_MEASUREMENT,
+        icon=ICON_CLOCK_ALERT_OUTLINE
+    ), 
     CONF_T1_ACTUAL: sensor.sensor_schema(
         unit_of_measurement=UNIT_CELSIUS,
         accuracy_decimals=2,
