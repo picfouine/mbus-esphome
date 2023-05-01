@@ -11,6 +11,7 @@ from esphome.const import  (
     DEVICE_CLASS_POWER,
     DEVICE_CLASS_TEMPERATURE,
     DEVICE_CLASS_VOLUME,
+    DEVICE_CLASS_WATER,
     ICON_THERMOMETER,
     ICON_WATER,
     UNIT_CELSIUS, 
@@ -37,17 +38,30 @@ CONF_T2_ACTUAL = "t2_actual"
 CONF_T1_MINUS_T2 = "t1_minus_t2"
 CONF_POWER_E1_OVER_E3 = "power_e1_over_e3"
 CONF_POWER_MAX_MONTH = "power_max_month"
+CONF_FLOW_V1_ACTUAL = "flow_v1_actual"
+CONF_FLOW_V1_MAX_MONTH = "flow_v1_max_month"
+
+CONF_INFO_NO_VOLTAGE_SUPPLY = "info_no_voltage_supply"
+CONF_INFO_T1_ABOVE_RANGE_OR_DISCONNECTED = "info_t1_above_range_or_disconnected"
+CONF_INFO_T2_ABOVE_RANGE_OR_DISCONNECTED = "info_t2_above_range_or_disconnected"
+CONF_INFO_T1_BELOW_RANGE_OR_SHORTED = "info_t1_below_range_or_shorted"
+CONF_INFO_T2_BELOW_RANGE_OR_SHORTED = "info_t2_below_range_or_shorted"
+CONF_INFO_INVALID_TEMP_DIFFERENCE = "info_invalid_temp_difference"
 CONF_INFO_V1_AIR = "info_v1_air"
+CONF_INFO_V1_WRONG_FLOW_DIRECTION = "info_v1_wrong_flow_direction"
+CONF_INFO_V1_GREATER_THAN_QS_MORE_THAN_HOUR = "info_v1_greater_than_qs_more_than_hour"
 
 ICON_CLOCK_ALERT_OUTLINE = "mdi:clock-alert-outline"
 ICON_CLOCK_OUTLINE = "mdi:clock-outline"
 ICON_HEAT_WAVE = "mdi:heat-wave"
 ICON_THERMOMETER_MINUS = "mdi:thermometer-minus"
 ICON_WATER_THERMOMETER_OUTLINE = "mdi:water-thermometer-outline"
+ICON_WAVES_ARROW_RIGHT = "mdi:waves-arrow-right"
 
 UNIT_CUBIC_METER_TIMES_DEG_CELCIUS = "m³ * °C"
 UNIT_DAYS = "days"
 UNIT_LITER = "l"
+UNIT_LITER_PER_HOUR = "l/h"
 
 SENSORS = {
     CONF_HEAT_ENERGY_E1: sensor.sensor_schema(
@@ -126,7 +140,34 @@ SENSORS = {
         device_class=DEVICE_CLASS_POWER,
         state_class=STATE_CLASS_MEASUREMENT,
         icon=ICON_HEAT_WAVE
+    ),
+    CONF_FLOW_V1_ACTUAL: sensor.sensor_schema(
+        unit_of_measurement=UNIT_LITER_PER_HOUR,
+        accuracy_decimals=0,
+        device_class=DEVICE_CLASS_WATER,
+        state_class=STATE_CLASS_MEASUREMENT,
+        icon=ICON_WAVES_ARROW_RIGHT
+    ),
+    CONF_FLOW_V1_MAX_MONTH: sensor.sensor_schema(
+        unit_of_measurement=UNIT_LITER_PER_HOUR,
+        accuracy_decimals=0,
+        device_class=DEVICE_CLASS_WATER,
+        state_class=STATE_CLASS_MEASUREMENT,
+        icon=ICON_WAVES_ARROW_RIGHT
     )
+}
+
+BINARY_SENSORS = {
+    CONF_INFO_V1_AIR: binary_sensor.BINARY_SENSOR_SCHEMA,
+    CONF_INFO_NO_VOLTAGE_SUPPLY: binary_sensor.BINARY_SENSOR_SCHEMA,
+    CONF_INFO_T1_ABOVE_RANGE_OR_DISCONNECTED: binary_sensor.BINARY_SENSOR_SCHEMA,
+    CONF_INFO_T2_ABOVE_RANGE_OR_DISCONNECTED: binary_sensor.BINARY_SENSOR_SCHEMA,
+    CONF_INFO_T1_BELOW_RANGE_OR_SHORTED: binary_sensor.BINARY_SENSOR_SCHEMA,
+    CONF_INFO_T2_BELOW_RANGE_OR_SHORTED: binary_sensor.BINARY_SENSOR_SCHEMA,
+    CONF_INFO_INVALID_TEMP_DIFFERENCE: binary_sensor.BINARY_SENSOR_SCHEMA,
+    CONF_INFO_V1_AIR: binary_sensor.BINARY_SENSOR_SCHEMA,
+    CONF_INFO_V1_WRONG_FLOW_DIRECTION: binary_sensor.BINARY_SENSOR_SCHEMA,
+    CONF_INFO_V1_GREATER_THAN_QS_MORE_THAN_HOUR: binary_sensor.BINARY_SENSOR_SCHEMA
 }
 
 CONFIG_SCHEMA = (
@@ -139,11 +180,17 @@ CONFIG_SCHEMA = (
         {
             cv.Optional(sensor_name): schema for sensor_name, schema in SENSORS.items()
         }
+    )
+    .extend(
+        {
+            cv.Optional(sensor_name): schema for sensor_name, schema in BINARY_SENSORS.items()
+        }
     ).extend(uart.UART_DEVICE_SCHEMA)
 )
 
 async def to_code(config):
     cg.add_global(heatmetermbus_ns.using)
+    cg.add_global(binary_sensor_ns.using)
     var = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)
@@ -152,3 +199,8 @@ async def to_code(config):
         if name in config:
             sens = await sensor.new_sensor(config[name])
             cg.add(getattr(var, f"set_{name}_sensor")(sens))
+
+    for name in BINARY_SENSORS:
+        if name in config:
+            sens = await binary_sensor.new_binary_sensor(config[name])
+            cg.add(getattr(var, f"set_{name}_binary_sensor")(sens))

@@ -106,7 +106,7 @@ public:
       unsigned v1Air : 1;
       unsigned v1WrongFlowDirection : 1;
       unsigned notUsed2 : 1;
-      unsigned v1LargerThanQsMoreThanHour : 1;
+      unsigned v1GreaterThanQsMoreThanHour : 1;
   } InfoBitsValue;
 
   typedef struct DateValue {

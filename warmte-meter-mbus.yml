@@ -63,3 +63,26 @@ sensor:
       name: power_e1_over_e3
     power_max_month:
       name: power_max_month
+    flow_v1_actual:
+      name: flow_v1_actual
+    flow_v1_max_month:
+      name: flow_v1_max_month
+    info_no_voltage_supply:
+      name: info_no_voltage_supply
+    info_t1_above_range_or_disconnected:
+      name: info_t1_above_range_or_disconnected
+    info_t2_above_range_or_disconnected:
+      name: info_t2_above_range_or_disconnected
+    info_t1_below_range_or_shorted:
+      name: info_t1_below_range_or_shorted
+    info_t2_below_range_or_shorted:
+      name: info_t2_below_range_or_shorted
+    info_invalid_temp_difference:
+      name: info_invalid_temp_difference
+    info_v1_air:
+      name: info_v1_air
+    info_v1_wrong_flow_direction:
+      name: info_v1_wrong_flow_direction
+    info_v1_greater_than_qs_more_than_hour:
+      name: info_v1_greater_than_qs_more_than_hour
+    
