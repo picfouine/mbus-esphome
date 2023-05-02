@@ -85,4 +85,21 @@ sensor:
       name: info_v1_wrong_flow_direction
     info_v1_greater_than_qs_more_than_hour:
       name: info_v1_greater_than_qs_more_than_hour
-    
+    heat_energy_e1_old:
+      name: heat_energy_e1_old
+    volume_v1_old:
+      name: volume_v1_old
+    energy_e8_inlet_old:
+      name: energy_e8_inlet_old
+    energy_e9_outlet_old:
+      name: energy_e9_outlet_old
+    power_max_year_old:
+      name: power_max_year_old
+    flow_v1_max_year_old:
+      name: flow_v1_max_year_old
+    log_year:
+      name: log_year
+    log_month:
+      name: log_month
+    log_day:
+      name: log_day

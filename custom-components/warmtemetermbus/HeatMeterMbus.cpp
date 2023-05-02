@@ -12,7 +12,6 @@ namespace esphome
 {
   namespace warmtemetermbus
   {
-
     static const char *TAG = "heatmetermbus.sensor";
 
     void HeatMeterMbus::setup()
@@ -136,6 +135,51 @@ namespace esphome
         // V1 > Qs For More Than An Hour
         bool infoV1GreaterThanQsForMoreThanHourValue = 1 == meterData.infoBits.v1WrongFlowDirection;
         info_v1_greater_than_qs_more_than_hour_binary_sensor_->publish_state(infoV1GreaterThanQsForMoreThanHourValue);
+
+        // Heat Energy E1 Old (storage nr != 0 in DIF)
+        // Source unit can be Wh or J
+        // TODO: Check source unit. For now, assume Wh
+        // Use tenPower - 3 to convert from Wh to kWh
+        float heatEnergyE1OldValue = pow(10, meterData.heatEnergyE1Old.tenPower - 3) * meterData.heatEnergyE1Old.value;
+        heat_energy_e1_old_sensor_->publish_state(heatEnergyE1OldValue);
+
+        // Volume V1 Old (storage nr != 0 in DIF)
+        // Source unit is always m3
+        // Use tenPower + 3 to convert to liters
+        float volumeV1OldValue = pow(10, meterData.volumeV1Old.tenPower + 3) * meterData.volumeV1Old.value;
+        volume_v1_old_sensor_->publish_state(volumeV1OldValue);
+
+        // Energy E8 Inlet Old (storage nr != 0 in DIF)
+        // Source unit is always m3 * deg Celcius
+        float energyE8InletOldValue = pow(10, meterData.energyE8Old.tenPower) * meterData.energyE8Old.value;
+        energy_e8_inlet_old_sensor_->publish_state(energyE8InletOldValue);
+
+        // Energy E9 Outlet Old (storage nr != 0 in DIF)
+        // Source unit is always m3 * deg Celcius
+        float energyE9OutletOldValue = pow(10, meterData.energyE9Old.tenPower) * meterData.energyE9Old.value;
+        energy_e9_outlet_old_sensor_->publish_state(energyE9OutletOldValue);
+        
+        // Power Max Year Old (storage nr != 0 in DIF)
+        // Source unit can be W or J/h
+        // TODO: Check source unit. For now, assume W
+        float powerMaxYearOldValue = pow(10, meterData.powerMaxYear.tenPower) * meterData.powerMaxYear.value;
+        power_max_year_old_sensor_->publish_state(powerMaxYearOldValue);
+
+        // Flow V1 Max Year Old (storage nr != 0 in DIF)
+        // Source unit can be m3/s, m3/m or m3/h
+        // TODO: Check source unit. For now, assume m3/h.
+        // Use tenPower + 3 to convert to l/h
+        float flowV1MaxYearOldValue = pow(10, meterData.flowV1MaxYear.tenPower + 3) * meterData.flowV1MaxYear.value;
+        flow_v1_max_year_old_sensor_->publish_state(flowV1MaxYearOldValue);
+
+        // Log Year
+        log_year_sensor_->publish_state(meterData.dateTimeLogged.year);
+
+        // Log Month
+        log_month_sensor_->publish_state(meterData.dateTimeLogged.month);
+
+        // Log Day
+        log_day_sensor_->publish_state(meterData.dateTimeLogged.day);
       }
       else
       {
@@ -166,6 +210,16 @@ namespace esphome
       LOG_SENSOR("  ", "Power Max Month", this->power_max_month_sensor_);
       LOG_SENSOR("  ", "Flow V1 Actual", this->flow_v1_actual_sensor_);
       LOG_SENSOR("  ", "Flow V1 Max Month", this->flow_v1_max_month_sensor_);
+      LOG_SENSOR("  ", "Heat Energy E1 Old", this->heat_energy_e1_old_sensor_);
+      LOG_SENSOR("  ", "Volume V1 Old", this->volume_v1_old_sensor_);
+      LOG_SENSOR("  ", "Energy E8 Inlet Old", this->energy_e8_inlet_old_sensor_);
+      LOG_SENSOR("  ", "Energy E9 Outlet Old", this->energy_e9_outlet_old_sensor_);
+      LOG_SENSOR("  ", "Power Max Year Old", this->power_max_year_old_sensor_);
+      LOG_SENSOR("  ", "Flow V1 Max Year Old", this->flow_v1_max_year_old_sensor_);
+      LOG_SENSOR("  ", "Log Year", this->log_year_sensor_);
+      LOG_SENSOR("  ", "Log Month", this->log_month_sensor_);
+      LOG_SENSOR("  ", "Log Day", this->log_day_sensor_);
+
       LOG_BINARY_SENSOR("  ", "No Voltage Supply", this->info_no_voltage_supply_binary_sensor_);
       LOG_BINARY_SENSOR("  ", "T1 Above Measuring Range or Disconnected", this->info_t1_above_range_or_disconnected_binary_sensor_);
       LOG_BINARY_SENSOR("  ", "T2 Above Measuring Range or Disconnected", this->info_t2_above_range_or_disconnected_binary_sensor_);

@@ -40,7 +40,16 @@ class HeatMeterMbus : public PollingComponent, public uart::UARTDevice {
     HEATMETERMBUS_METER_SENSOR(power_max_month)
     HEATMETERMBUS_METER_SENSOR(flow_v1_actual)
     HEATMETERMBUS_METER_SENSOR(flow_v1_max_month)
-    
+    HEATMETERMBUS_METER_SENSOR(heat_energy_e1_old)
+    HEATMETERMBUS_METER_SENSOR(volume_v1_old)
+    HEATMETERMBUS_METER_SENSOR(energy_e8_inlet_old)
+    HEATMETERMBUS_METER_SENSOR(energy_e9_outlet_old)
+    HEATMETERMBUS_METER_SENSOR(power_max_year_old)
+    HEATMETERMBUS_METER_SENSOR(flow_v1_max_year_old)
+    HEATMETERMBUS_METER_SENSOR(log_year)
+    HEATMETERMBUS_METER_SENSOR(log_month)
+    HEATMETERMBUS_METER_SENSOR(log_day)
+
     HEATMETERMBUS_METER_BINARYSENSOR(info_no_voltage_supply)
     HEATMETERMBUS_METER_BINARYSENSOR(info_t1_above_range_or_disconnected)
     HEATMETERMBUS_METER_BINARYSENSOR(info_t2_above_range_or_disconnected)

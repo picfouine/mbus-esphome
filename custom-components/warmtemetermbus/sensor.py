@@ -40,6 +40,15 @@ CONF_POWER_E1_OVER_E3 = "power_e1_over_e3"
 CONF_POWER_MAX_MONTH = "power_max_month"
 CONF_FLOW_V1_ACTUAL = "flow_v1_actual"
 CONF_FLOW_V1_MAX_MONTH = "flow_v1_max_month"
+CONF_HEAT_ENERGY_E1_OLD = "heat_energy_e1_old"
+CONF_VOLUME_V1_OLD = "volume_v1_old"
+CONF_ENERGY_E8_INLET_OLD = "energy_e8_inlet_old"
+CONF_ENERGY_E9_OUTLET_OLD = "energy_e9_outlet_old"
+CONF_POWER_MAX_YEAR_OLD = "power_max_year_old"
+CONF_FLOW_V1_MAX_YEAR_OLD = "flow_v1_max_year_old"
+CONF_LOG_YEAR = "log_year"
+CONF_LOG_MONTH = "log_month"
+CONF_LOG_DAY = "log_day"
 
 CONF_INFO_NO_VOLTAGE_SUPPLY = "info_no_voltage_supply"
 CONF_INFO_T1_ABOVE_RANGE_OR_DISCONNECTED = "info_t1_above_range_or_disconnected"
@@ -154,7 +163,52 @@ SENSORS = {
         device_class=DEVICE_CLASS_WATER,
         state_class=STATE_CLASS_MEASUREMENT,
         icon=ICON_WAVES_ARROW_RIGHT
-    )
+    ),
+    CONF_HEAT_ENERGY_E1_OLD: sensor.sensor_schema(
+        unit_of_measurement=UNIT_KILOWATT_HOURS,
+        accuracy_decimals=0,
+        device_class=DEVICE_CLASS_ENERGY,
+        state_class=STATE_CLASS_MEASUREMENT,
+        icon=ICON_HEAT_WAVE
+    ),
+    CONF_VOLUME_V1_OLD: sensor.sensor_schema(
+        unit_of_measurement=UNIT_LITER,
+        accuracy_decimals=0,
+        device_class=DEVICE_CLASS_VOLUME,
+        state_class=STATE_CLASS_MEASUREMENT,
+        icon=ICON_WATER
+    ),
+    CONF_ENERGY_E8_INLET_OLD: sensor.sensor_schema(
+        unit_of_measurement=UNIT_CUBIC_METER_TIMES_DEG_CELCIUS,
+        accuracy_decimals=0,
+        device_class=DEVICE_CLASS_ENERGY,#DEVICE_CLASS_HEAT,
+        state_class=STATE_CLASS_MEASUREMENT,
+        icon=ICON_HEAT_WAVE
+    ),
+    CONF_ENERGY_E9_OUTLET_OLD: sensor.sensor_schema(
+        unit_of_measurement=UNIT_CUBIC_METER_TIMES_DEG_CELCIUS,
+        accuracy_decimals=0,
+        device_class=DEVICE_CLASS_ENERGY,#DEVICE_CLASS_HEAT,
+        state_class=STATE_CLASS_MEASUREMENT,
+        icon=ICON_HEAT_WAVE
+    ), 
+    CONF_POWER_MAX_YEAR_OLD: sensor.sensor_schema(
+        unit_of_measurement=UNIT_KILOWATT,
+        accuracy_decimals=0,
+        device_class=DEVICE_CLASS_POWER,
+        state_class=STATE_CLASS_MEASUREMENT,
+        icon=ICON_HEAT_WAVE
+    ),
+    CONF_FLOW_V1_MAX_YEAR_OLD: sensor.sensor_schema(
+        unit_of_measurement=UNIT_LITER_PER_HOUR,
+        accuracy_decimals=0,
+        device_class=DEVICE_CLASS_WATER,
+        state_class=STATE_CLASS_MEASUREMENT,
+        icon=ICON_WAVES_ARROW_RIGHT
+    ),
+    CONF_LOG_YEAR: sensor.sensor_schema(),
+    CONF_LOG_MONTH: sensor.sensor_schema(),
+    CONF_LOG_DAY: sensor.sensor_schema()
 }
 
 BINARY_SENSORS = {
