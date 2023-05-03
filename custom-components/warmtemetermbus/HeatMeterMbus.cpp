@@ -33,78 +33,79 @@ namespace esphome
         // Source unit can be Wh or J
         // TODO: Check source unit. For now, assume Wh
         // Use tenPower - 3 to convert from Wh to kWh
-        float heatEnergyE1Value {pow(10, meterData.heatEnergyE1.tenPower - 3) * meterData.heatEnergyE1.value};
+        float heatEnergyE1Value {static_cast<float>(pow(10, meterData.heatEnergyE1.tenPower - 3) * meterData.heatEnergyE1.value)};
         heat_energy_e1_sensor_->publish_state(heatEnergyE1Value);
 
         // Volume V1
         // Source unit is always m3
         // Use tenPower + 3 to convert to liters
-        float volumeV1Value {pow(10, meterData.volumeV1.tenPower + 3) * meterData.volumeV1.value};
+        float volumeV1Value {static_cast<float>(pow(10, meterData.volumeV1.tenPower + 3) * meterData.volumeV1.value)};
         volume_v1_sensor_->publish_state(volumeV1Value);
 
         // Energy E8 Inlet
         // Source unit is always m3 * deg Celcius
-        float energyE8InletValue {pow(10, meterData.energyE8.tenPower) * meterData.energyE8.value};
+        float energyE8InletValue {static_cast<float>(pow(10, meterData.energyE8.tenPower) * meterData.energyE8.value)};
         energy_e8_inlet_sensor_->publish_state(energyE8InletValue);
 
         // Energy E9 Outlet
         // Source unit is always m3 * deg Celcius
-        float energyE9OutletValue {pow(10, meterData.energyE9.tenPower) * meterData.energyE9.value};
+        float energyE9OutletValue {static_cast<float>(pow(10, meterData.energyE9.tenPower) * meterData.energyE9.value)};
         energy_e9_outlet_sensor_->publish_state(energyE9OutletValue);
         
         // Operating Hours
         // Source unit can be seconds, minutes, hours or days
         // TODO: Check source unit. For now, assume hours, convert to days
         // No ten power
-        float operatingHoursValueInDays {meterData.operatingHours.value / 24.0};
+        float operatingHoursValueInDays {meterData.operatingHours.value / 24.0f};
         operating_hours_sensor_->publish_state(operatingHoursValueInDays);
 
         // Error Hour Counter
         // Source unit can be seconds, minutes, hours or days
         // TODO: Check source unit. For now, assume hours, convert to days
         // No ten power
-        float errorHourCounterValueInDays {meterData.errorHourCounter.value / 24.0};
+        float errorHourCounterValueInDays {meterData.errorHourCounter.value / 24.0f};
         error_hour_counter_sensor_->publish_state(errorHourCounterValueInDays);
 
         // T1 actual
         // Source unit is always degrees Celsius
-        float t1ActualValue {pow(10, meterData.t1Actual.tenPower) * meterData.t1Actual.value};
+        float t1ActualValue {static_cast<float>(pow(10, meterData.t1Actual.tenPower) * meterData.t1Actual.value)};
         t1_actual_sensor_->publish_state(t1ActualValue);
         
         // T2 actual
         // Source unit is always degrees Celsius
-        float t2ActualValue {pow(10, meterData.t2Actual.tenPower) * meterData.t2Actual.value};
+        float t2ActualValue {static_cast<float>(pow(10, meterData.t2Actual.tenPower) * meterData.t2Actual.value)};
         t2_actual_sensor_->publish_state(t2ActualValue);
 
         // T1 - T2
         // Source unit is always degrees Celcius
-        float t1MinusT2Value {pow(10, meterData.diffT1T2.tenPower) * meterData.diffT1T2.value};
+        float t1MinusT2Value {static_cast<float>(pow(10, meterData.diffT1T2.tenPower) * meterData.diffT1T2.value)};
+        ESP_LOGI(TAG, "T1 - T2, value = %d  tenPower = %d, sensorValue = %f", meterData.diffT1T2.value, meterData.diffT1T2.tenPower, t1MinusT2Value);
         t1_minus_t2_sensor_->publish_state(t1MinusT2Value);
 
         // Power E1 / E3
         // Source unit can be W or J/h
         // TODO: Check source unit. For now, assume W
-        float powerE1OverE3Value {pow(10, meterData.powerE1OverE3Actual.tenPower) * meterData.powerE1OverE3Actual.value};
+        float powerE1OverE3Value {static_cast<float>(pow(10, meterData.powerE1OverE3Actual.tenPower) * meterData.powerE1OverE3Actual.value)};
         power_e1_over_e3_sensor_->publish_state(powerE1OverE3Value);
 
         // Power Max Month
         // Source unit can be W or J/h
         // TODO: Check source unit. For now, assume W
-        float powerMaxMonthValue {pow(10, meterData.powerMaxMonth.tenPower) * meterData.powerMaxMonth.value};
+        float powerMaxMonthValue {static_cast<float>(pow(10, meterData.powerMaxMonth.tenPower) * meterData.powerMaxMonth.value)};
         power_max_month_sensor_->publish_state(powerMaxMonthValue);
 
         // Flow V1 Actual
         // Source unit can be m3/s, m3/m or m3/h
         // TODO: Check source unit. For now, assume m3/h.
         // Use tenPower + 3 to convert to l/h
-        float flowV1ActualValue {pow(10, meterData.flowV1Actual.tenPower + 3) * meterData.flowV1Actual.value};
+        float flowV1ActualValue {static_cast<float>(pow(10, meterData.flowV1Actual.tenPower + 3) * meterData.flowV1Actual.value)};
         flow_v1_actual_sensor_->publish_state(flowV1ActualValue);
 
         // Flow V1 Max Month
         // Source unit can be m3/s, m3/m or m3/h
         // TODO: Check source unit. For now, assume m3/h.
         // Use tenPower + 3 to convert to l/h
-        float flowV1MaxMonthValue {pow(10, meterData.flowV1MaxMonth.tenPower + 3) * meterData.flowV1MaxMonth.value};
+        float flowV1MaxMonthValue {static_cast<float>(pow(10, meterData.flowV1MaxMonth.tenPower + 3) * meterData.flowV1MaxMonth.value)};
         flow_v1_max_month_sensor_->publish_state(flowV1MaxMonthValue);
 
         // Info bits
@@ -140,36 +141,36 @@ namespace esphome
         // Source unit can be Wh or J
         // TODO: Check source unit. For now, assume Wh
         // Use tenPower - 3 to convert from Wh to kWh
-        float heatEnergyE1OldValue {pow(10, meterData.heatEnergyE1Old.tenPower - 3) * meterData.heatEnergyE1Old.value};
+        float heatEnergyE1OldValue {static_cast<float>(pow(10, meterData.heatEnergyE1Old.tenPower - 3) * meterData.heatEnergyE1Old.value)};
         heat_energy_e1_old_sensor_->publish_state(heatEnergyE1OldValue);
 
         // Volume V1 Old (storage nr != 0 in DIF)
         // Source unit is always m3
         // Use tenPower + 3 to convert to liters
-        float volumeV1OldValue {pow(10, meterData.volumeV1Old.tenPower + 3) * meterData.volumeV1Old.value};
+        float volumeV1OldValue {static_cast<float>(pow(10, meterData.volumeV1Old.tenPower + 3) * meterData.volumeV1Old.value)};
         volume_v1_old_sensor_->publish_state(volumeV1OldValue);
 
         // Energy E8 Inlet Old (storage nr != 0 in DIF)
         // Source unit is always m3 * deg Celcius
-        float energyE8InletOldValue {pow(10, meterData.energyE8Old.tenPower) * meterData.energyE8Old.value};
+        float energyE8InletOldValue {static_cast<float>(pow(10, meterData.energyE8Old.tenPower) * meterData.energyE8Old.value)};
         energy_e8_inlet_old_sensor_->publish_state(energyE8InletOldValue);
 
         // Energy E9 Outlet Old (storage nr != 0 in DIF)
         // Source unit is always m3 * deg Celcius
-        float energyE9OutletOldValue {pow(10, meterData.energyE9Old.tenPower) * meterData.energyE9Old.value};
+        float energyE9OutletOldValue {static_cast<float>(pow(10, meterData.energyE9Old.tenPower) * meterData.energyE9Old.value)};
         energy_e9_outlet_old_sensor_->publish_state(energyE9OutletOldValue);
         
         // Power Max Year Old (storage nr != 0 in DIF)
         // Source unit can be W or J/h
         // TODO: Check source unit. For now, assume W
-        float powerMaxYearOldValue {pow(10, meterData.powerMaxYear.tenPower) * meterData.powerMaxYear.value};
+        float powerMaxYearOldValue {static_cast<float>(pow(10, meterData.powerMaxYear.tenPower) * meterData.powerMaxYear.value)};
         power_max_year_old_sensor_->publish_state(powerMaxYearOldValue);
 
         // Flow V1 Max Year Old (storage nr != 0 in DIF)
         // Source unit can be m3/s, m3/m or m3/h
         // TODO: Check source unit. For now, assume m3/h.
         // Use tenPower + 3 to convert to l/h
-        float flowV1MaxYearOldValue {pow(10, meterData.flowV1MaxYear.tenPower + 3) * meterData.flowV1MaxYear.value};
+        float flowV1MaxYearOldValue {static_cast<float>(pow(10, meterData.flowV1MaxYear.tenPower + 3) * meterData.flowV1MaxYear.value)};
         flow_v1_max_year_old_sensor_->publish_state(flowV1MaxYearOldValue);
 
         // Log Year

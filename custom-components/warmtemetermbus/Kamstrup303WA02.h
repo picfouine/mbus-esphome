@@ -77,7 +77,7 @@ public:
   } DurationValue;
 
   typedef struct TemperatureValue {
-      uint16_t value;
+      int16_t value;
       // No unit required; always deg C
       int8_t tenPower;
   } TemperatureValue;
