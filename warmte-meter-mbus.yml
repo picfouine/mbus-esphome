@@ -99,7 +99,34 @@ sensor:
       name: flow_v1_max_year_old
     log_year:
       name: log_year
+      id: log_year
     log_month:
       name: log_month
+      id: log_month
     log_day:
       name: log_day
+      id: log_day
+
+text_sensor:
+  - platform: template
+    id: log_date
+    name: log_date
+    lambda: |-
+      if (!id(log_day).has_state() || !id(log_month).has_state() || !id(log_year).has_state()) {
+        std::string notAvailableString("date not available");
+        return notAvailableString;
+      } else {
+        char stringBuffer[11];
+        for (int i = 0; i < 11; ++i) {
+          stringBuffer[i] = '\0';
+        }
+        sprintf(
+          stringBuffer, 
+          "%.0f-%.0f-20%.0f", 
+          round(id(log_day).state), 
+          round(id(log_month).state), 
+          round(id(log_year).state)
+        );
+        std::string dateString(stringBuffer);
+        return dateString;
+      }
