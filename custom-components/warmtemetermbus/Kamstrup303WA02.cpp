@@ -3,12 +3,12 @@
 namespace esphome {
 namespace warmtemetermbus {
 
-static const char * TAG = "Kamstrup303WA02";
+static const char * TAG {"Kamstrup303WA02"};
 
 
 bool Kamstrup303WA02::readData(Kamstrup303WA02::MeterData* data) {
   ESP_LOGD(TAG, "readData - enter");
-  bool isSuccessful = false;
+  bool isSuccessful {false};
 	DataLinkLayer::TelegramData telegramData;
 	if (!dataLinkLayer.reqUd2(0x01, &telegramData)) {
 	 	return false;
@@ -29,7 +29,7 @@ bool Kamstrup303WA02::readData(Kamstrup303WA02::MeterData* data) {
 			// Variable data response
       ESP_LOGI(TAG, "Variable data response");      
       VariableDataRecord dataRecord;
-      uint16_t startOfDataRecordIdx = 12;
+      uint16_t startOfDataRecordIdx {12};
       
       // Heat energy E1
       readDataRecord(&dataRecord, &telegramData, &startOfDataRecordIdx);
@@ -252,7 +252,7 @@ bool Kamstrup303WA02::readData(Kamstrup303WA02::MeterData* data) {
       // Bits 0-4: day
       // Bits 8-11: month
       // Bits 5-7 & 12-15: year
-      uint16_t* dateTimeBits = reinterpret_cast<uint16_t*>(dataRecord.data);
+      uint16_t* dateTimeBits {reinterpret_cast<uint16_t*>(dataRecord.data)};
       data->dateTimeLogged.day = *dateTimeBits & 0x001F;
       data->dateTimeLogged.month = (*dateTimeBits & 0x0F00) >> 8;
       data->dateTimeLogged.year = ((*dateTimeBits & 0xF000) >> 9) | ((*dateTimeBits & 0x00E0) >> 5);
@@ -272,7 +272,7 @@ bool Kamstrup303WA02::readData(Kamstrup303WA02::MeterData* data) {
 }
 
 void Kamstrup303WA02::readDataRecord(VariableDataRecord* dataRecord, DataLinkLayer::TelegramData* userData, uint16_t* startOfDataRecordIdx) {
-  uint8_t dif = userData->data[*startOfDataRecordIdx];
+  uint8_t dif {userData->data[*startOfDataRecordIdx]};
 
   dataRecord->dataType = dif & 0x0F;
   dataRecord->function = (dif & (3 << 4)) >> 4;
@@ -281,21 +281,21 @@ void Kamstrup303WA02::readDataRecord(VariableDataRecord* dataRecord, DataLinkLay
   dataRecord->subUnit = 0;
   dataRecord->tariff = 0;
   
-  bool isExtended = dif & (1 << 7);
-  uint8_t edifIdx = *startOfDataRecordIdx + 1;
-  uint8_t edifNr = 0;
+  bool isExtended {dif & (1 << 7)};
+  uint16_t edifIdx {static_cast<uint16_t>(*startOfDataRecordIdx + 1)};
+  uint8_t edifNr {0};
   while (isExtended) {
-      uint8_t edif = userData->data[edifIdx++];
+      uint8_t edif {userData->data[edifIdx++]};
       
-      unsigned long subUnitInEdif = (edif | (1 << 6)) >> 6;
+      uint32_t subUnitInEdif {static_cast<uint32_t>((edif | (1 << 6)) >> 6)};
       subUnitInEdif <<= edifNr;
       dataRecord->subUnit |= subUnitInEdif;
       
-      unsigned long tariffInEdif = (edif | (3 << 4)) >> 4;
+      uint32_t tariffInEdif {static_cast<uint32_t>((edif | (3 << 4)) >> 4)};
       tariffInEdif <<= (edifNr * 2);
       dataRecord->tariff |= tariffInEdif;
       
-      unsigned long long storageNrInEdif = edif | 0xF;
+      uint64_t storageNrInEdif {static_cast<uint64_t>(edif | 0xF)};
       storageNrInEdif <<= (edifNr * 4 + 1);
       dataRecord->storageNumber |= storageNrInEdif;
       
@@ -304,21 +304,21 @@ void Kamstrup303WA02::readDataRecord(VariableDataRecord* dataRecord, DataLinkLay
   }
   
   // Now read the VIB - start with VIF
-  uint8_t vifIdx = edifIdx;
-  uint8_t vif = userData->data[vifIdx];
+  uint16_t vifIdx {edifIdx};
+  uint8_t vif {userData->data[vifIdx]};
 
   dataRecord->unitAndMultiplier = vif & 0x7F;
 
   isExtended = vif & (1 << 7);
-  uint8_t evifIdx = vifIdx + 1;
+  uint16_t evifIdx {static_cast<uint16_t>(vifIdx + 1)};
   while (isExtended) {
-      uint8_t evif = userData->data[evifIdx++];
+      uint8_t evif {userData->data[evifIdx++]};
       isExtended = evif & (1 << 7);
   }
 
   // Find out data length. Number of bytes depends on DIF data field.
-  uint8_t dataIdx = evifIdx;
-  uint8_t dataLength = 0;
+  uint16_t dataIdx {evifIdx};
+  uint8_t dataLength {0};
 
   switch (dataRecord->dataType) {
       case 0x0:
@@ -364,11 +364,11 @@ void Kamstrup303WA02::readDataRecord(VariableDataRecord* dataRecord, DataLinkLay
   // Read data
   // For now store at max 8 bytes
   // Initialize data to 0!
-  for (uint8_t i = 0; i < 8; ++i) {
+  for (uint8_t i {0}; i < 8; ++i) {
     dataRecord->data[i] = 0;
   }
-  for (uint8_t i = 0; i < dataLength; ++i) {
-      uint8_t currentByte = userData->data[dataIdx + i];
+  for (uint8_t i {0}; i < dataLength; ++i) {
+      uint8_t currentByte {userData->data[dataIdx + i]};
       if (i < 8) {
           dataRecord->data[i] = currentByte;
       }
@@ -378,15 +378,15 @@ void Kamstrup303WA02::readDataRecord(VariableDataRecord* dataRecord, DataLinkLay
 }
 
 void Kamstrup303WA02::copyDataToTargetBuffer(VariableDataRecord* dataRecord, void* targetBuffer) {
-    uint8_t *byteTargetBuffer = reinterpret_cast<uint8_t*>(targetBuffer);
-    for (uint8_t i = 0; i < dataRecord->dataLength; ++i) {
+    uint8_t *byteTargetBuffer {reinterpret_cast<uint8_t*>(targetBuffer)};
+    for (uint8_t i {0}; i < dataRecord->dataLength; ++i) {
         *byteTargetBuffer++ = dataRecord->data[i];
     }
 }
 
 bool Kamstrup303WA02::DataLinkLayer::reqUd2(uint8_t address, Kamstrup303WA02::DataLinkLayer::TelegramData * const dataBuffer) {
   ESP_LOGD(TAG, "reqUd2 - enter");
-	bool success = false;
+	bool success {false};
 	// Initialize slave if required, and check for successful init
 	if (!slaveInitialized) {
 		slaveInitialized = sndNke(address);
@@ -399,9 +399,9 @@ bool Kamstrup303WA02::DataLinkLayer::reqUd2(uint8_t address, Kamstrup303WA02::Da
 	}
 
 	// Short Frame, expect RSP_UD
-	uint8_t c = (1 << CFieldBitDirection) | (nextReqUd2Fcb << CFieldBitFCB) | (1 << CFieldBitFCV) | (CFieldFunctionReqUd2);
+	uint8_t c {static_cast<uint8_t>((1 << CFieldBitDirection) | (nextReqUd2Fcb << CFieldBitFCB) | (1 << CFieldBitFCV) | (CFieldFunctionReqUd2))};
   ESP_LOGD(TAG, "About to send short frame");
-	bool dataIsReceived = trySendShortFrame(c, address);
+	bool dataIsReceived {trySendShortFrame(c, address)};
 	ESP_LOGD(TAG, "returned from sending short frame");
 
 	if (dataIsReceived) {
@@ -438,14 +438,14 @@ bool Kamstrup303WA02::DataLinkLayer::reqUd2(uint8_t address, Kamstrup303WA02::Da
     }
 
     ESP_LOGD(TAG, "Reading telegram data bytes");
-    for (uint8_t userDataByteIdx = 0; userDataByteIdx < receivedL - 3; ++userDataByteIdx) {
+    for (uint8_t userDataByteIdx {0}; userDataByteIdx < receivedL - 3; ++userDataByteIdx) {
 			if (!readNextByte(&dataBuffer->data[userDataByteIdx])) {
         ESP_LOGE(TAG, "Could not read next byte");
         return false;
       }
 		}
 
-		uint8_t calculatedChecksum = calculateChecksum(reinterpret_cast<uint8_t*>(dataBuffer), receivedL);
+		uint8_t calculatedChecksum {calculateChecksum(reinterpret_cast<uint8_t*>(dataBuffer), receivedL)};
 		uint8_t receivedChecksum {0};
 		if (!readNextByte(&receivedChecksum) || calculatedChecksum != receivedChecksum) {
       ESP_LOGE(TAG, "Received (or not) checksum: %X, calculated checksum: %X", receivedChecksum, calculatedChecksum);
@@ -464,7 +464,7 @@ bool Kamstrup303WA02::DataLinkLayer::reqUd2(uint8_t address, Kamstrup303WA02::Da
 }
 
 bool Kamstrup303WA02::DataLinkLayer::readNextByte(uint8_t* pReceivedByte) {
-  uint32_t timeBeforeStartingToWait = millis();
+  uint32_t timeBeforeStartingToWait {millis()};
 	while (uartDevice->available() == 0) {
     delay(1);
     if (millis() - timeBeforeStartingToWait > 150) {
@@ -477,10 +477,10 @@ bool Kamstrup303WA02::DataLinkLayer::readNextByte(uint8_t* pReceivedByte) {
 }
 
 bool Kamstrup303WA02::DataLinkLayer::sndNke(uint8_t address) {
-  bool success = false;
+  bool success {false};
   // Short Frame, expect 0xE5
-  uint8_t c = (1 << CFieldBitDirection) | CFieldFunctionSndNke;
-  bool dataIsReceived = trySendShortFrame(c, address);
+  uint8_t c {static_cast<uint8_t>((1 << CFieldBitDirection) | CFieldFunctionSndNke)};
+  bool dataIsReceived {trySendShortFrame(c, address)};
   if (dataIsReceived) {
     uint8_t receivedByte {0};
     uartDevice->read_byte(&receivedByte);
@@ -497,11 +497,11 @@ bool Kamstrup303WA02::DataLinkLayer::sndNke(uint8_t address) {
 }
 
 bool Kamstrup303WA02::DataLinkLayer::trySendShortFrame(uint8_t c, uint8_t a) {
-  bool success = false;
+  bool success {false};
   
-  bool dataIsReceived = false;
+  bool dataIsReceived {false};
   flushRxBuffer();
-  for (uint8_t transmitAttempt = 0; transmitAttempt < 3 && !dataIsReceived; ++transmitAttempt) {
+  for (uint8_t transmitAttempt {0}; transmitAttempt < 3 && !dataIsReceived; ++transmitAttempt) {
     if (transmitAttempt > 0) {
       ESP_LOGD(TAG, "RETRY TRANSMIT SHORT FRAME");
     }
@@ -515,7 +515,10 @@ bool Kamstrup303WA02::DataLinkLayer::trySendShortFrame(uint8_t c, uint8_t a) {
 
 void Kamstrup303WA02::DataLinkLayer::flushRxBuffer() {
   while (uartDevice->available()) {
-    uint8_t byteCountInBuffer = uartDevice->available();
+    int32_t byteCountInBuffer {uartDevice->available()};
+    if (byteCountInBuffer > 255) {
+      byteCountInBuffer = 255;
+    }
     uint8_t bytesInBuffer[byteCountInBuffer];
     uartDevice->read_array(bytesInBuffer, byteCountInBuffer);
   }
@@ -523,7 +526,7 @@ void Kamstrup303WA02::DataLinkLayer::flushRxBuffer() {
 
 void Kamstrup303WA02::DataLinkLayer::sendShortFrame(uint8_t c, uint8_t a) {
   uint8_t data[] = { c, a };
-  uint8_t checksum = calculateChecksum(data, 2);
+  uint8_t checksum {calculateChecksum(data, 2)};
   uint8_t shortFrame[] = { StartByteShortFrame, c, a, checksum, StopByte };
   uartDevice->write_array(shortFrame, 5);
   delay(1);
@@ -532,11 +535,11 @@ void Kamstrup303WA02::DataLinkLayer::sendShortFrame(uint8_t c, uint8_t a) {
 }
 
 bool Kamstrup303WA02::DataLinkLayer::waitForIncomingData() {
-  bool dataReceived = false;
+  bool dataReceived {false};
   // 330 bits + 50ms = 330 * 1000 / 2400 + 50 ms = 187,5 ms
   delay(138);
   ESP_LOGD(TAG, "waitForIncomingData - after long delay");
-  for (uint16_t i = 0; i < 500; ++i) {
+  for (uint16_t i {0}; i < 500; ++i) {
     if (uartDevice->available() > 0) {
       dataReceived = true;
       ESP_LOGD(TAG, "waitForIncomingData - loop - data received!");
@@ -553,8 +556,8 @@ bool Kamstrup303WA02::DataLinkLayer::waitForIncomingData() {
 }
 
 uint8_t Kamstrup303WA02::DataLinkLayer::calculateChecksum(const uint8_t data[], uint8_t length) {
-  uint8_t checksum = 0;
-  for (uint8_t i = 0; i < length; ++i) {
+  uint8_t checksum {0};
+  for (uint8_t i {0}; i < length; ++i) {
     checksum += data[i];
   }
   return checksum;
