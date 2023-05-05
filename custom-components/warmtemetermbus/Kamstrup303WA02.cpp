@@ -252,7 +252,7 @@ bool Kamstrup303WA02::readData(Kamstrup303WA02::MeterData* data) {
       // Bits 0-4: day
       // Bits 8-11: month
       // Bits 5-7 & 12-15: year
-      uint16_t* dateTimeBits {reinterpret_cast<uint16_t*>(dataRecord.data)};
+      const uint16_t * const dateTimeBits {reinterpret_cast<uint16_t*>(dataRecord.data)};
       data->dateTimeLogged.day = *dateTimeBits & 0x001F;
       data->dateTimeLogged.month = (*dateTimeBits & 0x0F00) >> 8;
       data->dateTimeLogged.year = ((*dateTimeBits & 0xF000) >> 9) | ((*dateTimeBits & 0x00E0) >> 5);
@@ -272,7 +272,7 @@ bool Kamstrup303WA02::readData(Kamstrup303WA02::MeterData* data) {
 }
 
 void Kamstrup303WA02::readDataRecord(VariableDataRecord* dataRecord, DataLinkLayer::TelegramData* userData, uint16_t* startOfDataRecordIdx) {
-  uint8_t dif {userData->data[*startOfDataRecordIdx]};
+  const uint8_t dif {userData->data[*startOfDataRecordIdx]};
 
   dataRecord->dataType = dif & 0x0F;
   dataRecord->function = (dif & (3 << 4)) >> 4;
@@ -305,14 +305,14 @@ void Kamstrup303WA02::readDataRecord(VariableDataRecord* dataRecord, DataLinkLay
   
   // Now read the VIB - start with VIF
   uint16_t vifIdx {edifIdx};
-  uint8_t vif {userData->data[vifIdx]};
+  const uint8_t vif {userData->data[vifIdx]};
 
   dataRecord->unitAndMultiplier = vif & 0x7F;
 
   isExtended = vif & (1 << 7);
   uint16_t evifIdx {static_cast<uint16_t>(vifIdx + 1)};
   while (isExtended) {
-      uint8_t evif {userData->data[evifIdx++]};
+      const uint8_t evif {userData->data[evifIdx++]};
       isExtended = evif & (1 << 7);
   }
 
@@ -322,9 +322,13 @@ void Kamstrup303WA02::readDataRecord(VariableDataRecord* dataRecord, DataLinkLay
 
   switch (dataRecord->dataType) {
       case 0x0:
+         [[fallthrough]];
       case 0x1:
+         [[fallthrough]];
       case 0x2:
+         [[fallthrough]];
       case 0x3:
+         [[fallthrough]];
       case 0x4:
           dataLength = dataRecord->dataType;
           break;
@@ -368,7 +372,7 @@ void Kamstrup303WA02::readDataRecord(VariableDataRecord* dataRecord, DataLinkLay
     dataRecord->data[i] = 0;
   }
   for (uint8_t i {0}; i < dataLength; ++i) {
-      uint8_t currentByte {userData->data[dataIdx + i]};
+      const uint8_t currentByte {userData->data[dataIdx + i]};
       if (i < 8) {
           dataRecord->data[i] = currentByte;
       }
@@ -399,9 +403,13 @@ bool Kamstrup303WA02::DataLinkLayer::reqUd2(uint8_t address, Kamstrup303WA02::Da
 	}
 
 	// Short Frame, expect RSP_UD
-	uint8_t c {static_cast<uint8_t>((1 << CFieldBitDirection) | (nextReqUd2Fcb << CFieldBitFCB) | (1 << CFieldBitFCV) | (CFieldFunctionReqUd2))};
+	const uint8_t c {
+    static_cast<uint8_t>(
+      (1 << CFieldBitDirection) | (nextReqUd2Fcb << CFieldBitFCB) | (1 << CFieldBitFCV) | (CFieldFunctionReqUd2)
+    )
+  };
   ESP_LOGD(TAG, "About to send short frame");
-	bool dataIsReceived {trySendShortFrame(c, address)};
+	const bool dataIsReceived {trySendShortFrame(c, address)};
 	ESP_LOGD(TAG, "returned from sending short frame");
 
 	if (dataIsReceived) {
@@ -445,7 +453,7 @@ bool Kamstrup303WA02::DataLinkLayer::reqUd2(uint8_t address, Kamstrup303WA02::Da
       }
 		}
 
-		uint8_t calculatedChecksum {calculateChecksum(reinterpret_cast<uint8_t*>(dataBuffer), receivedL)};
+		const uint8_t calculatedChecksum {calculateChecksum(reinterpret_cast<uint8_t*>(dataBuffer), receivedL)};
 		uint8_t receivedChecksum {0};
 		if (!readNextByte(&receivedChecksum) || calculatedChecksum != receivedChecksum) {
       ESP_LOGE(TAG, "Received (or not) checksum: %X, calculated checksum: %X", receivedChecksum, calculatedChecksum);
@@ -464,7 +472,7 @@ bool Kamstrup303WA02::DataLinkLayer::reqUd2(uint8_t address, Kamstrup303WA02::Da
 }
 
 bool Kamstrup303WA02::DataLinkLayer::readNextByte(uint8_t* pReceivedByte) {
-  uint32_t timeBeforeStartingToWait {millis()};
+  const uint32_t timeBeforeStartingToWait {millis()};
 	while (uartDevice->available() == 0) {
     delay(1);
     if (millis() - timeBeforeStartingToWait > 150) {
@@ -479,8 +487,10 @@ bool Kamstrup303WA02::DataLinkLayer::readNextByte(uint8_t* pReceivedByte) {
 bool Kamstrup303WA02::DataLinkLayer::sndNke(uint8_t address) {
   bool success {false};
   // Short Frame, expect 0xE5
-  uint8_t c {static_cast<uint8_t>((1 << CFieldBitDirection) | CFieldFunctionSndNke)};
-  bool dataIsReceived {trySendShortFrame(c, address)};
+  const uint8_t c {static_cast<uint8_t>(
+    (1 << CFieldBitDirection) | CFieldFunctionSndNke
+  )};
+  const bool dataIsReceived {trySendShortFrame(c, address)};
   if (dataIsReceived) {
     uint8_t receivedByte {0};
     uartDevice->read_byte(&receivedByte);
@@ -498,7 +508,6 @@ bool Kamstrup303WA02::DataLinkLayer::sndNke(uint8_t address) {
 
 bool Kamstrup303WA02::DataLinkLayer::trySendShortFrame(uint8_t c, uint8_t a) {
   bool success {false};
-  
   bool dataIsReceived {false};
   flushRxBuffer();
   for (uint8_t transmitAttempt {0}; transmitAttempt < 3 && !dataIsReceived; ++transmitAttempt) {
@@ -525,9 +534,9 @@ void Kamstrup303WA02::DataLinkLayer::flushRxBuffer() {
 }
 
 void Kamstrup303WA02::DataLinkLayer::sendShortFrame(uint8_t c, uint8_t a) {
-  uint8_t data[] = { c, a };
-  uint8_t checksum {calculateChecksum(data, 2)};
-  uint8_t shortFrame[] = { StartByteShortFrame, c, a, checksum, StopByte };
+  const uint8_t data[] = { c, a };
+  const uint8_t checksum {calculateChecksum(data, 2)};
+  const uint8_t shortFrame[] = { StartByteShortFrame, c, a, checksum, StopByte };
   uartDevice->write_array(shortFrame, 5);
   delay(1);
   uartDevice->flush();
