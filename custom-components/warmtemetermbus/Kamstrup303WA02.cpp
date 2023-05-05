@@ -27,7 +27,7 @@ bool Kamstrup303WA02::readData(Kamstrup303WA02::MeterData* data) {
 			break;
 		case 0x2: {
 			// Variable data response
-      ESP_LOGI(TAG, "Variable data response");      
+      ESP_LOGV(TAG, "Variable data response");      
       VariableDataRecord dataRecord;
       uint16_t startOfDataRecordIdx {12};
       
@@ -261,7 +261,7 @@ bool Kamstrup303WA02::readData(Kamstrup303WA02::MeterData* data) {
 			break;
 		}
 		case 0x3:
-			ESP_LOGD(TAG, "Static data response");
+			ESP_LOGV(TAG, "Static data response");
 			break;
 		default:
       ESP_LOGW(TAG, "Unknown response to REQ_UD2");
@@ -408,10 +408,7 @@ bool Kamstrup303WA02::DataLinkLayer::reqUd2(uint8_t address, Kamstrup303WA02::Da
       (1 << CFieldBitDirection) | (nextReqUd2Fcb << CFieldBitFCB) | (1 << CFieldBitFCV) | (CFieldFunctionReqUd2)
     )
   };
-  ESP_LOGD(TAG, "About to send short frame");
 	const bool dataIsReceived {trySendShortFrame(c, address)};
-	ESP_LOGD(TAG, "returned from sending short frame");
-
 	if (dataIsReceived) {
 		// We expect either a Control Frame, or a Long Frame. Handle as the same!
 		// Expected fields:
@@ -422,7 +419,6 @@ bool Kamstrup303WA02::DataLinkLayer::reqUd2(uint8_t address, Kamstrup303WA02::Da
       ESP_LOGE(TAG, "Incorrect start byte! %dX", receivedByte);
 			return false;
 		}
-    ESP_LOGD(TAG, "Correct start byte");
 
 		uint8_t receivedL {0};
     if (!readNextByte(&receivedL)) {
@@ -445,7 +441,6 @@ bool Kamstrup303WA02::DataLinkLayer::reqUd2(uint8_t address, Kamstrup303WA02::Da
       return false;
     }
 
-    ESP_LOGD(TAG, "Reading telegram data bytes");
     for (uint8_t userDataByteIdx {0}; userDataByteIdx < receivedL - 3; ++userDataByteIdx) {
 			if (!readNextByte(&dataBuffer->data[userDataByteIdx])) {
         ESP_LOGE(TAG, "Could not read next byte");
@@ -455,12 +450,21 @@ bool Kamstrup303WA02::DataLinkLayer::reqUd2(uint8_t address, Kamstrup303WA02::Da
 
 		const uint8_t calculatedChecksum {calculateChecksum(reinterpret_cast<uint8_t*>(dataBuffer), receivedL)};
 		uint8_t receivedChecksum {0};
-		if (!readNextByte(&receivedChecksum) || calculatedChecksum != receivedChecksum) {
-      ESP_LOGE(TAG, "Received (or not) checksum: %X, calculated checksum: %X", receivedChecksum, calculatedChecksum);
+		if (!readNextByte(&receivedChecksum)) {
+      ESP_LOGE(TAG, "Did not receive checksum");
 			return false;
 		}
-		if (!readNextByte(&receivedByte) || StopByte != receivedByte) {
-      ESP_LOGE(TAG, "Received (or not) stop byte: %X", receivedByte);
+    if (calculatedChecksum != receivedChecksum) {
+      ESP_LOGE(TAG, "Received incorrect checksum! Received: %X; expected: %X", receivedChecksum, calculatedChecksum);
+      return false;
+    }
+
+		if (!readNextByte(&receivedByte)) {
+      ESP_LOGE(TAG, "Did not receive stop byte");
+      return false;
+    }
+    if (StopByte != receivedByte) {
+      ESP_LOGE(TAG, "Received incorrect stop byte: %X", receivedByte);
 			return false;
 		}
 		
@@ -476,7 +480,7 @@ bool Kamstrup303WA02::DataLinkLayer::readNextByte(uint8_t* pReceivedByte) {
 	while (uartDevice->available() == 0) {
     delay(1);
     if (millis() - timeBeforeStartingToWait > 150) {
-      ESP_LOGE(TAG, "NO DATA AVAILABLE AFTER TIMEOUT");
+      ESP_LOGE(TAG, "No data available after timeout");
       return false;
     }
   }
@@ -496,10 +500,10 @@ bool Kamstrup303WA02::DataLinkLayer::sndNke(uint8_t address) {
     uartDevice->read_byte(&receivedByte);
     success = StartByteSingleCharacter == receivedByte;
     if (!success) {
-      ESP_LOGI(TAG, "WRONG ANSWER TO SND_NKE!");
+      ESP_LOGE(TAG, "Wrong answer to SND_NKE: %X", receivedByte);
     }
   } else {
-    ESP_LOGI(TAG, "No answer to SND_NKE!");
+    ESP_LOGE(TAG, "No answer to SND_NKE!");
   }
   nextReqUd2Fcb = true;
   nextSndUdFcb = true;
@@ -512,10 +516,9 @@ bool Kamstrup303WA02::DataLinkLayer::trySendShortFrame(uint8_t c, uint8_t a) {
   flushRxBuffer();
   for (uint8_t transmitAttempt {0}; transmitAttempt < 3 && !dataIsReceived; ++transmitAttempt) {
     if (transmitAttempt > 0) {
-      ESP_LOGD(TAG, "RETRY TRANSMIT SHORT FRAME");
+      ESP_LOGD(TAG, "Retry transmit short frame");
     }
     sendShortFrame(c, a);
-    ESP_LOGD(TAG, "Sent short frame. Now waiting for incoming data");
     dataIsReceived = waitForIncomingData();
   }
   success = dataIsReceived;
@@ -547,19 +550,15 @@ bool Kamstrup303WA02::DataLinkLayer::waitForIncomingData() {
   bool dataReceived {false};
   // 330 bits + 50ms = 330 * 1000 / 2400 + 50 ms = 187,5 ms
   delay(138);
-  ESP_LOGD(TAG, "waitForIncomingData - after long delay");
   for (uint16_t i {0}; i < 500; ++i) {
     if (uartDevice->available() > 0) {
       dataReceived = true;
-      ESP_LOGD(TAG, "waitForIncomingData - loop - data received!");
       break;
-    } else {
-      ESP_LOGD(TAG, "waitForIncomingData - loop - NO data received");
     }
     delay(1);
   }
   if (!dataReceived) {
-    ESP_LOGE(TAG, "waitForIncomingData - exit - NO data received...");
+    ESP_LOGE(TAG, "waitForIncomingData - exit - No data received");
   }
   return dataReceived;
 }

@@ -79,7 +79,6 @@ namespace esphome
         // T1 - T2
         // Source unit is always degrees Celcius
         const float t1MinusT2Value {static_cast<float>(pow(10, meterData.diffT1T2.tenPower) * meterData.diffT1T2.value)};
-        ESP_LOGI(TAG, "T1 - T2, value = %d  tenPower = %d, sensorValue = %f", meterData.diffT1T2.value, meterData.diffT1T2.tenPower, t1MinusT2Value);
         t1_minus_t2_sensor_->publish_state(t1MinusT2Value);
 
         // Power E1 / E3
