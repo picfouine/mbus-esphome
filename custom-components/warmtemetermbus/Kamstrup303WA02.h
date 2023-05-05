@@ -175,27 +175,27 @@ private:
     uart::UARTDevice* uartDevice;
 
     // Methods
-    bool sndNke(uint8_t address);
-    bool trySendShortFrame(uint8_t c, uint8_t a);
-    void sendShortFrame(uint8_t c, uint8_t a);
+    bool readNextByte(uint8_t * const receivedByte);
+    bool sndNke(const uint8_t address);
+    bool trySendShortFrame(const uint8_t c, const uint8_t a);
+    void sendShortFrame(const uint8_t c, const uint8_t a);
     bool waitForIncomingData();
-    bool readNextByte(uint8_t* receivedByte);
     void flushRxBuffer();
-    uint8_t calculateChecksum(const uint8_t data[], uint8_t length);
+    uint8_t calculateChecksum(const uint8_t data[], const uint8_t length);
 
   public:
-    bool reqUd2(uint8_t address, TelegramData * const dataBuffer);
+    bool reqUd2(const uint8_t address, TelegramData * const dataBuffer);
   };
 
 public:
   Kamstrup303WA02(uart::UARTDevice* _uartDevice) : dataLinkLayer(_uartDevice) {}
 
-  bool readData(MeterData* data);
+  bool readData(MeterData * const data);
 
 private:
   DataLinkLayer dataLinkLayer;
 
-  void readDataRecord(VariableDataRecord* dataRecord, DataLinkLayer::TelegramData* userData, uint16_t* startOfDataRecordIdx);
+  void readDataRecord(VariableDataRecord * const dataRecord, const DataLinkLayer::TelegramData * const userData, uint16_t * const startOfDataRecordIdx);
   void copyDataToTargetBuffer(VariableDataRecord* dataRecord, void* targetBuffer);
 };
 

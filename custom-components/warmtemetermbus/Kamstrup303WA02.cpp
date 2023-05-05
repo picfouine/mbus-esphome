@@ -6,7 +6,7 @@ namespace warmtemetermbus {
 static const char * TAG {"Kamstrup303WA02"};
 
 
-bool Kamstrup303WA02::readData(Kamstrup303WA02::MeterData* data) {
+bool Kamstrup303WA02::readData(Kamstrup303WA02::MeterData * const data) {
   ESP_LOGD(TAG, "readData - enter");
   bool isSuccessful {false};
 	DataLinkLayer::TelegramData telegramData;
@@ -271,7 +271,7 @@ bool Kamstrup303WA02::readData(Kamstrup303WA02::MeterData* data) {
 	return isSuccessful;	
 }
 
-void Kamstrup303WA02::readDataRecord(VariableDataRecord* dataRecord, DataLinkLayer::TelegramData* userData, uint16_t* startOfDataRecordIdx) {
+void Kamstrup303WA02::readDataRecord(VariableDataRecord * const dataRecord, const DataLinkLayer::TelegramData * const userData, uint16_t * const startOfDataRecordIdx) {
   const uint8_t dif {userData->data[*startOfDataRecordIdx]};
 
   dataRecord->dataType = dif & 0x0F;
@@ -388,7 +388,7 @@ void Kamstrup303WA02::copyDataToTargetBuffer(VariableDataRecord* dataRecord, voi
     }
 }
 
-bool Kamstrup303WA02::DataLinkLayer::reqUd2(uint8_t address, Kamstrup303WA02::DataLinkLayer::TelegramData * const dataBuffer) {
+bool Kamstrup303WA02::DataLinkLayer::reqUd2(const uint8_t address, Kamstrup303WA02::DataLinkLayer::TelegramData * const dataBuffer) {
   ESP_LOGD(TAG, "reqUd2 - enter");
 	bool success {false};
 	// Initialize slave if required, and check for successful init
@@ -475,7 +475,7 @@ bool Kamstrup303WA02::DataLinkLayer::reqUd2(uint8_t address, Kamstrup303WA02::Da
 	return success;
 }
 
-bool Kamstrup303WA02::DataLinkLayer::readNextByte(uint8_t* pReceivedByte) {
+bool Kamstrup303WA02::DataLinkLayer::readNextByte(uint8_t * const pReceivedByte) {
   const uint32_t timeBeforeStartingToWait {millis()};
 	while (uartDevice->available() == 0) {
     delay(1);
@@ -488,7 +488,7 @@ bool Kamstrup303WA02::DataLinkLayer::readNextByte(uint8_t* pReceivedByte) {
 	return true;
 }
 
-bool Kamstrup303WA02::DataLinkLayer::sndNke(uint8_t address) {
+bool Kamstrup303WA02::DataLinkLayer::sndNke(const uint8_t address) {
   bool success {false};
   // Short Frame, expect 0xE5
   const uint8_t c {static_cast<uint8_t>(
@@ -510,7 +510,7 @@ bool Kamstrup303WA02::DataLinkLayer::sndNke(uint8_t address) {
   return success;
 }
 
-bool Kamstrup303WA02::DataLinkLayer::trySendShortFrame(uint8_t c, uint8_t a) {
+bool Kamstrup303WA02::DataLinkLayer::trySendShortFrame(const uint8_t c, const uint8_t a) {
   bool success {false};
   bool dataIsReceived {false};
   flushRxBuffer();
@@ -536,7 +536,7 @@ void Kamstrup303WA02::DataLinkLayer::flushRxBuffer() {
   }
 }
 
-void Kamstrup303WA02::DataLinkLayer::sendShortFrame(uint8_t c, uint8_t a) {
+void Kamstrup303WA02::DataLinkLayer::sendShortFrame(const uint8_t c, const uint8_t a) {
   const uint8_t data[] = { c, a };
   const uint8_t checksum {calculateChecksum(data, 2)};
   const uint8_t shortFrame[] = { StartByteShortFrame, c, a, checksum, StopByte };
@@ -563,7 +563,7 @@ bool Kamstrup303WA02::DataLinkLayer::waitForIncomingData() {
   return dataReceived;
 }
 
-uint8_t Kamstrup303WA02::DataLinkLayer::calculateChecksum(const uint8_t data[], uint8_t length) {
+uint8_t Kamstrup303WA02::DataLinkLayer::calculateChecksum(const uint8_t data[], const uint8_t length) {
   uint8_t checksum {0};
   for (uint8_t i {0}; i < length; ++i) {
     checksum += data[i];
