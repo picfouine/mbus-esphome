@@ -212,7 +212,6 @@ namespace esphome
         {
           delay(1);
         }
-        ESP_LOGI(TAG, "From task_loop");
       }
     }
 
