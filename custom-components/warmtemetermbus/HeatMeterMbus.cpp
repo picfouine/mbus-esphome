@@ -1,4 +1,6 @@
 #include "esphome/core/log.h"
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
 #include <math.h>
 #include "HeatMeterMbus.h"
 #include "Kamstrup303WA02.h"
@@ -16,6 +18,23 @@ namespace esphome
 
     void HeatMeterMbus::setup()
     {
+      xTaskCreatePinnedToCore(HeatMeterMbus::task_loop,
+                        "mbus_task",  // name
+                        10000,       // stack size (in words)
+                        nullptr,     // input params
+                        1,           // priority
+                        nullptr,     // Handle, not needed
+                        0            // core
+      );
+    }
+
+    void HeatMeterMbus::task_loop(void* params)
+    {
+      while (true)
+      {
+        delay(1000);
+        ESP_LOGI(TAG, "From task_loop");
+      }
     }
 
     void HeatMeterMbus::update()

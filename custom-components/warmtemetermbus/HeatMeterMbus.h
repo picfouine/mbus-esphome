@@ -67,6 +67,8 @@ class HeatMeterMbus : public PollingComponent, public uart::UARTDevice {
 
   private:
     Kamstrup303WA02 kamstrup;
+
+    static void task_loop(void* params);
 };
 
 } //namespace warmtemetermbus
