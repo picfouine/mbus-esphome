@@ -23,6 +23,8 @@ namespace warmtemetermbus {
  public: \
   void set_##name##_binary_sensor(binary_sensor::BinarySensor *(name)) { this->name##_binary_sensor_ = name; }
 
+extern bool vlaggetje;
+
 class HeatMeterMbus : public PollingComponent, public uart::UARTDevice {
   public:  
     HeatMeterMbus() : PollingComponent(10000), kamstrup(this) {}
