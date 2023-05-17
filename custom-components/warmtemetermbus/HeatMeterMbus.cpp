@@ -51,18 +51,35 @@ namespace esphome
       adc1_config_width(ADC_WIDTH_BIT_12);
       adc1_config_channel_atten(ADC1_CHANNEL_0, ADC_ATTEN_DB_11);
       esp_adc_cal_characteristics_t adc1Characteristics;
-      esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 0, &adc1Characteristics);
+      esp_adc_cal_value_t calValType = esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 0, &adc1Characteristics);
 
       while (true) {
         const uint32_t rawAdcValue = adc1_get_raw(ADC1_CHANNEL_0);
         const uint32_t voltageInMv = esp_adc_cal_raw_to_voltage(rawAdcValue, &adc1Characteristics);
         const float voltageInV = static_cast<float>(voltageInMv) / 1000.0f;
-        const float busVoltage = voltageInMv * 12.75f / 1000.0f;
-        const uint32_t busVoltageInMv = static_cast<float>(voltageInMv) * 12.75f;
+        const float busVoltage = voltageInMv * 19.0f / 1000.0f;
+        const uint32_t busVoltageInMv = static_cast<float>(voltageInMv) * 19.0f;
         heatMeterMbus->bus_voltage_sensor_->publish_state(busVoltage);
+        ESP_LOGI(TAG, "-----------------------------------------");
+        switch (calValType) {
+          case ESP_ADC_CAL_VAL_EFUSE_VREF:
+            ESP_LOGI(TAG, "Calibration type: eFuse");
+            break;
+          case ESP_ADC_CAL_VAL_EFUSE_TP:
+            ESP_LOGI(TAG, "Calibration type: Two Point");
+            break;
+          case ESP_ADC_CAL_VAL_DEFAULT_VREF:
+            ESP_LOGI(TAG, "Calibration type: default reference voltage");
+            break;
+          default:
+            break;
+        }
+        ESP_LOGI(TAG, "Used Vref: %d", adc1Characteristics.vref);
+        ESP_LOGI(TAG, "");
         ESP_LOGI(TAG, "RAW ADC value: %d", rawAdcValue);
         ESP_LOGI(TAG, "ADC Voltage: %.1fV (%dmV)", voltageInV, voltageInMv);
         ESP_LOGI(TAG, "Bus Voltage: %.1fV (%dmV)", busVoltage, busVoltageInMv);
+        ESP_LOGI(TAG, "-----------------------------------------");
 
         vTaskDelay(1000 / portTICK_PERIOD_MS);
       }
