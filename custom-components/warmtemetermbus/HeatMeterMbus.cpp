@@ -210,7 +210,7 @@ namespace esphome
         }
         else
         {
-          delay(1);
+          vTaskDelay(100 / portTICK_PERIOD_MS);
         }
       }
     }
