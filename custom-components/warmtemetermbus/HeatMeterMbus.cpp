@@ -1,6 +1,8 @@
 #include "esphome/core/log.h"
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
+#include <driver/adc.h>
+#include <esp_adc_cal.h>
 #include <math.h>
 #include "HeatMeterMbus.h"
 #include "Kamstrup303WA02.h"
@@ -21,14 +23,49 @@ namespace esphome
 
     void HeatMeterMbus::setup()
     {
-      xTaskCreatePinnedToCore(HeatMeterMbus::task_loop,
-                        "mbus_task", // name
-                        10000,       // stack size (in words)
-                        this,        // input params
-                        1,           // priority
-                        nullptr,     // Handle, not needed
-                        0            // core
+      xTaskCreatePinnedToCore(
+        HeatMeterMbus::task_loop,
+        "mbus_task", // name
+        10000,       // stack size (in words)
+        this,        // input params
+        1,           // priority
+        nullptr,     // Handle, not needed
+        0            // core
       );
+
+      xTaskCreatePinnedToCore(
+        HeatMeterMbus::adc_task_loop,
+        "adc_task", // name
+        4096,       // stack size (in words)
+        this,       // input params
+        2,          // priority
+        nullptr,    // handle, not needed
+        0           // core
+      );
+    }
+
+    void HeatMeterMbus::adc_task_loop(void* params)
+    {
+      HeatMeterMbus *heatMeterMbus = reinterpret_cast<HeatMeterMbus*>(params);
+
+      adc1_config_width(ADC_WIDTH_BIT_12);
+      adc1_config_channel_atten(ADC1_CHANNEL_0, ADC_ATTEN_DB_11);
+      esp_adc_cal_characteristics_t adc1Characteristics;
+      esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 0, &adc1Characteristics);
+
+      while (true) {
+        const uint32_t rawAdcValue = adc1_get_raw(ADC1_CHANNEL_0);
+        const uint32_t voltageInMv = esp_adc_cal_raw_to_voltage(rawAdcValue, &adc1Characteristics);
+        const float voltageInV = static_cast<float>(voltageInMv) / 1000.0f;
+        const float busVoltage = voltageInMv * 12.75f / 1000.0f;
+        const uint32_t busVoltageInMv = static_cast<float>(voltageInMv) * 12.75f;
+        heatMeterMbus->bus_voltage_sensor_->publish_state(busVoltage);
+        ESP_LOGI(TAG, "RAW ADC value: %d", rawAdcValue);
+        ESP_LOGI(TAG, "ADC Voltage: %.1fV (%dmV)", voltageInV, voltageInMv);
+        ESP_LOGI(TAG, "Bus Voltage: %.1fV (%dmV)", busVoltage, busVoltageInMv);
+
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+      }
     }
 
     void HeatMeterMbus::task_loop(void* params)
@@ -252,6 +289,7 @@ namespace esphome
       LOG_SENSOR("  ", "Log Year", this->log_year_sensor_);
       LOG_SENSOR("  ", "Log Month", this->log_month_sensor_);
       LOG_SENSOR("  ", "Log Day", this->log_day_sensor_);
+      LOG_SENSOR("  ", "Bus Voltage", this->bus_voltage_sensor_);
 
       LOG_BINARY_SENSOR("  ", "No Voltage Supply", this->info_no_voltage_supply_binary_sensor_);
       LOG_BINARY_SENSOR("  ", "T1 Above Measuring Range or Disconnected", this->info_t1_above_range_or_disconnected_binary_sensor_);
