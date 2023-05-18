@@ -49,16 +49,22 @@ namespace esphome
       HeatMeterMbus *heatMeterMbus = reinterpret_cast<HeatMeterMbus*>(params);
 
       adc1_config_width(ADC_WIDTH_BIT_12);
-      adc1_config_channel_atten(ADC1_CHANNEL_0, ADC_ATTEN_DB_11);
+      adc1_config_channel_atten(ADC1_CHANNEL_0, ADC_ATTEN_DB_0);
       esp_adc_cal_characteristics_t adc1Characteristics;
-      esp_adc_cal_value_t calValType = esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 0, &adc1Characteristics);
+      esp_adc_cal_value_t calValType = esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_0, ADC_WIDTH_BIT_12, 0, &adc1Characteristics);
 
       while (true) {
-        const uint32_t rawAdcValue = adc1_get_raw(ADC1_CHANNEL_0);
+        uint32_t summedRawAdcValues {0};
+        constexpr uint8_t readCount = 8;
+        for (uint8_t i = 0; i < readCount; ++i) {
+          const uint32_t rawAdcValue = adc1_get_raw(ADC1_CHANNEL_0);
+          summedRawAdcValues += rawAdcValue;
+        }
+        const uint32_t rawAdcValue = summedRawAdcValues / readCount;
         const uint32_t voltageInMv = esp_adc_cal_raw_to_voltage(rawAdcValue, &adc1Characteristics);
         const float voltageInV = static_cast<float>(voltageInMv) / 1000.0f;
-        const float busVoltage = voltageInMv * 19.0f / 1000.0f;
-        const uint32_t busVoltageInMv = static_cast<float>(voltageInMv) * 19.0f;
+        const float busVoltage = voltageInMv * 48.0f / 1000.0f;
+        const uint32_t busVoltageInMv = static_cast<float>(voltageInMv) * 48.0f;
         heatMeterMbus->bus_voltage_sensor_->publish_state(busVoltage);
         ESP_LOGI(TAG, "-----------------------------------------");
         switch (calValType) {
