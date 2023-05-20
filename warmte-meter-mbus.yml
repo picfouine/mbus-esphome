@@ -106,6 +106,8 @@ sensor:
     log_day:
       name: log_day
       id: log_day
+    bus_voltage:
+      name: bus_voltage
 
 text_sensor:
   - platform: template

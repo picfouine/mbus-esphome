@@ -10,6 +10,7 @@ from esphome.const import  (
     DEVICE_CLASS_HEAT,
     DEVICE_CLASS_POWER,
     DEVICE_CLASS_TEMPERATURE,
+    DEVICE_CLASS_VOLTAGE,
     DEVICE_CLASS_VOLUME,
     DEVICE_CLASS_WATER,
     ICON_THERMOMETER,
@@ -17,6 +18,7 @@ from esphome.const import  (
     UNIT_CELSIUS, 
     UNIT_KILOWATT,
     UNIT_KILOWATT_HOURS,
+    UNIT_VOLT,
     STATE_CLASS_MEASUREMENT,
 )
 
@@ -49,6 +51,7 @@ CONF_FLOW_V1_MAX_YEAR_OLD = "flow_v1_max_year_old"
 CONF_LOG_YEAR = "log_year"
 CONF_LOG_MONTH = "log_month"
 CONF_LOG_DAY = "log_day"
+CONF_BUS_VOLTAGE = "bus_voltage"
 
 CONF_INFO_NO_VOLTAGE_SUPPLY = "info_no_voltage_supply"
 CONF_INFO_T1_ABOVE_RANGE_OR_DISCONNECTED = "info_t1_above_range_or_disconnected"
@@ -63,6 +66,7 @@ CONF_INFO_V1_GREATER_THAN_QS_MORE_THAN_HOUR = "info_v1_greater_than_qs_more_than
 ICON_CLOCK_ALERT_OUTLINE = "mdi:clock-alert-outline"
 ICON_CLOCK_OUTLINE = "mdi:clock-outline"
 ICON_HEAT_WAVE = "mdi:heat-wave"
+ICON_LIGHTNING_BOLT = "mdi:lightning-bolt"
 ICON_THERMOMETER_MINUS = "mdi:thermometer-minus"
 ICON_WATER_THERMOMETER_OUTLINE = "mdi:water-thermometer-outline"
 ICON_WAVES_ARROW_RIGHT = "mdi:waves-arrow-right"
@@ -208,7 +212,13 @@ SENSORS = {
     ),
     CONF_LOG_YEAR: sensor.sensor_schema(),
     CONF_LOG_MONTH: sensor.sensor_schema(),
-    CONF_LOG_DAY: sensor.sensor_schema()
+    CONF_LOG_DAY: sensor.sensor_schema(),
+    CONF_BUS_VOLTAGE: sensor.sensor_schema(
+        unit_of_measurement=UNIT_VOLT,
+        accuracy_decimals=1,
+        device_class=DEVICE_CLASS_VOLTAGE,
+        icon=ICON_LIGHTNING_BOLT
+    )
 }
 
 BINARY_SENSORS = {

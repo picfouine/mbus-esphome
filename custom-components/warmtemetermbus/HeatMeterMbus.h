@@ -52,6 +52,7 @@ class HeatMeterMbus : public PollingComponent, public uart::UARTDevice {
     HEATMETERMBUS_METER_SENSOR(log_year)
     HEATMETERMBUS_METER_SENSOR(log_month)
     HEATMETERMBUS_METER_SENSOR(log_day)
+    HEATMETERMBUS_METER_SENSOR(bus_voltage)
 
     HEATMETERMBUS_METER_BINARYSENSOR(info_no_voltage_supply)
     HEATMETERMBUS_METER_BINARYSENSOR(info_t1_above_range_or_disconnected)
@@ -73,6 +74,7 @@ class HeatMeterMbus : public PollingComponent, public uart::UARTDevice {
     Kamstrup303WA02 kamstrup;
 
     static void task_loop(void* params);
+    static void adc_task_loop(void* params);
 };
 
 } //namespace warmtemetermbus
