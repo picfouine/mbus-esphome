@@ -16,42 +16,22 @@ namespace esphome
   namespace warmtemetermbus
   {
     bool vlaggetje = false;
-    uint32_t dutyCycle;
 
     static const char *TAG = "heatmetermbus.sensor";
 
     void HeatMeterMbus::setup()
     {
-      // GPIO32
-      ledc_timer_config_t timerConfig = {
-        .speed_mode = LEDC_HIGH_SPEED_MODE,
-        .duty_resolution = LEDC_TIMER_10_BIT,
-        .timer_num = LEDC_TIMER_0,
-        .freq_hz = 18000,
-        .clk_cfg = LEDC_USE_APB_CLK
-      };
-
-      esp_err_t configResult = ledc_timer_config(&timerConfig);
+      esp_err_t configResult = pwm.initialize(32, 18000, 0.85f);
       if (ESP_OK != configResult)
       {
-        ESP_LOGE(TAG, "Error configuring PWM timer: %d", configResult);
+        ESP_LOGE(TAG, "Error initializing PWM: %d", configResult);
         return;
       }
 
-      dutyCycle = floor((1 << 10) * 0.85f);
-      ledc_channel_config_t channelConfig = {
-        .gpio_num = 32,
-        .speed_mode = LEDC_HIGH_SPEED_MODE,
-        .channel = LEDC_CHANNEL_0,
-        .intr_type = LEDC_INTR_DISABLE,
-        .timer_sel = LEDC_TIMER_0,
-        .duty = dutyCycle,
-        .hpoint = 0
-      };
-      configResult = ledc_channel_config(&channelConfig);
-      if (ESP_OK != configResult)
+      esp_err_t pwmEnableResult = pwm.enable();
+      if (ESP_OK != pwmEnableResult)
       {
-        ESP_LOGE(TAG, "Error configuring PWM channel");
+        ESP_LOGE(TAG, "Error enabling PWM channel");
         return;
       }
 

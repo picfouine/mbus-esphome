@@ -5,6 +5,7 @@
 #include "esphome/components/binary_sensor/binary_sensor.h"
 #include "esphome/components/uart/uart.h"
 #include "Kamstrup303WA02.h"
+#include "Pwm.h"
 
 namespace esphome {
 namespace warmtemetermbus {
@@ -68,6 +69,7 @@ class HeatMeterMbus : public PollingComponent, public uart::UARTDevice {
     float get_setup_priority() const override;
 
   private:
+    Pwm pwm;
     Kamstrup303WA02 kamstrup;
 
     static void task_loop(void* params);
