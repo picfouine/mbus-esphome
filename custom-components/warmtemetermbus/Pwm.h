@@ -12,6 +12,7 @@ public:
 
   esp_err_t initialize(uint8_t gpioPin, uint32_t frequency, float dutyCycle);
   esp_err_t enable();
+  esp_err_t updateDutyCycle(float dutyCycle);
   
 private:
   Pwm(const Pwm& pwm);

@@ -42,5 +42,17 @@ namespace esphome
     {
       return ledc_channel_config(&channelConfig);
     }
+
+    esp_err_t Pwm::updateDutyCycle(float dutyCycle)
+    {
+      uint32_t dutyCycleValue = floor((1 << 10) * dutyCycle);
+      esp_err_t configResult = ledc_set_duty(channelConfig.speed_mode, channelConfig.channel, dutyCycleValue);
+      if (ESP_OK != configResult)
+      {
+        return configResult;
+      }
+      return ledc_update_duty(channelConfig.speed_mode, channelConfig.channel);
+    }
+
   } // namespace warmtemetermbus
 } // namespace esphome

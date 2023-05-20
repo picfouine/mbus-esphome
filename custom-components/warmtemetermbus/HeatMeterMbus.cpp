@@ -1,6 +1,8 @@
 #include "esphome/core/log.h"
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
+#include <driver/adc.h>
+#include <esp_adc_cal.h>
 #include <math.h>
 #include "HeatMeterMbus.h"
 #include "Kamstrup303WA02.h"
@@ -59,45 +61,31 @@ namespace esphome
       HeatMeterMbus *heatMeterMbus = reinterpret_cast<HeatMeterMbus*>(params);
 
       adc1_config_width(ADC_WIDTH_BIT_12);
-      adc1_config_channel_atten(ADC1_CHANNEL_0, ADC_ATTEN_DB_0);
+      adc1_config_channel_atten(ADC1_CHANNEL_0, ADC_ATTEN_DB_11);
       esp_adc_cal_characteristics_t adc1Characteristics;
-      esp_adc_cal_value_t calValType = esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_0, ADC_WIDTH_BIT_12, 0, &adc1Characteristics);
+      esp_adc_cal_value_t calValType = esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 0, &adc1Characteristics);
 
       while (true) {
         uint32_t summedRawAdcValues {0};
-        constexpr uint8_t readCount = 8;
+        constexpr uint8_t readCount = 4;
         for (uint8_t i = 0; i < readCount; ++i) {
           const uint32_t rawAdcValue = adc1_get_raw(ADC1_CHANNEL_0);
           summedRawAdcValues += rawAdcValue;
         }
         const uint32_t rawAdcValue = summedRawAdcValues / readCount;
         const uint32_t voltageInMv = esp_adc_cal_raw_to_voltage(rawAdcValue, &adc1Characteristics);
-        const float voltageInV = static_cast<float>(voltageInMv) / 1000.0f;
-        const float busVoltage = voltageInMv * 48.0f / 1000.0f;
-        const uint32_t busVoltageInMv = static_cast<float>(voltageInMv) * 48.0f;
-        heatMeterMbus->bus_voltage_sensor_->publish_state(busVoltage);
-        ESP_LOGI(TAG, "-----------------------------------------");
-        switch (calValType) {
-          case ESP_ADC_CAL_VAL_EFUSE_VREF:
-            ESP_LOGI(TAG, "Calibration type: eFuse");
-            break;
-          case ESP_ADC_CAL_VAL_EFUSE_TP:
-            ESP_LOGI(TAG, "Calibration type: Two Point");
-            break;
-          case ESP_ADC_CAL_VAL_DEFAULT_VREF:
-            ESP_LOGI(TAG, "Calibration type: default reference voltage");
-            break;
-          default:
-            break;
-        }
-        ESP_LOGI(TAG, "Used Vref: %d", adc1Characteristics.vref);
-        ESP_LOGI(TAG, "");
-        ESP_LOGI(TAG, "RAW ADC value: %d", rawAdcValue);
-        ESP_LOGI(TAG, "ADC Voltage: %.1fV (%dmV)", voltageInV, voltageInMv);
-        ESP_LOGI(TAG, "Bus Voltage: %.1fV (%dmV)", busVoltage, busVoltageInMv);
-        ESP_LOGI(TAG, "-----------------------------------------");
+        uint8_t potPercentage = 100 * static_cast<float>(rawAdcValue) / (1 << 12);
+        float newDutyCycle = 0.7f + 0.3f * static_cast<float>(rawAdcValue) / (1 << 12);
 
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        heatMeterMbus->pwm.updateDutyCycle(newDutyCycle);
+
+        // ESP_LOGI(TAG, "Raw ADC value: %d", rawAdcValue);
+        // ESP_LOGI(TAG, "ADC Voltage: %dmV", voltageInMv);
+        // ESP_LOGI(TAG, "Percentage of pot: %d", potPercentage);
+        ESP_LOGD(TAG, "New duty cycle: %.2f", newDutyCycle);
+        // ESP_LOGI(TAG, "-----------------------------------------");
+
+        vTaskDelay(100 / portTICK_PERIOD_MS);
       }
     }
 
