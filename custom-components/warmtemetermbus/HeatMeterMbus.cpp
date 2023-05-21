@@ -17,25 +17,36 @@ namespace esphome
   namespace warmtemetermbus
   {
     bool vlaggetje = false;
+    bool pwmCalibrated = false;
 
     static const char *TAG = "heatmetermbus.sensor";
 
     void HeatMeterMbus::setup()
     {
-      esp_err_t configResult = pwm.initialize(32, 18000, 0.85f);
-      if (ESP_OK != configResult)
-      {
-        ESP_LOGE(TAG, "Error initializing PWM: %d", configResult);
-        return;
-      }
 
-      esp_err_t pwmEnableResult = pwm.enable();
-      if (ESP_OK != pwmEnableResult)
-      {
-        ESP_LOGE(TAG, "Error enabling PWM channel");
-        return;
-      }
+      // Calibrate PWM duty cycle required for proper 36 volt generation.
+      // Start at 75% duty cycle.
+      // Find the duty cycle for which the max voltage over the current sensing resistor is 330mA. (??)
+      // 
+      
+      // Let's first start with looking at the ADC raw results...
 
+      // Give the boost converter some time to settle
+      // for (uint8_t i = 0; i < 5; ++i) {
+      //   vTaskDelay(1000 / portTICK_PERIOD_MS);
+      // }
+
+      //ESP_LOGI(TAG, "AFTER WAITING");
+
+
+      xTaskCreatePinnedToCore(HeatMeterMbus::adc_task_loop,
+                        "adc_task", // name
+                        10000,       // stack size (in words)
+                        this,        // input params
+                        1,           // priority
+                        nullptr,     // Handle, not needed
+                        0            // core
+      );
       xTaskCreatePinnedToCore(HeatMeterMbus::task_loop,
                         "mbus_task", // name
                         10000,       // stack size (in words)
@@ -44,48 +55,88 @@ namespace esphome
                         nullptr,     // Handle, not needed
                         0            // core
       );
-
-      xTaskCreatePinnedToCore(
-        HeatMeterMbus::adc_task_loop,
-        "adc_task", // name
-        4096,       // stack size (in words)
-        this,       // input params
-        2,          // priority
-        nullptr,    // handle, not needed
-        0           // core
-      );
     }
 
     void HeatMeterMbus::adc_task_loop(void* params)
     {
       HeatMeterMbus *heatMeterMbus = reinterpret_cast<HeatMeterMbus*>(params);
 
+      esp_err_t configResult = heatMeterMbus->pwm.initialize(32, 18000, 0.75f);
+      if (ESP_OK != configResult)
+      {
+        ESP_LOGE(TAG, "Error initializing PWM: %d", configResult);
+        return;
+      }
+
+      esp_err_t pwmEnableResult = heatMeterMbus->pwm.enable();
+      if (ESP_OK != pwmEnableResult)
+      {
+        ESP_LOGE(TAG, "Error enabling PWM channel");
+        return;
+      }
+
+
       adc1_config_width(ADC_WIDTH_BIT_12);
       adc1_config_channel_atten(ADC1_CHANNEL_0, ADC_ATTEN_DB_11);
       esp_adc_cal_characteristics_t adc1Characteristics;
       esp_adc_cal_value_t calValType = esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 0, &adc1Characteristics);
 
-      while (true) {
+      vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+      float dutyCycle {0.75f};
+      bool currentTooHigh = false;
+
+      while (!currentTooHigh) {
+        dutyCycle += 0.01f;
+        heatMeterMbus->pwm.updateDutyCycle(dutyCycle);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+
+        uint32_t maxAdcValue {0};
         uint32_t summedRawAdcValues {0};
-        constexpr uint8_t readCount = 4;
+        constexpr uint8_t readCount = 32;
         for (uint8_t i = 0; i < readCount; ++i) {
           const uint32_t rawAdcValue = adc1_get_raw(ADC1_CHANNEL_0);
           summedRawAdcValues += rawAdcValue;
+          if (rawAdcValue > maxAdcValue) {
+            maxAdcValue = rawAdcValue;
+          }
         }
+
         const uint32_t rawAdcValue = summedRawAdcValues / readCount;
         const uint32_t voltageInMv = esp_adc_cal_raw_to_voltage(rawAdcValue, &adc1Characteristics);
-        uint8_t potPercentage = 100 * static_cast<float>(rawAdcValue) / (1 << 12);
-        float newDutyCycle = 0.7f + 0.3f * static_cast<float>(rawAdcValue) / (1 << 12);
+        const uint32_t maxVoltageInMv = esp_adc_cal_raw_to_voltage(maxAdcValue, &adc1Characteristics);
 
-        heatMeterMbus->pwm.updateDutyCycle(newDutyCycle);
+        if (maxVoltageInMv > 400) {
+          ESP_LOGI(TAG, "Maybe found it...");
+          // Sure? One more try...
+          uint32_t maxAdcValue {0};
+          uint32_t summedRawAdcValues {0};
+          constexpr uint8_t readCount = 32;
+          for (uint8_t i = 0; i < readCount; ++i) {
+            const uint32_t rawAdcValue = adc1_get_raw(ADC1_CHANNEL_0);
+            summedRawAdcValues += rawAdcValue;
+            if (rawAdcValue > maxAdcValue) {
+              maxAdcValue = rawAdcValue;
+            }
+          }
+          if (maxVoltageInMv >= 400) {
+            // Found it!
+            currentTooHigh = true;
+            dutyCycle -= 0.02f;
+            heatMeterMbus->pwm.updateDutyCycle(dutyCycle);
+            pwmCalibrated = true;
+            ESP_LOGI(TAG, "PWM calibrated! Duty cycle = %.1f", dutyCycle);
+          }
 
-        // ESP_LOGI(TAG, "Raw ADC value: %d", rawAdcValue);
-        // ESP_LOGI(TAG, "ADC Voltage: %dmV", voltageInMv);
-        // ESP_LOGI(TAG, "Percentage of pot: %d", potPercentage);
-        ESP_LOGD(TAG, "New duty cycle: %.2f", newDutyCycle);
-        // ESP_LOGI(TAG, "-----------------------------------------");
+          
+        }
+        vTaskDelay(50 / portTICK_PERIOD_MS);
+      }
 
-        vTaskDelay(100 / portTICK_PERIOD_MS);
+
+      while (true)
+      {
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
       }
     }
 
@@ -96,7 +147,7 @@ namespace esphome
 
       while (true)
       {
-        const bool shouldReadNow = vlaggetje;
+        const bool shouldReadNow = vlaggetje && pwmCalibrated;
         if (shouldReadNow)
         {
           // Let's request data, and wait for its results :-)
