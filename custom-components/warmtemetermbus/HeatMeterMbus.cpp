@@ -69,14 +69,15 @@ namespace esphome
     {
       // Calibrate PWM duty cycle required for proper 36 volt generation.
       // Start at 75% duty cycle.
-      // Find the duty cycle for which the max voltage over the current sensing resistor is 400mA.
+      // Find the duty cycle for which the max voltage over the current sensing resistor is 375mA.
       heatMeterMbus->pwmCalibrated = false;
       float dutyCycle {0.75f};
-      constexpr float dutyCycleIncrement {0.01f};
-      constexpr uint8_t timeInMsForConverterToSettle {10};
+      constexpr float dutyCycleIncrement {0.005f};
+      constexpr uint8_t timeInMsForConverterToSettle {25};
       constexpr float dutyCycleReductionAfterTarget {0.02f};
-      constexpr uint8_t additionalDelayInMs {25};
-      const uint32_t targetMaxAdcVoltage {400};
+      constexpr uint8_t additionalDelayInMs {50};
+      const uint32_t targetMaxAdcVoltage {250};
+      const uint32_t targetVoltageTolerance {10};
       while (!heatMeterMbus->pwmCalibrated) {
         dutyCycle += dutyCycleIncrement;
         heatMeterMbus->pwm.updateDutyCycle(dutyCycle);
@@ -87,7 +88,7 @@ namespace esphome
         if (maxAdcVoltage > targetMaxAdcVoltage) {
           // Sure? One more try...
           maxAdcVoltage = heatMeterMbus->adc.maxAdcValueOverNumberOfConversions(32);
-          if (maxAdcVoltage >= targetMaxAdcVoltage) {
+          if (maxAdcVoltage >= targetMaxAdcVoltage - targetVoltageTolerance) {
             // Found it!
             dutyCycle -= dutyCycleReductionAfterTarget;
             heatMeterMbus->pwm.updateDutyCycle(dutyCycle);
