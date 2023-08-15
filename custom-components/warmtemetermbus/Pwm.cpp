@@ -2,9 +2,6 @@
 #include <math.h>
 #include "Pwm.h"
 
-//#include <iostream>
-//#include <sstream>
-
 using namespace std; 
 
 namespace esphome
