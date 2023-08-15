@@ -33,8 +33,12 @@ wifi:
 
 uart:
   baud_rate: 2400
-  tx_pin: 17
-  rx_pin: 16
+  # WROOM Breadboard / PCB: TX 17, RX 16
+  # tx_pin: 17
+  # rx_pin: 16
+  # WROVER PCB: TX 19, RX 18
+  tx_pin: 19
+  rx_pin: 18
   data_bits: 8
   parity: EVEN
   stop_bits: 1
