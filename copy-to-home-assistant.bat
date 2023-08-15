@@ -9,8 +9,8 @@ REM Component files
 set customComponentsSrcDir=.\custom-components\warmtemetermbus
 set customComponentsTargetDir=%targetDir%\custom_components\warmte-meter-mbus
 copy %customComponentsSrcDir%\__init__.py %customComponentsTargetDir%
-@REM copy %customComponentsSrcDir%\Adc.cpp %customComponentsTargetDir%
-@REM copy %customComponentsSrcDir%\Adc.h %customComponentsTargetDir%
+REM copy %customComponentsSrcDir%\Adc.cpp %customComponentsTargetDir%
+REM copy %customComponentsSrcDir%\Adc.h %customComponentsTargetDir%
 copy %customComponentsSrcDir%\HeatMeterMbus.cpp %customComponentsTargetDir%
 copy %customComponentsSrcDir%\HeatMeterMbus.h %customComponentsTargetDir%
 copy %customComponentsSrcDir%\Kamstrup303WA02.cpp %customComponentsTargetDir%
