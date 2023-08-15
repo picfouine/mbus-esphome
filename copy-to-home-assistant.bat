@@ -2,7 +2,7 @@
 set targetDir=z:\esphome
 
 REM YML file
-set ymlFile=.\warmte-meter-mbus.yml
+set ymlFile=.\warmte-meter-mbus.yaml
 copy %ymlFile% %targetDir%
 
 REM Component files
