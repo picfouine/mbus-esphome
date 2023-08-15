@@ -6,7 +6,6 @@
 #include "esphome/components/uart/uart.h"
 #include "Kamstrup303WA02.h"
 #include "Pwm.h"
-#include "Adc.h"
 
 namespace esphome {
 namespace warmtemetermbus {
@@ -70,15 +69,11 @@ class HeatMeterMbus : public PollingComponent, public uart::UARTDevice {
 
   private:
     Pwm pwm;
-    Adc adc;
     Kamstrup303WA02 kamstrup;
     bool updateRequested {false};
-    bool pwmCalibrated {false};
 
-    static void adc_task_loop(void* params);
     static void read_mbus_task_loop(void* params);
     static esp_err_t initializeAndEnablePwm(Pwm* pwm);
-    static void calibrateDutyCycle(HeatMeterMbus* heatMeterMbus);
 };
 
 } //namespace warmtemetermbus

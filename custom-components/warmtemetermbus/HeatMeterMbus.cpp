@@ -13,22 +13,16 @@ namespace esphome
   {
     static const char *TAG = "heatmetermbus.sensor";
 
+    bool pwmInitialized { false };
+    bool pwmEnabled { false };
+
     void HeatMeterMbus::setup()
     {
       if (ESP_OK != initializeAndEnablePwm(&pwm))
       {
         ESP_LOGE(TAG, "Error initializing and enabling PWM");
-        return;
       }
 
-      xTaskCreatePinnedToCore(HeatMeterMbus::adc_task_loop,
-                        "adc_task", // name
-                        10000,       // stack size (in words)
-                        this,        // input params
-                        1,           // priority
-                        nullptr,     // Handle, not needed
-                        0            // core
-      );
       xTaskCreatePinnedToCore(HeatMeterMbus::read_mbus_task_loop,
                         "mbus_task", // name
                         10000,       // stack size (in words)
@@ -41,11 +35,16 @@ namespace esphome
 
     esp_err_t HeatMeterMbus::initializeAndEnablePwm(Pwm* pwm)
     {
-      esp_err_t configResult = pwm->initialize(32, 18000, 0.75f);
+      esp_err_t configResult = pwm->initialize(32, 18000, 0.85f);
       if (ESP_OK != configResult)
       {
         ESP_LOGE(TAG, "Error initializing PWM: %d", configResult);
         return configResult;
+      }
+      else
+      {
+        ESP_LOGI(TAG, "Initialized PWM");
+        pwmInitialized = true;
       }
 
       esp_err_t pwmEnableResult = pwm->enable();
@@ -53,50 +52,12 @@ namespace esphome
       {
         ESP_LOGE(TAG, "Error enabling PWM channel");
       }
-      return pwmEnableResult;
-    }
-
-    void HeatMeterMbus::adc_task_loop(void* params)
-    {
-      HeatMeterMbus *heatMeterMbus = reinterpret_cast<HeatMeterMbus*>(params);
-
-      heatMeterMbus->adc.configure();
-      calibrateDutyCycle(heatMeterMbus);
-      vTaskDelete(NULL);
-    }
-
-    void HeatMeterMbus::calibrateDutyCycle(HeatMeterMbus* heatMeterMbus)
-    {
-      // Calibrate PWM duty cycle required for proper 36 volt generation.
-      // Start at 75% duty cycle.
-      // Find the duty cycle for which the max voltage over the current sensing resistor is 375mA.
-      heatMeterMbus->pwmCalibrated = false;
-      float dutyCycle {0.75f};
-      constexpr float dutyCycleIncrement {0.005f};
-      constexpr uint8_t timeInMsForConverterToSettle {25};
-      constexpr float dutyCycleReductionAfterTarget {0.02f};
-      constexpr uint8_t additionalDelayInMs {50};
-      const uint32_t targetMaxAdcVoltage {250};
-      const uint32_t targetVoltageTolerance {10};
-      while (!heatMeterMbus->pwmCalibrated) {
-        dutyCycle += dutyCycleIncrement;
-        heatMeterMbus->pwm.updateDutyCycle(dutyCycle);
-        // Give the boost converter some time to settle
-        vTaskDelay(timeInMsForConverterToSettle / portTICK_PERIOD_MS);
-
-        uint32_t maxAdcVoltage = heatMeterMbus->adc.maxAdcValueOverNumberOfConversions(32);
-        if (maxAdcVoltage > targetMaxAdcVoltage) {
-          // Sure? One more try...
-          maxAdcVoltage = heatMeterMbus->adc.maxAdcValueOverNumberOfConversions(32);
-          if (maxAdcVoltage >= targetMaxAdcVoltage - targetVoltageTolerance) {
-            // Found it!
-            dutyCycle -= dutyCycleReductionAfterTarget;
-            heatMeterMbus->pwm.updateDutyCycle(dutyCycle);
-            heatMeterMbus->pwmCalibrated = true;
-          }
-        }
-        vTaskDelay(additionalDelayInMs / portTICK_PERIOD_MS);
+      else
+      {
+        ESP_LOGI(TAG, "Enabled PWM channel");
+        pwmEnabled = true;
       }
+      return pwmEnableResult;
     }
 
     void HeatMeterMbus::read_mbus_task_loop(void* params)
@@ -106,9 +67,10 @@ namespace esphome
 
       while (true)
       {
-        const bool shouldReadNow = heatMeterMbus->updateRequested && heatMeterMbus->pwmCalibrated;
+        const bool shouldReadNow = heatMeterMbus->updateRequested;
         if (shouldReadNow)
         {
+          ESP_LOGI(TAG, "PWM initialized: %d, PWM enabled: %d", pwmInitialized, pwmEnabled);
           // Let's request data, and wait for its results :-)
           Kamstrup303WA02::MeterData meterData;
           ESP_LOGI(TAG, "About to readData");
@@ -286,6 +248,7 @@ namespace esphome
     void HeatMeterMbus::update()
     {
       updateRequested = true;
+      ESP_LOGD(TAG, "update()");
     }
 
     float HeatMeterMbus::get_setup_priority() const
