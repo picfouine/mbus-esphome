@@ -7,7 +7,7 @@ copy %ymlFile% %targetDir%
 
 REM Component files
 set customComponentsSrcDir=.\custom-components\warmtemetermbus
-set customComponentsTargetDir=%targetDir%\custom_components\warmte-meter-mbus
+set customComponentsTargetDir=%targetDir%\custom_components\HeatMeterMbus
 copy %customComponentsSrcDir%\__init__.py %customComponentsTargetDir%
 REM copy %customComponentsSrcDir%\Adc.cpp %customComponentsTargetDir%
 REM copy %customComponentsSrcDir%\Adc.h %customComponentsTargetDir%

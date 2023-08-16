@@ -45,7 +45,7 @@ uart:
   stop_bits: 1
 
 sensor:
-  - platform: warmtemetermbus
+  - platform: HeatMeterMbus
     heat_energy_e1:
       name: heat_energy_e1
     volume_v1:
