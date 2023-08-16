@@ -24,13 +24,14 @@ namespace esphome
       }
 
       uint32_t dutyCycleValue = floor((1 << 10) * dutyCycle);
-      channelConfig.gpio_num = 32;
+      channelConfig.gpio_num = gpioPin;
       channelConfig.speed_mode = LEDC_HIGH_SPEED_MODE;
       channelConfig.channel = LEDC_CHANNEL_0;
       channelConfig.intr_type = LEDC_INTR_DISABLE;
       channelConfig.timer_sel = LEDC_TIMER_0;
       channelConfig.duty = dutyCycleValue;
       channelConfig.hpoint = 0;
+      channelConfig.flags.output_invert = 0;
 
       return ESP_OK;
     }
@@ -50,6 +51,5 @@ namespace esphome
       }
       return ledc_update_duty(channelConfig.speed_mode, channelConfig.channel);
     }
-
   } // namespace warmtemetermbus
 } // namespace esphome
