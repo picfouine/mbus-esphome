@@ -70,7 +70,6 @@ namespace esphome
         const bool shouldReadNow = heatMeterMbus->updateRequested;
         if (shouldReadNow)
         {
-          ESP_LOGI(TAG, "PWM initialized: %d, PWM enabled: %d", pwmInitialized, pwmEnabled);
           // Let's request data, and wait for its results :-)
           Kamstrup303WA02::MeterData meterData;
           ESP_LOGI(TAG, "About to readData");
@@ -294,6 +293,5 @@ namespace esphome
       LOG_BINARY_SENSOR("  ", "V1 Wrong Flow Direction", this->info_v1_wrong_flow_direction_binary_sensor_);
       LOG_BINARY_SENSOR("  ", "V1 > Qs For More Than An Hour", this->info_v1_greater_than_qs_more_than_hour_binary_sensor_);
     }
-
   } // namespace warmtemetermbus
 } // namespace esphome
