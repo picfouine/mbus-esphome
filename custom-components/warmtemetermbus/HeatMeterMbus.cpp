@@ -16,11 +16,6 @@ namespace esphome
     bool pwmInitialized { false };
     bool pwmEnabled { false };
 
-    void HeatMeterMbus::poep()
-    {
-      ESP_LOGI(TAG, "Poep!");
-    }
-
     void HeatMeterMbus::setup()
     {
       if (ESP_OK != initializeAndEnablePwm(&pwm))
@@ -249,10 +244,20 @@ namespace esphome
       }
     }
 
-    void HeatMeterMbus::update()
+    void HeatMeterMbus::enableMbus() {
+      ESP_LOGI(TAG, "Enabling Mbus");
+      pwm.enable();
+    }
+
+    void HeatMeterMbus::disableMbus() {
+      ESP_LOGI(TAG, "Disabling Mbus");
+      pwm.disable();
+    }
+
+    void HeatMeterMbus::readMbus()
     {
       updateRequested = true;
-      ESP_LOGD(TAG, "update()");
+      ESP_LOGI(TAG, "readMbus()");
     }
 
     float HeatMeterMbus::get_setup_priority() const

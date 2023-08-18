@@ -24,9 +24,9 @@ namespace warmtemetermbus {
  public: \
   void set_##name##_binary_sensor(binary_sensor::BinarySensor *(name)) { this->name##_binary_sensor_ = name; }
 
-class HeatMeterMbus : public PollingComponent, public uart::UARTDevice {
+class HeatMeterMbus : public Component, public uart::UARTDevice {
   public:  
-    HeatMeterMbus() : PollingComponent(10000), kamstrup(this) {}
+    HeatMeterMbus() : kamstrup(this) {}
     
     HEATMETERMBUS_METER_SENSOR(heat_energy_e1)
     HEATMETERMBUS_METER_SENSOR(volume_v1)
@@ -67,8 +67,10 @@ class HeatMeterMbus : public PollingComponent, public uart::UARTDevice {
     void dump_config() override;
     float get_setup_priority() const override;
 
-    void poep();
-    
+    void enableMbus();
+    void disableMbus();
+    void readMbus();
+
   private:
     Pwm pwm;
     Kamstrup303WA02 kamstrup;
