@@ -67,7 +67,11 @@ namespace esphome
 
       while (true)
       {
-        const bool shouldReadNow = heatMeterMbus->updateRequested;
+        const bool shouldReadNow = heatMeterMbus->updateRequested && heatMeterMbus->mbusEnabled;
+        if (heatMeterMbus->updateRequested && !heatMeterMbus->mbusEnabled)
+        {
+          ESP_LOGD(TAG, "Read Mbus requested but Mbus disabled");
+        }
         if (shouldReadNow)
         {
           // Let's request data, and wait for its results :-)
@@ -247,17 +251,18 @@ namespace esphome
     void HeatMeterMbus::enableMbus() {
       ESP_LOGI(TAG, "Enabling Mbus");
       pwm.enable();
+      mbusEnabled = true;
     }
 
     void HeatMeterMbus::disableMbus() {
       ESP_LOGI(TAG, "Disabling Mbus");
       pwm.disable();
+      mbusEnabled = false;
     }
 
     void HeatMeterMbus::readMbus()
     {
       updateRequested = true;
-      ESP_LOGI(TAG, "readMbus()");
     }
 
     float HeatMeterMbus::get_setup_priority() const

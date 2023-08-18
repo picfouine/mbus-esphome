@@ -73,7 +73,8 @@ class HeatMeterMbus : public Component, public uart::UARTDevice {
   private:
     Pwm pwm;
     Kamstrup303WA02 kamstrup;
-    bool updateRequested {false};
+    bool updateRequested { false };
+    bool mbusEnabled { true };
 
     static void read_mbus_task_loop(void* params);
     static esp_err_t initializeAndEnablePwm(Pwm* pwm);
