@@ -50,10 +50,10 @@ uart:
   stop_bits: 1
 
 interval:
-  - interval: 2sec
+  - interval: 8sec
     then:
       - lambda: |-
-            id(heatmetermbus).poep();
+            id(heatmetermbus).readMbus();
 
 sensor:
   - platform: HeatMeterMbus
