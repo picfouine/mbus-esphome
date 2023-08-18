@@ -49,6 +49,19 @@ uart:
   parity: EVEN
   stop_bits: 1
 
+switch:
+  - platform: template
+    name: MbusSwitch
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
+    id: readmbus
+    turn_on_action:
+    - lambda: |-
+        id(heatmetermbus).enableMbus();
+    turn_off_action:
+    - lambda: |-
+        id(heatmetermbus).disableMbus();
+
 interval:
   - interval: 8sec
     then:
