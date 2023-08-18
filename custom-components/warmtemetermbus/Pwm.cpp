@@ -23,7 +23,8 @@ namespace esphome
         return configResult;
       }
 
-      uint32_t dutyCycleValue = floor((1 << 10) * dutyCycle);
+      this->dutyCycle = dutyCycle;
+      uint32_t dutyCycleValue = floor((1 << 10) * this->dutyCycle);
       channelConfig.gpio_num = gpioPin;
       channelConfig.speed_mode = LEDC_HIGH_SPEED_MODE;
       channelConfig.channel = LEDC_CHANNEL_0;
@@ -38,11 +39,20 @@ namespace esphome
 
     esp_err_t Pwm::enable()
     {
+      uint32_t dutyCycleValue = floor((1 << 10) * this->dutyCycle);
+      channelConfig.duty = dutyCycleValue;
+      return ledc_channel_config(&channelConfig);
+    }
+
+    esp_err_t Pwm::disable()
+    {
+      channelConfig.duty = 0;
       return ledc_channel_config(&channelConfig);
     }
 
     esp_err_t Pwm::updateDutyCycle(float dutyCycle)
     {
+      this->dutyCycle = dutyCycle;
       uint32_t dutyCycleValue = floor((1 << 10) * dutyCycle);
       esp_err_t configResult = ledc_set_duty(channelConfig.speed_mode, channelConfig.channel, dutyCycleValue);
       if (ESP_OK != configResult)
