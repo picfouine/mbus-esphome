@@ -63,7 +63,6 @@ class HeatMeterMbus : public Component, public uart::UARTDevice {
     HEATMETERMBUS_METER_BINARYSENSOR(info_v1_greater_than_qs_more_than_hour)
 
     void setup() override;
-    void update() override;
     void dump_config() override;
     float get_setup_priority() const override;
 
