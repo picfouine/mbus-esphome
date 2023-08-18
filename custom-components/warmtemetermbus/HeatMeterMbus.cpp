@@ -16,6 +16,11 @@ namespace esphome
     bool pwmInitialized { false };
     bool pwmEnabled { false };
 
+    void HeatMeterMbus::poep()
+    {
+      ESP_LOGI(TAG, "Poep!");
+    }
+
     void HeatMeterMbus::setup()
     {
       if (ESP_OK != initializeAndEnablePwm(&pwm))

@@ -67,6 +67,8 @@ class HeatMeterMbus : public PollingComponent, public uart::UARTDevice {
     void dump_config() override;
     float get_setup_priority() const override;
 
+    void poep();
+    
   private:
     Pwm pwm;
     Kamstrup303WA02 kamstrup;

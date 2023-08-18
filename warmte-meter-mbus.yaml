@@ -49,8 +49,15 @@ uart:
   parity: EVEN
   stop_bits: 1
 
+interval:
+  - interval: 2sec
+    then:
+      - lambda: |-
+            id(heatmetermbus).poep();
+
 sensor:
   - platform: HeatMeterMbus
+    id: heatmetermbus
     heat_energy_e1:
       name: heat_energy_e1
     volume_v1:
