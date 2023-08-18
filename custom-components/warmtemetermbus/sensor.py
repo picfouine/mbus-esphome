@@ -26,7 +26,7 @@ DEPENDENCIES = ["uart"]
 AUTO_LOAD = ["binary_sensor"]
 
 heatmetermbus_ns = cg.esphome_ns.namespace("warmtemetermbus")
-heatmetermbus = heatmetermbus_ns.class_("HeatMeterMbus", cg.PollingComponent, uart.UARTDevice)
+heatmetermbus = heatmetermbus_ns.class_("HeatMeterMbus", cg.Component, uart.UARTDevice)
 binary_sensor_ns = cg.esphome_ns.namespace("binary_sensor")
 
 CONF_HEAT_ENERGY_E1 = "heat_energy_e1"
