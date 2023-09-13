@@ -11,7 +11,6 @@ CONF_HEATMETERMBUS_ID = 'heatmeter_mbus_id'
 CONF_INDEX = 'index'
 
 CONFIG_SCHEMA = sensor.sensor_schema(MbusSensor).extend({
-    # cv.Required(CONF_ID): cv.declare_id(MbusSensor),
     cv.GenerateID(CONF_HEATMETERMBUS_ID): cv.use_id(HeatMeterMbus),
     cv.Required(CONF_INDEX): int
 })

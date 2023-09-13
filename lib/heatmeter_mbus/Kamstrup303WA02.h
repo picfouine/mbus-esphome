@@ -58,9 +58,13 @@ class Kamstrup303WA02 {
     } DataBlock;
 
     typedef struct MbusMeterData {
-      MbusMeterData() {}
-      ~MbusMeterData();
-      std::vector<DataBlock*>* data_blocks { nullptr };
+      public:
+        MbusMeterData() {}
+        ~MbusMeterData();
+        std::vector<DataBlock*>* data_blocks { nullptr };
+
+      private:
+        void deallocate_data_blocks();
     } MbusMeterData;
 
     static const uint8_t FIXED_DATA_HEADER_SIZE = 12;
@@ -103,6 +107,7 @@ class Kamstrup303WA02 {
         const uint8_t C_FIELD_FUNCTION_SND_NKE = 0x0;
         const uint8_t C_FIELD_FUNCTION_REQ_UD2 = 0xB;
 
+        bool initialize_meter(const uint8_t address);
         bool parse_long_frame_response(LongFrame* longFrame);
         bool read_next_byte(uint8_t* received_byte);
     };

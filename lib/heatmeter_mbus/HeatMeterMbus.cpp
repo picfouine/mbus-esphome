@@ -6,7 +6,7 @@
 #include "HeatMeterMbus.h"
 #include "IMbusSensor.h"
 #include "Kamstrup303WA02.h"
-#include "EspArduinoUartInterface.h"
+#include "Esp32ArduinoUartInterface.h"
 
 using namespace std; 
 
@@ -20,7 +20,7 @@ namespace esphome
     bool pwmEnabled { false };
 
     HeatMeterMbus::HeatMeterMbus() {
-      EspArduinoUartInterface *uart_interface = new EspArduinoUartInterface(this);
+      Esp32ArduinoUartInterface *uart_interface = new Esp32ArduinoUartInterface(this);
       this->kamstrup = new Kamstrup303WA02(uart_interface);
     }
 
@@ -30,6 +30,7 @@ namespace esphome
       if (ESP_OK != initializeAndEnablePwm(&pwm))
       {
         ESP_LOGE(TAG, "Error initializing and enabling PWM");
+        return;
       }
 
       xTaskCreatePinnedToCore(HeatMeterMbus::read_mbus_task_loop,
@@ -128,20 +129,20 @@ namespace esphome
       this->have_dumped_data_blocks_ = true;
     }
 
-    void HeatMeterMbus::enableMbus() {
+    void HeatMeterMbus::enable_mbus() {
       ESP_LOGI(TAG, "Enabling Mbus");
       pwm.enable();
       mbusEnabled = true;
     }
 
-    void HeatMeterMbus::disableMbus() {
+    void HeatMeterMbus::disable_mbus() {
       ESP_LOGI(TAG, "Disabling Mbus");
       pwm.disable();
       mbusEnabled = false;
       this->have_dumped_data_blocks_ = false;
     }
 
-    void HeatMeterMbus::readMbus()
+    void HeatMeterMbus::read_mbus()
     {
       updateRequested = true;
     }

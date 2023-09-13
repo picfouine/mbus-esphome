@@ -1,6 +1,6 @@
 substitutions:
-  device_name: warmte-meter-mbus
-  friendly_name: MBus
+  device_name: warmte-meter-mbus-v-1-2
+  friendly_name: MBus v1.2
   time_timezone: "Europe/Amsterdam"
 
 esphome:
@@ -15,11 +15,11 @@ esp32:
 external_components:
   - source:
       type: local
-      path: custom_components
+      path: lib
     
 # Enable logging
 logger:
-  baud_rate: 0
+  # baud_rate: 115200
   level: INFO 
   logs:
     sensor: INFO
@@ -27,23 +27,23 @@ logger:
 
 # Enable Home Assistant API
 api:
-  encryption:
-    key: "PsKaCvrdD8AjEdWsv7b32V2KGBf7kicJAqhE+/zU1H8="
+#   encryption:
+#     key: "PsKaCvrdD8AjEdWsv7b32V2KGBf7kicJAqhE+/zU1H8="
 
-ota:
-  password: "e5264b2500ef5b812b82d4342c5a60f6"
+# ota:
+#   password: "e5264b2500ef5b812b82d4342c5a60f6"
 
 wifi:
 # Next two lines for building locally with ESPHome
-#  ssid: "Unicorn"
-#  password: "?" #password...
+  ssid: "Unicorn"
+  password: "?" #password...
 # Next two lines for building on Home Assistant OS, ESPHome
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
+#  ssid: !secret wifi_ssid
+#  password: !secret wifi_password
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "Warmte-Meter-Mbus"
+    ssid: "Warmte-Meter-Mbus-v-1-2"
     password: "MHcfSqvZc6fe"
 
 uart:
@@ -66,10 +66,16 @@ switch:
     id: readmbus
     turn_on_action:
     - lambda: |-
-        id(heatmetermbus).enableMbus();
+        id(heatmetermbus).enable_mbus();
     turn_off_action:
     - lambda: |-
-        id(heatmetermbus).disableMbus();
+        id(heatmetermbus).disable_mbus();
+
+button:
+  - platform: restart
+    name: "${friendly_name} Restart"
+  - platform: factory_reset
+    name: "${friendly_name} Factory Reset"    
 
 button:
   - platform: restart
@@ -81,7 +87,7 @@ interval:
   - interval: 8sec
     then:
       - lambda: |-
-            id(heatmetermbus).readMbus();
+            id(heatmetermbus).read_mbus();
 
 heatmeter_mbus:
   id: heatmetermbus
@@ -166,98 +172,3 @@ text_sensor:
       name: "Device Info"
     reset_reason:
       name: "Reset Reason"
-
-# sensor:
-#   - platform: heatmeter_mbus
-#     id: heatmetermbus
-#     heat_energy_e1:
-#       name: heat_energy_e1
-#     volume_v1:
-#       name: volume_v1
-#     energy_e8_inlet:
-#       name: energy_e8_inlet
-#     energy_e9_outlet:
-#       name: energy_e9_outlet
-#     operating_hours:
-#       name: operating_hours
-#     error_hour_counter:
-#       name: error_hour_counter
-#     t1_actual:
-#       name: t1_actual
-#     t2_actual:
-#       name: t2_actual
-#     t1_minus_t2:
-#       name: t1_minus_t2
-#     power_e1_over_e3:
-#       name: power_e1_over_e3
-#     power_max_month:
-#       name: power_max_month
-#     flow_v1_actual:
-#       name: flow_v1_actual
-#     flow_v1_max_month:
-#       name: flow_v1_max_month
-#     info_no_voltage_supply:
-#       name: info_no_voltage_supply
-#     info_t1_above_range_or_disconnected:
-#       name: info_t1_above_range_or_disconnected
-#     info_t2_above_range_or_disconnected:
-#       name: info_t2_above_range_or_disconnected
-#     info_t1_below_range_or_shorted:
-#       name: info_t1_below_range_or_shorted
-#     info_t2_below_range_or_shorted:
-#       name: info_t2_below_range_or_shorted
-#     info_invalid_temp_difference:
-#       name: info_invalid_temp_difference
-#     info_v1_air:
-#       name: info_v1_air
-#     info_v1_wrong_flow_direction:
-#       name: info_v1_wrong_flow_direction
-#     info_v1_greater_than_qs_more_than_hour:
-#       name: info_v1_greater_than_qs_more_than_hour
-#     heat_energy_e1_old:
-#       name: heat_energy_e1_old
-#     volume_v1_old:
-#       name: volume_v1_old
-#     energy_e8_inlet_old:
-#       name: energy_e8_inlet_old
-#     energy_e9_outlet_old:
-#       name: energy_e9_outlet_old
-#     power_max_year_old:
-#       name: power_max_year_old
-#     flow_v1_max_year_old:
-#       name: flow_v1_max_year_old
-#     log_year:
-#       name: log_year
-#       id: log_year
-#     log_month:
-#       name: log_month
-#       id: log_month
-#     log_day:
-#       name: log_day
-#       id: log_day
-#     bus_voltage:
-#       name: bus_voltage
-
-# text_sensor:
-#   - platform: template
-#     id: log_date
-#     name: log_date
-#     lambda: |-
-#       if (!id(log_day).has_state() || !id(log_month).has_state() || !id(log_year).has_state()) {
-#         std::string notAvailableString("date not available");
-#         return notAvailableString;
-#       } else {
-#         char stringBuffer[11];
-#         for (int i = 0; i < 11; ++i) {
-#           stringBuffer[i] = '\0';
-#         }
-#         sprintf(
-#           stringBuffer, 
-#           "%.0f-%.0f-20%.0f", 
-#           round(id(log_day).state), 
-#           round(id(log_month).state), 
-#           round(id(log_year).state)
-#         );
-#         std::string dateString(stringBuffer);
-#         return dateString;
-#       }

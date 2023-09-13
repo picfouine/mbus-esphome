@@ -14,16 +14,20 @@ static const char * TAG {"Kamstrup303WA02"};
 
 Kamstrup303WA02::MbusMeterData::~MbusMeterData() {
   if (this->data_blocks != nullptr) {
-    for (auto data_block : *data_blocks) {
-      if (data_block->binary_data != nullptr) {
-        delete[] data_block->binary_data;
-        data_block->binary_data = nullptr;
-      }
-      delete data_block;
-    }
-    delete data_blocks;
-    data_blocks = nullptr;
+    this->deallocate_data_blocks();
   }
+}
+
+void Kamstrup303WA02::MbusMeterData::deallocate_data_blocks() {
+  for (auto data_block : *(this->data_blocks)) {
+    if (data_block->binary_data != nullptr) {
+      delete[] data_block->binary_data;
+      data_block->binary_data = nullptr;
+    }
+    delete data_block;
+  }
+  delete this->data_blocks;
+  this->data_blocks = nullptr;
 }
 
 Kamstrup303WA02::Kamstrup303WA02(UartInterface* uart_interface) {
@@ -37,6 +41,10 @@ bool Kamstrup303WA02::read_meter_data(Kamstrup303WA02::MbusMeterData* meter_data
   DataLinkLayer::LongFrame response_to_req_ud2;
   if (!this->data_link_layer_->req_ud2(address, &response_to_req_ud2)) {
     ESP_LOGI(TAG, "req_ud2: fail");
+    if (response_to_req_ud2.user_data != nullptr) {
+      // Deallocate user_data, allocated by data link layer
+      delete[] response_to_req_ud2.user_data;
+    }
     return false;
   }
 
@@ -71,25 +79,14 @@ bool Kamstrup303WA02::read_meter_data(Kamstrup303WA02::MbusMeterData* meter_data
   return success;
 }
 
-      // // Bits 0-4: day
-      // // Bits 8-11: month
-      // // Bits 5-7 & 12-15: year
-      // const uint16_t * const dateTimeBits {reinterpret_cast<uint16_t*>(dataRecord.data)};
-      // data->dateTimeLogged.day = *dateTimeBits & 0x001F;
-      // data->dateTimeLogged.month = (*dateTimeBits & 0x0F00) >> 8;
-      // data->dateTimeLogged.year = ((*dateTimeBits & 0xF000) >> 9) | ((*dateTimeBits & 0x00E0) >> 5);
-
 bool Kamstrup303WA02::DataLinkLayer::req_ud2(const uint8_t address, LongFrame* response_frame) {
   bool success { false };
 
-  if (!this->meter_is_initialized_) {
-    if (this->snd_nke(address)) {
-      this->meter_is_initialized_ = true;
-    } else {
-      ESP_LOGI(TAG, "Could not initialize meter");
-      return false;
-    }
+  if (!this->meter_is_initialized_ && !this->initialize_meter(address)) {
+    ESP_LOGI(TAG, "Could not initialize meter");
+    return false;
   }
+
   const uint8_t fcb = this->next_req_ud2_fcb_ ? 1u : 0u;
   const uint8_t c = (1 << C_FIELD_BIT_DIRECTION) | (fcb << C_FIELD_BIT_FCB) | (1 << C_FIELD_BIT_FCV) | C_FIELD_FUNCTION_REQ_UD2;
   bool received_response_to_request = this->try_send_short_frame(c, address);
@@ -104,6 +101,16 @@ bool Kamstrup303WA02::DataLinkLayer::req_ud2(const uint8_t address, LongFrame* r
     this->next_req_ud2_fcb_ = !this->next_req_ud2_fcb_;
   }
   return success;
+}
+
+bool Kamstrup303WA02::DataLinkLayer::initialize_meter(const uint8_t address) {
+  if (this->snd_nke(address)) {
+    this->meter_is_initialized_ = true;
+    return true;
+  } else {
+    this->meter_is_initialized_ = false;
+    return false;
+  }
 }
 
 bool Kamstrup303WA02::DataLinkLayer::parse_long_frame_response(Kamstrup303WA02::DataLinkLayer::LongFrame* long_frame) {
@@ -192,7 +199,7 @@ bool Kamstrup303WA02::DataLinkLayer::parse_long_frame_response(Kamstrup303WA02::
 
 bool Kamstrup303WA02::DataLinkLayer::read_next_byte(uint8_t* received_byte) {
   const uint32_t time_before_starting_to_wait { millis() };
-	while (this->uart_interface_->available() == 0) {
+  while (this->uart_interface_->available() == 0) {
     delay(1);
     if (millis() - time_before_starting_to_wait > 150) {
       ESP_LOGE(TAG, "No data available after timeout");
@@ -265,11 +272,12 @@ void Kamstrup303WA02::DataLinkLayer::send_short_frame(const uint8_t c, const uin
   delay(1);
 }
 
-// TODO: rename to wait_for_incoming_telegram
 bool Kamstrup303WA02::DataLinkLayer::wait_for_incoming_data() {
   bool dataReceived {false};
   // 330 bits + 50ms = 330 * 1000 / 2400 + 50 ms = 187,5 ms
   // Wait at least 11 bit times = 5ms
+  // For some reason waiting 5ms, then try until 190ms passed, does not work.
+  // Waiting for 138ms initially and then another 500ms at max, does work.
   delay(138);
   for (uint16_t i {0}; i < 500; ++i) {
     if (this->uart_interface_->available() > 0) {

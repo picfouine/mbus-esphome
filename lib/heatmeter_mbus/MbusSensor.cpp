@@ -28,6 +28,7 @@ void MbusSensor::transform_and_publish(Kamstrup303WA02::DataBlock* data_block) {
       break;
     }
     default:
+      ESP_LOGI(TAG, "Unsupported data length");
       break;
   }
 }

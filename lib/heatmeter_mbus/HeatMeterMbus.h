@@ -27,9 +27,9 @@ class HeatMeterMbus : public Component, public uart::UARTDevice {
       this->sensors_.push_back(sensor);
       return sensor;
     }
-    void enableMbus();
-    void disableMbus();
-    void readMbus();
+    void enable_mbus();
+    void disable_mbus();
+    void read_mbus();
 
   private:
     uint8_t address { 0x01 };
