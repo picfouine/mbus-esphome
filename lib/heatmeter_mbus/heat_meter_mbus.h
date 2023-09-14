@@ -16,34 +16,34 @@ namespace esphome {
 namespace warmtemetermbus {
 
 class HeatMeterMbus : public Component, public uart::UARTDevice {
-  public:  
-    HeatMeterMbus();
-    
-    void setup() override;
-    void dump_config() override;
-    float get_setup_priority() const override;
-    
-    MbusSensor* create_sensor(uint8_t index) {
-      MbusSensor* sensor = new MbusSensor(index);
-      this->sensors_.push_back(sensor);
-      return sensor;
-    }
-    void enable_mbus();
-    void disable_mbus();
-    void read_mbus();
+ public:  
+  HeatMeterMbus();
+  
+  void setup() override;
+  void dump_config() override;
+  float get_setup_priority() const override;
+  
+  MbusSensor* create_sensor(uint8_t index) {
+    MbusSensor* sensor = new MbusSensor(index);
+    this->sensors_.push_back(sensor);
+    return sensor;
+  }
+  void enable_mbus();
+  void disable_mbus();
+  void read_mbus();
 
-  private:
-    uint8_t address { 0x01 };
-    bool have_dumped_data_blocks_ { false };
-    Pwm pwm;
-    Kamstrup303WA02* kamstrup;
-    bool update_requested { false };
-    bool mbus_enabled { true };
-    std::vector<IMbusSensor*> sensors_;
+ private:
+  uint8_t address { 0x01 };
+  bool have_dumped_data_blocks_ { false };
+  Pwm pwm;
+  Kamstrup303WA02* kamstrup;
+  bool update_requested { false };
+  bool mbus_enabled { true };
+  std::vector<IMbusSensor*> sensors_;
 
-    static void read_mbus_task_loop(void* params);
-    void dump_data_blocks(Kamstrup303WA02::MbusMeterData* meter_data);
-    static esp_err_t initialize_and_enable_pwm(Pwm* pwm);
+  static void read_mbus_task_loop(void* params);
+  void dump_data_blocks(Kamstrup303WA02::MbusMeterData* meter_data);
+  static esp_err_t initialize_and_enable_pwm(Pwm* pwm);
 };
 
 } //namespace warmtemetermbus

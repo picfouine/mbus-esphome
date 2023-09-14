@@ -9,7 +9,7 @@ namespace esphome {
 namespace warmtemetermbus {
 
 class Pwm {
-public:  
+ public:  
   Pwm() {}
   ~Pwm() {}
 
@@ -18,7 +18,7 @@ public:
   esp_err_t disable();
   esp_err_t update_duty_cycle(float duty_cycle);
   
-private:
+ private:
   Pwm(const Pwm& pwm);
 
   float duty_cycle_ { 85.0f };

@@ -10,31 +10,31 @@ namespace esphome {
 namespace warmtemetermbus {
 
 class Esp32ArduinoUartInterface : public UartInterface {
-  public:
-    Esp32ArduinoUartInterface(uart::UARTDevice* uart_device) : uart_device_(uart_device) {}
+ public:
+  Esp32ArduinoUartInterface(uart::UARTDevice* uart_device) : uart_device_(uart_device) {}
 
-    virtual bool read_byte(uint8_t* data) {
-      return this->uart_device_->read_byte(data);
-    }
+  virtual bool read_byte(uint8_t* data) {
+    return this->uart_device_->read_byte(data);
+  }
 
-    virtual bool read_array(uint8_t* data, size_t len) {
-      return this->uart_device_->read_array(data, len);
-    }
+  virtual bool read_array(uint8_t* data, size_t len) {
+    return this->uart_device_->read_array(data, len);
+  }
 
-    virtual void write_array(const uint8_t* data, size_t len) {
-      this->uart_device_->write_array(data, len);
-    }
+  virtual void write_array(const uint8_t* data, size_t len) {
+    this->uart_device_->write_array(data, len);
+  }
 
-    virtual int available() const {
-      return this->uart_device_->available();
-    }
+  virtual int available() const {
+    return this->uart_device_->available();
+  }
 
-    virtual void flush() {
-      this->uart_device_->flush();
-    }
+  virtual void flush() {
+    this->uart_device_->flush();
+  }
   
-  protected:
-    uart::UARTDevice* uart_device_;
+ protected:
+  uart::UARTDevice* uart_device_;
 };
 
 } //namespace warmtemetermbus
