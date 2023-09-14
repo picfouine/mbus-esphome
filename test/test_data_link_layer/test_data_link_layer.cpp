@@ -13,45 +13,45 @@ void setUp(void) {}
 void tearDown(void) {}
 
 void test_data_link_layer_calculate_checksum(void) {
-  FakeUartInterface fakeUartInterface;
-  TestableDataLinkLayer dataLinkLayer(&fakeUartInterface);
+  FakeUartInterface fake_uart_interface;
+  TestableDataLinkLayer data_link_layer(&fake_uart_interface);
   
   uint8_t *data = new uint8_t[2] { 0, 0 };
-  TEST_ASSERT_EQUAL(0, dataLinkLayer.call_calculate_checksum(data, 2));
+  TEST_ASSERT_EQUAL(0, data_link_layer.call_calculate_checksum(data, 2));
   delete[] data;
 
   data = new uint8_t[2] { 0, 1 };
-  TEST_ASSERT_EQUAL(1, dataLinkLayer.call_calculate_checksum(data, 2));
+  TEST_ASSERT_EQUAL(1, data_link_layer.call_calculate_checksum(data, 2));
   delete[] data;
   data = new uint8_t[2] { 1, 0 };
-  TEST_ASSERT_EQUAL(1, dataLinkLayer.call_calculate_checksum(data, 2));
+  TEST_ASSERT_EQUAL(1, data_link_layer.call_calculate_checksum(data, 2));
   delete[] data;
   
   data = new uint8_t[2] { 1, 1 };
-  TEST_ASSERT_EQUAL(2, dataLinkLayer.call_calculate_checksum(data, 2));
+  TEST_ASSERT_EQUAL(2, data_link_layer.call_calculate_checksum(data, 2));
   delete[] data;
   
   data = new uint8_t[2] { 0, 255 };
-  TEST_ASSERT_EQUAL(255, dataLinkLayer.call_calculate_checksum(data, 2));
+  TEST_ASSERT_EQUAL(255, data_link_layer.call_calculate_checksum(data, 2));
   delete[] data;
   data = new uint8_t[2] { 1, 255 };
-  TEST_ASSERT_EQUAL(0, dataLinkLayer.call_calculate_checksum(data, 2));
+  TEST_ASSERT_EQUAL(0, data_link_layer.call_calculate_checksum(data, 2));
   delete[] data;
   data = new uint8_t[2] { 255, 1 };
-  TEST_ASSERT_EQUAL(0, dataLinkLayer.call_calculate_checksum(data, 2));
+  TEST_ASSERT_EQUAL(0, data_link_layer.call_calculate_checksum(data, 2));
   delete[] data;
   data = new uint8_t[2] { 255, 2 };
-  TEST_ASSERT_EQUAL(1, dataLinkLayer.call_calculate_checksum(data, 2));
+  TEST_ASSERT_EQUAL(1, data_link_layer.call_calculate_checksum(data, 2));
   delete[] data;
 
   data = new uint8_t[5] { 8, 128, 200, 0, 12 };
-  TEST_ASSERT_EQUAL(92, dataLinkLayer.call_calculate_checksum(data, 5));
+  TEST_ASSERT_EQUAL(92, data_link_layer.call_calculate_checksum(data, 5));
   delete[] data;
 }
 
 void test_data_link_layer_calculate_checksum_with_long_frame() {
-  FakeUartInterface fakeUartInterface;
-  TestableDataLinkLayer dataLinkLayer(&fakeUartInterface);
+  FakeUartInterface fake_uart_interface;
+  TestableDataLinkLayer data_link_layer(&fake_uart_interface);
 
   Kamstrup303WA02::DataLinkLayer::LongFrame long_frame {
     .l = 6,
@@ -61,7 +61,7 @@ void test_data_link_layer_calculate_checksum_with_long_frame() {
     .check_sum = 0x00,
     .user_data = new uint8_t[3] { 0x66, 0x77, 0x88 }
   };
-  const uint8_t actual_checksum = dataLinkLayer.call_calculate_checksum(&long_frame);
+  const uint8_t actual_checksum = data_link_layer.call_calculate_checksum(&long_frame);
   delete[] long_frame.user_data;
   TEST_ASSERT_EQUAL(0x33, actual_checksum);
 }
@@ -101,13 +101,13 @@ void test_data_link_layer_try_send_short_frame_reply_to_first_request(void) {
                     0                           // core
   );
 
-  TestableDataLinkLayer dataLinkLayer(&uart_interface);
-  dataLinkLayer.set_meter_is_initialized(true);
+  TestableDataLinkLayer data_link_layer(&uart_interface);
+  data_link_layer.set_meter_is_initialized(true);
   
   // Act
   const uint8_t c = 0x40;
   const uint8_t a = 0x54;
-  const bool actual_return_value = dataLinkLayer.call_try_send_short_frame(c, a);
+  const bool actual_return_value = data_link_layer.call_try_send_short_frame(c, a);
 
   // Assert
   TEST_ASSERT_TRUE(actual_return_value);
@@ -162,13 +162,13 @@ void test_data_link_layer_try_send_short_frame_reply_to_second_request(void) {
                     0                           // core
   );
 
-  TestableDataLinkLayer dataLinkLayer(&uart_interface);
-  dataLinkLayer.set_meter_is_initialized(true);
+  TestableDataLinkLayer data_link_layer(&uart_interface);
+  data_link_layer.set_meter_is_initialized(true);
 
   // Act
   const uint8_t c = 0x40;
   const uint8_t a = 0x54;
-  const bool actual_return_value = dataLinkLayer.call_try_send_short_frame(c, a);
+  const bool actual_return_value = data_link_layer.call_try_send_short_frame(c, a);
 
   // Assert
   TEST_ASSERT_TRUE(actual_return_value);
@@ -219,12 +219,12 @@ void test_data_link_layer_snd_nke_correct_response(void) {
                     0                           // core
   );
 
-  TestableDataLinkLayer dataLinkLayer(&uart_interface);
-  dataLinkLayer.set_meter_is_initialized(true);
+  TestableDataLinkLayer data_link_layer(&uart_interface);
+  data_link_layer.set_meter_is_initialized(true);
 
   // Act
   const uint8_t a = 0xB2;
-  const bool actual_return_value = dataLinkLayer.snd_nke(a);
+  const bool actual_return_value = data_link_layer.snd_nke(a);
 
   // Assert
   TEST_ASSERT_TRUE(actual_return_value);
@@ -245,7 +245,7 @@ void test_data_link_layer_snd_nke_correct_response(void) {
   TEST_ASSERT_EQUAL(0x16, actual_written_array.data[4]);
 
   // Test the next-to-use FCB bit for req_ud2
-  TEST_ASSERT_TRUE(dataLinkLayer.get_next_req_ud2_fcb());
+  TEST_ASSERT_TRUE(data_link_layer.get_next_req_ud2_fcb());
 }
 
 void test_data_link_layer_snd_nke_incorrect_response(void) {
@@ -278,12 +278,12 @@ void test_data_link_layer_snd_nke_incorrect_response(void) {
                     0                           // core
   );
 
-  TestableDataLinkLayer dataLinkLayer(&uart_interface);
-  dataLinkLayer.set_meter_is_initialized(true);
+  TestableDataLinkLayer data_link_layer(&uart_interface);
+  data_link_layer.set_meter_is_initialized(true);
 
   // Act
   const uint8_t a = 0xB2;
-  const bool actual_return_value = dataLinkLayer.snd_nke(a);
+  const bool actual_return_value = data_link_layer.snd_nke(a);
 
   // Assert
   TEST_ASSERT_FALSE(actual_return_value);
@@ -335,13 +335,13 @@ void test_data_link_layer_req_ud2_check_sending_correct_data(void) {
                     0                           // core
   );
 
-  TestableDataLinkLayer dataLinkLayer(&uart_interface);
-  dataLinkLayer.set_meter_is_initialized(true);
+  TestableDataLinkLayer data_link_layer(&uart_interface);
+  data_link_layer.set_meter_is_initialized(true);
 
   // Act
   const uint8_t a = 0xB2;
   Kamstrup303WA02::DataLinkLayer::LongFrame response_frame;
-  const bool actual_return_value = dataLinkLayer.req_ud2(a, &response_frame);
+  const bool actual_return_value = data_link_layer.req_ud2(a, &response_frame);
 
   // Assert
   // Check the sent data: should be a short frame!
@@ -397,13 +397,13 @@ void test_data_link_layer_req_ud2_check_snd_nke_to_init(void) {
                     0                           // core
   );
 
-  TestableDataLinkLayer dataLinkLayer(&uart_interface);
-  dataLinkLayer.set_meter_is_initialized(false);
+  TestableDataLinkLayer data_link_layer(&uart_interface);
+  data_link_layer.set_meter_is_initialized(false);
 
   // Act
   const uint8_t a = 0xB2;
   Kamstrup303WA02::DataLinkLayer::LongFrame response_frame;
-  const bool actual_return_value = dataLinkLayer.req_ud2(a, &response_frame);
+  const bool actual_return_value = data_link_layer.req_ud2(a, &response_frame);
 
   // Assert
   // Check the sent data: should be a short frame!
@@ -450,13 +450,13 @@ void test_data_link_layer_req_ud2_correct_response(void) {
                     0                           // core
   );
 
-  TestableDataLinkLayer dataLinkLayer(&uart_interface);
-  dataLinkLayer.set_meter_is_initialized(true);
+  TestableDataLinkLayer data_link_layer(&uart_interface);
+  data_link_layer.set_meter_is_initialized(true);
 
   // Act
   const uint8_t a = 0xB2;
   Kamstrup303WA02::DataLinkLayer::LongFrame response_frame;
-  const bool actual_return_value = dataLinkLayer.req_ud2(a, &response_frame);
+  const bool actual_return_value = data_link_layer.req_ud2(a, &response_frame);
 
   // Assert
   TEST_ASSERT_TRUE(actual_return_value);
@@ -474,13 +474,13 @@ void test_data_link_layer_req_ud2_correct_response(void) {
 void test_data_link_layer_req_ud2_no_response(void) {
   // Arrange
   FakeUartInterface uart_interface;
-  TestableDataLinkLayer dataLinkLayer(&uart_interface);
-  dataLinkLayer.set_meter_is_initialized(true);
+  TestableDataLinkLayer data_link_layer(&uart_interface);
+  data_link_layer.set_meter_is_initialized(true);
 
   // Act
   const uint8_t a = 0xB2;
   Kamstrup303WA02::DataLinkLayer::LongFrame response_frame;
-  const bool actual_return_value = dataLinkLayer.req_ud2(a, &response_frame);
+  const bool actual_return_value = data_link_layer.req_ud2(a, &response_frame);
 
   // Assert
   TEST_ASSERT_FALSE(actual_return_value);
@@ -506,13 +506,13 @@ void test_data_link_layer_req_ud2_incorrect_a_field(void) {
                     0                           // core
   );
 
-  TestableDataLinkLayer dataLinkLayer(&uart_interface);
-  dataLinkLayer.set_meter_is_initialized(true);
+  TestableDataLinkLayer data_link_layer(&uart_interface);
+  data_link_layer.set_meter_is_initialized(true);
 
   // Act
   const uint8_t a = 0xB2;
   Kamstrup303WA02::DataLinkLayer::LongFrame response_frame;
-  const bool actual_return_value = dataLinkLayer.req_ud2(a, &response_frame);
+  const bool actual_return_value = data_link_layer.req_ud2(a, &response_frame);
 
   // Assert
   TEST_ASSERT_FALSE(actual_return_value);
@@ -538,13 +538,13 @@ void test_data_link_layer_req_ud2_incorrect_function(void) {
                     0                           // core
   );
 
-  TestableDataLinkLayer dataLinkLayer(&uart_interface);
-  dataLinkLayer.set_meter_is_initialized(true);
+  TestableDataLinkLayer data_link_layer(&uart_interface);
+  data_link_layer.set_meter_is_initialized(true);
 
   // Act
   const uint8_t a = 0xB2;
   Kamstrup303WA02::DataLinkLayer::LongFrame response_frame;
-  const bool actual_return_value = dataLinkLayer.req_ud2(a, &response_frame);
+  const bool actual_return_value = data_link_layer.req_ud2(a, &response_frame);
 
   // Assert
   TEST_ASSERT_FALSE(actual_return_value);
@@ -570,13 +570,13 @@ void test_data_link_layer_req_ud2_incorrect_check_sum(void) {
                     0                           // core
   );
 
-  TestableDataLinkLayer dataLinkLayer(&uart_interface);
-  dataLinkLayer.set_meter_is_initialized(true);
+  TestableDataLinkLayer data_link_layer(&uart_interface);
+  data_link_layer.set_meter_is_initialized(true);
 
   // Act
   const uint8_t a = 0xB2;
   Kamstrup303WA02::DataLinkLayer::LongFrame response_frame;
-  const bool actual_return_value = dataLinkLayer.req_ud2(a, &response_frame);
+  const bool actual_return_value = data_link_layer.req_ud2(a, &response_frame);
 
   // Assert
   TEST_ASSERT_FALSE(actual_return_value);
@@ -602,13 +602,13 @@ void test_data_link_layer_req_ud2_different_l_fields(void) {
                     0                           // core
   );
 
-  TestableDataLinkLayer dataLinkLayer(&uart_interface);
-  dataLinkLayer.set_meter_is_initialized(true);
+  TestableDataLinkLayer data_link_layer(&uart_interface);
+  data_link_layer.set_meter_is_initialized(true);
 
   // Act
   const uint8_t a = 0xB2;
   Kamstrup303WA02::DataLinkLayer::LongFrame response_frame;
-  const bool actual_return_value = dataLinkLayer.req_ud2(a, &response_frame);
+  const bool actual_return_value = data_link_layer.req_ud2(a, &response_frame);
 
   // Assert
   TEST_ASSERT_FALSE(actual_return_value);

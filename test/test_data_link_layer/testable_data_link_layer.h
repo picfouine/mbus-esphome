@@ -80,7 +80,7 @@ class FakeUartInterface : public esphome::warmtemetermbus::UartInterface {
 
 class TestableDataLinkLayer : public esphome::warmtemetermbus::Kamstrup303WA02::DataLinkLayer {
   public:
-    TestableDataLinkLayer(FakeUartInterface* uartInterface) : esphome::warmtemetermbus::Kamstrup303WA02::DataLinkLayer(uartInterface) {}
+    TestableDataLinkLayer(FakeUartInterface* uart_interface) : esphome::warmtemetermbus::Kamstrup303WA02::DataLinkLayer(uart_interface) {}
 
     bool call_try_send_short_frame(const uint8_t c, const uint8_t a) {
       return this->try_send_short_frame(c, a);
@@ -113,12 +113,12 @@ typedef struct FakeUartInterfaceTaskArgs {
 
 void fake_uart_interface_task(void* param) {
   FakeUartInterfaceTaskArgs *args = reinterpret_cast<FakeUartInterfaceTaskArgs*>(param);
-  FakeUartInterface *uartInterface = args->uart_interface;
-  while (uartInterface->write_array_call_count() < args->respond_to_nth_write) {
+  FakeUartInterface *uart_interface = args->uart_interface;
+  while (uart_interface->write_array_call_count() < args->respond_to_nth_write) {
     vTaskDelay(1 / portTICK_PERIOD_MS);
   }
   delay(args->delay_in_ms);
-  uartInterface->set_fake_data_to_return(args->data_to_return, args->len_of_data_to_return);
+  uart_interface->set_fake_data_to_return(args->data_to_return, args->len_of_data_to_return);
   vTaskDelete(NULL);
 }
 
