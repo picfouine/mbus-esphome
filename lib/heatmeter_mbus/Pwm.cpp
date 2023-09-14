@@ -1,3 +1,5 @@
+#ifndef UNIT_TEST
+
 #include "Pwm.h"
 
 #include <math.h>
@@ -68,3 +70,5 @@ namespace esphome
     }
   } // namespace warmtemetermbus
 } // namespace esphome
+
+#endif // UNIT_TEST
