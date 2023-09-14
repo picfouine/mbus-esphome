@@ -1,12 +1,15 @@
+#include <vector>
+
 #include <Arduino.h>
-#include <test_includes.h>
-#include <TestableKamstrup303WA02.h>
-#include <test_data_link_layer/TestableDataLinkLayer.h>
-#include <DataBlockReader.h>
-#include <unity.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
-#include <vector>
+#include <unity.h>
+
+#include <DataBlockReader.h>
+#include <Kamstrup303WA02.h>
+#include <test_data_link_layer/TestableDataLinkLayer.h>
+#include <test_includes.h>
+#include <TestableKamstrup303WA02.h>
 
 using std::vector;
 using namespace esphome::warmtemetermbus;
