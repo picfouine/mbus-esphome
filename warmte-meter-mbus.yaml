@@ -77,12 +77,6 @@ button:
   - platform: factory_reset
     name: "${friendly_name} Factory Reset"    
 
-button:
-  - platform: restart
-    name: "${friendly_name} Restart"
-  - platform: factory_reset
-    name: "${friendly_name} Factory Reset"    
-
 interval:
   - interval: 8sec
     then:
