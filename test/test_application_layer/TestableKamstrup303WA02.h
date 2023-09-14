@@ -1,7 +1,6 @@
 #ifndef TESTABLEKAMSTRUP303WA02_H_
 #define TESTABLEKAMSTRUP303WA02_H_
 
-#include <test_includes.h>
 #include <Kamstrup303WA02.h>
 #include "../test_data_link_layer/TestableDataLinkLayer.h"
 
