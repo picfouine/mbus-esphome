@@ -30,17 +30,22 @@ namespace esphome
       if (ESP_OK != initializeAndEnablePwm(&pwm))
       {
         ESP_LOGE(TAG, "Error initializing and enabling PWM");
+        mark_failed();
         return;
       }
 
-      xTaskCreatePinnedToCore(HeatMeterMbus::read_mbus_task_loop,
-                        "mbus_task", // name
-                        10000,       // stack size (in words)
-                        this,        // input params
-                        1,           // priority
-                        nullptr,     // Handle, not needed
-                        0            // core
-      );
+      if (xTaskCreatePinnedToCore(HeatMeterMbus::read_mbus_task_loop,
+                                  "mbus_task", // name
+                                  10000,       // stack size (in words)
+                                  this,        // input params
+                                  1,           // priority
+                                  nullptr,     // Handle, not needed
+                                  0            // core
+        ) != pdPASS) {
+          ESP_LOGE(TAG, "Could not start mbus_task");
+          mark_failed();
+          return;
+      }
     }
 
     esp_err_t HeatMeterMbus::initializeAndEnablePwm(Pwm* pwm)
