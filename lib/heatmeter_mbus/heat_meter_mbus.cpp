@@ -54,11 +54,11 @@ namespace esphome
 
     esp_err_t HeatMeterMbus::initializeAndEnablePwm(Pwm* pwm)
     {
-      esp_err_t configResult = pwm->initialize(32, 18000, 0.85f);
-      if (ESP_OK != configResult)
+      esp_err_t config_result = pwm->initialize(32, 18000, 0.85f);
+      if (ESP_OK != config_result)
       {
-        ESP_LOGE(TAG, "Error initializing PWM: %d", configResult);
-        return configResult;
+        ESP_LOGE(TAG, "Error initializing PWM: %d", config_result);
+        return config_result;
       }
       else
       {
@@ -66,8 +66,8 @@ namespace esphome
         pwm_initialized = true;
       }
 
-      esp_err_t pwmEnableResult = pwm->enable();
-      if (ESP_OK != pwmEnableResult)
+      esp_err_t pwm_enable_result = pwm->enable();
+      if (ESP_OK != pwm_enable_result)
       {
         ESP_LOGE(TAG, "Error enabling PWM channel");
       }
@@ -76,17 +76,17 @@ namespace esphome
         ESP_LOGI(TAG, "Enabled PWM channel");
         pwm_enabled = true;
       }
-      return pwmEnableResult;
+      return pwm_enable_result;
     }
 
     void HeatMeterMbus::read_mbus_task_loop(void* params)
     {
-      HeatMeterMbus *heatMeterMbus = reinterpret_cast<HeatMeterMbus*>(params);
+      HeatMeterMbus *heat_meter_mbus = reinterpret_cast<HeatMeterMbus*>(params);
 
       while (true)
       {
-        bool should_read_now = heatMeterMbus->updateRequested && heatMeterMbus->mbusEnabled;
-        if (heatMeterMbus->updateRequested && !heatMeterMbus->mbusEnabled)
+        bool should_read_now = heat_meter_mbus->update_requested && heat_meter_mbus->mbus_enabled;
+        if (heat_meter_mbus->update_requested && !heat_meter_mbus->mbus_enabled)
         {
           ESP_LOGD(TAG, "Read Mbus requested but Mbus disabled");
         }
@@ -94,16 +94,16 @@ namespace esphome
         {
           // Let's request data, and wait for its results :-)
           Kamstrup303WA02::MbusMeterData mbus_meter_data;
-          bool read_is_successful { heatMeterMbus->kamstrup->read_meter_data(&mbus_meter_data, heatMeterMbus->address) };
+          bool read_is_successful { heat_meter_mbus->kamstrup->read_meter_data(&mbus_meter_data, heat_meter_mbus->address) };
 
           if (read_is_successful) {
             ESP_LOGI(TAG, "Successfully read meter data");
 
-            if (!heatMeterMbus->have_dumped_data_blocks_) {
-              heatMeterMbus->dump_data_blocks(&mbus_meter_data);
+            if (!heat_meter_mbus->have_dumped_data_blocks_) {
+              heat_meter_mbus->dump_data_blocks(&mbus_meter_data);
             }
 
-            for (auto sensor : heatMeterMbus->sensors_) {
+            for (auto sensor : heat_meter_mbus->sensors_) {
               for (auto data_block : *(mbus_meter_data.data_blocks)) {
                 if (sensor->is_right_sensor_for_data_block(data_block)) {
                   ESP_LOGI(TAG, "Found matching data block");
@@ -116,7 +116,7 @@ namespace esphome
           else {
             ESP_LOGE(TAG, "Did not successfully read meter data");
           }
-          heatMeterMbus->updateRequested = false;
+          heat_meter_mbus->update_requested = false;
         }
         else
         {
@@ -140,20 +140,20 @@ namespace esphome
 
     void HeatMeterMbus::enable_mbus() {
       ESP_LOGI(TAG, "Enabling Mbus");
-      pwm.enable();
-      mbusEnabled = true;
+      this->pwm.enable();
+      this->mbus_enabled = true;
     }
 
     void HeatMeterMbus::disable_mbus() {
       ESP_LOGI(TAG, "Disabling Mbus");
-      pwm.disable();
-      mbusEnabled = false;
+      this->pwm.disable();
+      this->mbus_enabled = false;
       this->have_dumped_data_blocks_ = false;
     }
 
     void HeatMeterMbus::read_mbus()
     {
-      updateRequested = true;
+      this->update_requested = true;
     }
 
     float HeatMeterMbus::get_setup_priority() const

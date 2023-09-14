@@ -37,8 +37,8 @@ class HeatMeterMbus : public Component, public uart::UARTDevice {
     bool have_dumped_data_blocks_ { false };
     Pwm pwm;
     Kamstrup303WA02* kamstrup;
-    bool updateRequested { false };
-    bool mbusEnabled { true };
+    bool update_requested { false };
+    bool mbus_enabled { true };
     std::vector<IMbusSensor*> sensors_;
 
     static void read_mbus_task_loop(void* params);
