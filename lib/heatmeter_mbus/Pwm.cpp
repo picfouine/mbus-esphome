@@ -1,6 +1,11 @@
-#include <driver/ledc.h>
-#include <math.h>
 #include "Pwm.h"
+
+#include <math.h>
+
+#include <driver/ledc.h>
+#include "esp_err.h"
+#include "esphome/core/datatypes.h"
+#include "hal/ledc_types.h"
 
 using namespace std; 
 

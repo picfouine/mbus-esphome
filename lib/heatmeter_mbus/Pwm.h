@@ -1,6 +1,9 @@
-#pragma once
+#ifndef PWM_H_
+#define PWM_H_
 
 #include <driver/ledc.h>
+#include "esp_err.h"
+#include "esphome/core/datatypes.h"
 
 namespace esphome {
 namespace warmtemetermbus {
@@ -25,3 +28,5 @@ private:
 
 } //namespace warmtemetermbus
 } //namespace esphome
+
+#endif // PWM_H_

@@ -5,6 +5,7 @@
 
 #include "esphome/components/uart/uart.h"
 #include "esphome/core/component.h"
+#include "esphome/core/datatypes.h"
 
 #include "IMbusSensor.h"
 #include "Kamstrup303WA02.h"
