@@ -32,15 +32,16 @@ class HeatMeterMbus : public Component, public uart::UARTDevice {
   void disable_mbus();
   void read_mbus();
 
- private:
+ protected:
   uint8_t address { 0x01 };
   bool have_dumped_data_blocks_ { false };
   Pwm pwm;
-  Kamstrup303WA02* kamstrup;
+  Kamstrup303WA02* kamstrup { nullptr };
   bool update_requested { false };
   bool mbus_enabled { true };
   std::vector<IMbusSensor*> sensors_;
 
+ private:
   static void read_mbus_task_loop(void* params);
   void dump_data_blocks(Kamstrup303WA02::MbusMeterData* meter_data);
   static esp_err_t initialize_and_enable_pwm(Pwm* pwm);

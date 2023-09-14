@@ -75,8 +75,6 @@ class Kamstrup303WA02 {
     FIXED_DATA_RESPOND = 3
   } CiSlaveToMasterCode;
 
-  static const uint8_t FIXED_DATA_HEADER_SIZE = 12;
-
   class DataLinkLayer {
    public:
     typedef struct LongFrame {
@@ -89,6 +87,7 @@ class Kamstrup303WA02 {
     } LongFrame;
     
     DataLinkLayer(UartInterface* uart_interface) : uart_interface_(uart_interface) {}
+
     bool req_ud2(const uint8_t address, LongFrame* response_frame);
     bool snd_nke(const uint8_t address);
 
@@ -105,20 +104,22 @@ class Kamstrup303WA02 {
     bool meter_is_initialized_ { false };
 
    private:
-    const uint8_t START_BYTE_SINGLE_CHARACTER = 0xE5;
-    const uint8_t START_BYTE_SHORT_FRAME = 0x10;
-    const uint8_t START_BYTE_CONTROL_AND_LONG_FRAME = 0x68;
-    const uint8_t STOP_BYTE = 0x16;
-    const uint8_t C_FIELD_BIT_DIRECTION = 6;
-    const uint8_t C_FIELD_BIT_FCB = 5;
-    const uint8_t C_FIELD_BIT_FCV = 4;
-    const uint8_t C_FIELD_FUNCTION_SND_NKE = 0x0;
-    const uint8_t C_FIELD_FUNCTION_REQ_UD2 = 0xB;
+    static const uint8_t START_BYTE_SINGLE_CHARACTER = 0xE5;
+    static const uint8_t START_BYTE_SHORT_FRAME = 0x10;
+    static const uint8_t START_BYTE_CONTROL_AND_LONG_FRAME = 0x68;
+    static const uint8_t STOP_BYTE = 0x16;
+    static const uint8_t C_FIELD_BIT_DIRECTION = 6;
+    static const uint8_t C_FIELD_BIT_FCB = 5;
+    static const uint8_t C_FIELD_BIT_FCV = 4;
+    static const uint8_t C_FIELD_FUNCTION_SND_NKE = 0x0;
+    static const uint8_t C_FIELD_FUNCTION_REQ_UD2 = 0xB;
 
     bool initialize_meter(const uint8_t address);
     bool parse_long_frame_response(LongFrame* longFrame);
     bool read_next_byte(uint8_t* received_byte);
   };
+
+  static const uint8_t FIXED_DATA_HEADER_SIZE = 12;
 
   Kamstrup303WA02(UartInterface* uart_interface);
 

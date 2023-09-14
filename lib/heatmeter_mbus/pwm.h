@@ -17,13 +17,14 @@ class Pwm {
   esp_err_t enable();
   esp_err_t disable();
   esp_err_t update_duty_cycle(float duty_cycle);
-  
- private:
-  Pwm(const Pwm& pwm);
 
+ protected:
   float duty_cycle_ { 85.0f };
   ledc_timer_config_t timer_config_;
   ledc_channel_config_t channel_config_;
+  
+ private:
+  Pwm(const Pwm& pwm);
 };
 
 } //namespace warmtemetermbus
