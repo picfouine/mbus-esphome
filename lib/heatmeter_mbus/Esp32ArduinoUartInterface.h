@@ -1,10 +1,8 @@
 #ifndef ESP32ARDUINOUARTINTERFACE_H_
 #define ESP32ARDUINOUARTINTERFACE_H_
 
-// #ifndef UNIT_TEST
 #include "esphome/core/datatypes.h"
 #include "esphome/components/uart/uart.h"
-// #endif // UNIT_TEST
 
 #include "UartInterface.h"
 
