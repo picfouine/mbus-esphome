@@ -13,9 +13,6 @@
 #include "data_block_reader.h"
 #include "uart_interface.h"
 
-
-
-
 namespace esphome {
 namespace warmtemetermbus {
 
@@ -223,7 +220,7 @@ bool Kamstrup303WA02::DataLinkLayer::snd_nke(const uint8_t address) {
   bool success { false };
 
   const uint8_t c = (1 << C_FIELD_BIT_DIRECTION) | (C_FIELD_FUNCTION_SND_NKE);
-  bool received_response_to_short_frame = try_send_short_frame(c, address);
+  bool received_response_to_short_frame = this->try_send_short_frame(c, address);
   if (received_response_to_short_frame) {
     uint8_t received_byte { 0 };
     this->uart_interface_->read_byte(&received_byte);
@@ -245,35 +242,35 @@ bool Kamstrup303WA02::DataLinkLayer::snd_nke(const uint8_t address) {
 // (see 5.4 Communication Process)
 bool Kamstrup303WA02::DataLinkLayer::try_send_short_frame(const uint8_t c, const uint8_t a) {
   bool success { false };
-  bool dataIsReceived { false };
-  flush_rx_buffer();
-  for (uint8_t transmitAttempt {0}; transmitAttempt < 3 && !dataIsReceived; ++transmitAttempt) {
-    if (transmitAttempt > 0) {
+  bool data_is_received { false };
+  this->flush_rx_buffer();
+  for (uint8_t transmit_attempt {0}; transmit_attempt < 3 && !data_is_received; ++transmit_attempt) {
+    if (transmit_attempt > 0) {
       ESP_LOGD(TAG, "Retry transmit short frame");
     }
-    send_short_frame(c, a);
+    this->send_short_frame(c, a);
     // Sending takes about 4,58ms per byte. Short frame takes about 23ms to send.
     vTaskDelay(25 / portTICK_PERIOD_MS);
-    dataIsReceived = wait_for_incoming_data();
+    data_is_received = this->wait_for_incoming_data();
   }
-  success = dataIsReceived;
+  success = data_is_received;
   return success;
 }
 
 void Kamstrup303WA02::DataLinkLayer::flush_rx_buffer() {
   while (this->uart_interface_->available()) {
-    int32_t byteCountInBuffer {this->uart_interface_->available()};
-    if (byteCountInBuffer > 255) {
-      byteCountInBuffer = 255;
+    int32_t byte_count_in_buffer {this->uart_interface_->available()};
+    if (byte_count_in_buffer > 255) {
+      byte_count_in_buffer = 255;
     }
-    uint8_t bytesInBuffer[byteCountInBuffer];
-    this->uart_interface_->read_array(bytesInBuffer, byteCountInBuffer);
+    uint8_t bytes_in_buffer[byte_count_in_buffer];
+    this->uart_interface_->read_array(bytes_in_buffer, byte_count_in_buffer);
   }
 }
 
 void Kamstrup303WA02::DataLinkLayer::send_short_frame(const uint8_t c, const uint8_t a) {
   const uint8_t data[] = { c, a };
-  const uint8_t checksum { calculate_checksum(data, 2) };
+  const uint8_t checksum { this->calculate_checksum(data, 2) };
   const uint8_t short_frame[] = { START_BYTE_SHORT_FRAME, c, a, checksum, STOP_BYTE };
   this->uart_interface_->write_array(short_frame, 5);
   delay(1);
@@ -282,7 +279,7 @@ void Kamstrup303WA02::DataLinkLayer::send_short_frame(const uint8_t c, const uin
 }
 
 bool Kamstrup303WA02::DataLinkLayer::wait_for_incoming_data() {
-  bool dataReceived {false};
+  bool data_received {false};
   // 330 bits + 50ms = 330 * 1000 / 2400 + 50 ms = 187,5 ms
   // Wait at least 11 bit times = 5ms
   // For some reason waiting 5ms, then try until 190ms passed, does not work.
@@ -290,15 +287,15 @@ bool Kamstrup303WA02::DataLinkLayer::wait_for_incoming_data() {
   delay(138);
   for (uint16_t i {0}; i < 500; ++i) {
     if (this->uart_interface_->available() > 0) {
-      dataReceived = true;
+      data_received = true;
       break;
     }
     delay(1);
   }
-  if (!dataReceived) {
+  if (!data_received) {
     ESP_LOGE(TAG, "waitForIncomingData - exit - No data received");
   }
-  return dataReceived;
+  return data_received;
 }
 
 uint8_t Kamstrup303WA02::DataLinkLayer::calculate_checksum(const LongFrame* long_frame) const {
