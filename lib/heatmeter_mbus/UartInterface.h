@@ -1,9 +1,10 @@
 #ifndef UARTINTERFACE_H_
 #define UARTINTERFACE_H_
 
-#ifndef UNIT_TEST
+#ifdef UNIT_TEST
+#include <test_includes.h>
+#else
 #include "esphome/core/datatypes.h"
-#include "esphome/components/uart/uart.h"
 #endif // UNIT_TEST
 
 namespace esphome {
