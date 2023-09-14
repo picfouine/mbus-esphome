@@ -6,6 +6,7 @@
 #endif // UNIT_TEST
 
 #include <vector>
+
 #include "Kamstrup303WA02.h"
 
 namespace esphome {

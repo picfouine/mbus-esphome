@@ -1,9 +1,17 @@
+#include "DataBlockReader.h"
+
+#include <vector>
+
+#include <Arduino.h>
+#ifndef UNIT_TEST
+#include "esphome/core/datatypes.h"
+#endif // UNIT_TEST
+
 #ifdef UNIT_TEST
 #include <test_includes.h>
 #endif // UNIT_TEST
 
-#include <Arduino.h>
-#include "DataBlockReader.h"
+#include "Kamstrup303WA02.h"
 
 using std::vector;
 
