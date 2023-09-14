@@ -13,17 +13,17 @@ public:
   Pwm() {}
   ~Pwm() {}
 
-  esp_err_t initialize(uint8_t gpioPin, uint32_t frequency, float dutyCycle);
+  esp_err_t initialize(uint8_t gpio_pin, uint32_t frequency, float duty_cycle);
   esp_err_t enable();
   esp_err_t disable();
-  esp_err_t updateDutyCycle(float dutyCycle);
+  esp_err_t update_duty_cycle(float duty_cycle);
   
 private:
   Pwm(const Pwm& pwm);
 
-  float dutyCycle { 85.0f };
-  ledc_timer_config_t timerConfig;
-  ledc_channel_config_t channelConfig;
+  float duty_cycle_ { 85.0f };
+  ledc_timer_config_t timer_config_;
+  ledc_channel_config_t channel_config_;
 };
 
 } //namespace warmtemetermbus

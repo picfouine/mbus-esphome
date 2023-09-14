@@ -15,58 +15,58 @@ namespace esphome
 {
   namespace warmtemetermbus
   {
-    esp_err_t Pwm::initialize(uint8_t gpioPin, uint32_t frequency, float dutyCycle)
+    esp_err_t Pwm::initialize(uint8_t gpio_pin, uint32_t frequency, float duty_cycle)
     {
       // GPIO32
-      timerConfig.speed_mode = LEDC_HIGH_SPEED_MODE;
-      timerConfig.duty_resolution = LEDC_TIMER_10_BIT;
-      timerConfig.timer_num = LEDC_TIMER_0;
-      timerConfig.freq_hz = frequency;
-      timerConfig.clk_cfg = LEDC_USE_APB_CLK;
+      this->timer_config_.speed_mode = LEDC_HIGH_SPEED_MODE;
+      this->timer_config_.duty_resolution = LEDC_TIMER_10_BIT;
+      this->timer_config_.timer_num = LEDC_TIMER_0;
+      this->timer_config_.freq_hz = frequency;
+      this->timer_config_.clk_cfg = LEDC_USE_APB_CLK;
 
-      esp_err_t configResult = ledc_timer_config(&timerConfig);
-      if (ESP_OK != configResult)
+      esp_err_t config_result = ledc_timer_config(&timer_config_);
+      if (ESP_OK != config_result)
       {
-        return configResult;
+        return config_result;
       }
 
-      this->dutyCycle = dutyCycle;
-      uint32_t dutyCycleValue = floor((1 << 10) * this->dutyCycle);
-      channelConfig.gpio_num = gpioPin;
-      channelConfig.speed_mode = LEDC_HIGH_SPEED_MODE;
-      channelConfig.channel = LEDC_CHANNEL_0;
-      channelConfig.intr_type = LEDC_INTR_DISABLE;
-      channelConfig.timer_sel = LEDC_TIMER_0;
-      channelConfig.duty = dutyCycleValue;
-      channelConfig.hpoint = 0;
-      channelConfig.flags.output_invert = 0;
+      this->duty_cycle_ = duty_cycle;
+      uint32_t duty_cycle_value = floor((1 << 10) * this->duty_cycle_);
+      this->channel_config_.gpio_num = gpio_pin;
+      this->channel_config_.speed_mode = LEDC_HIGH_SPEED_MODE;
+      this->channel_config_.channel = LEDC_CHANNEL_0;
+      this->channel_config_.intr_type = LEDC_INTR_DISABLE;
+      this->channel_config_.timer_sel = LEDC_TIMER_0;
+      this->channel_config_.duty = duty_cycle_value;
+      this->channel_config_.hpoint = 0;
+      this->channel_config_.flags.output_invert = 0;
 
       return ESP_OK;
     }
 
     esp_err_t Pwm::enable()
     {
-      uint32_t dutyCycleValue = floor((1 << 10) * this->dutyCycle);
-      channelConfig.duty = dutyCycleValue;
-      return ledc_channel_config(&channelConfig);
+      uint32_t duty_cycle_value = floor((1 << 10) * this->duty_cycle_);
+      this->channel_config_.duty = duty_cycle_value;
+      return ledc_channel_config(&this->channel_config_);
     }
 
     esp_err_t Pwm::disable()
     {
-      channelConfig.duty = 0;
-      return ledc_channel_config(&channelConfig);
+      this->channel_config_.duty = 0;
+      return ledc_channel_config(&this->channel_config_);
     }
 
-    esp_err_t Pwm::updateDutyCycle(float dutyCycle)
+    esp_err_t Pwm::update_duty_cycle(float duty_cycle)
     {
-      this->dutyCycle = dutyCycle;
-      uint32_t dutyCycleValue = floor((1 << 10) * dutyCycle);
-      esp_err_t configResult = ledc_set_duty(channelConfig.speed_mode, channelConfig.channel, dutyCycleValue);
-      if (ESP_OK != configResult)
+      this->duty_cycle_ = duty_cycle;
+      uint32_t duty_cycle_value = floor((1 << 10) * duty_cycle);
+      esp_err_t config_result = ledc_set_duty(this->channel_config_.speed_mode, this->channel_config_.channel, duty_cycle_value);
+      if (ESP_OK != config_result)
       {
-        return configResult;
+        return config_result;
       }
-      return ledc_update_duty(channelConfig.speed_mode, channelConfig.channel);
+      return ledc_update_duty(this->channel_config_.speed_mode, this->channel_config_.channel);
     }
   } // namespace warmtemetermbus
 } // namespace esphome
