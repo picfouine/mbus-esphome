@@ -85,12 +85,12 @@ namespace esphome
 
       while (true)
       {
-        const bool shouldReadNow = heatMeterMbus->updateRequested && heatMeterMbus->mbusEnabled;
+        bool should_read_now = heatMeterMbus->updateRequested && heatMeterMbus->mbusEnabled;
         if (heatMeterMbus->updateRequested && !heatMeterMbus->mbusEnabled)
         {
           ESP_LOGD(TAG, "Read Mbus requested but Mbus disabled");
         }
-        if (shouldReadNow)
+        if (should_read_now)
         {
           // Let's request data, and wait for its results :-)
           Kamstrup303WA02::MbusMeterData mbus_meter_data;
