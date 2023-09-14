@@ -1,13 +1,16 @@
 #ifndef TESTABLEDATALINKLAYER_H_
 #define TESTABLEDATALINKLAYER_H_
 
-#include <test_includes.h>
-#include <UartInterface.h>
-#include <vector>
 #include <queue>
-#include <Kamstrup303WA02.h>
+#include <vector>
+
+#include <Arduino.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
+
+#include <Kamstrup303WA02.h>
+#include <test_includes.h>
+#include <UartInterface.h>
 
 using std::vector;
 using std::queue;
@@ -19,7 +22,6 @@ class FakeUartInterface : public esphome::warmtemetermbus::UartInterface {
       size_t len;
     } WrittenArray;
 
-    // UartInterface
     virtual bool read_byte(uint8_t* data) {
       if (0 == this->fake_data_to_return_.size()) {
         return false;
