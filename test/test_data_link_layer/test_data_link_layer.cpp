@@ -1,9 +1,11 @@
 #include <Arduino.h>
-#include <test_includes.h>
-#include <TestableDataLinkLayer.h>
-#include <unity.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
+#include <unity.h>
+
+#include "Kamstrup303WA02.h"
+#include <test_includes.h>
+#include <TestableDataLinkLayer.h>
 
 using namespace esphome::warmtemetermbus;
 
