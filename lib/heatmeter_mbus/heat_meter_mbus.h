@@ -8,7 +8,7 @@
 #include "esphome/core/datatypes.h"
 
 #include "i_mbus_sensor.h"
-#include "kamstrup303wa02.h"
+#include "kamstrup_303wa02.h"
 #include "mbus_sensor.h"
 #include "pwm.h"
 

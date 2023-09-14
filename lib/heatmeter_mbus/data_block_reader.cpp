@@ -11,7 +11,7 @@
 #include <test_includes.h>
 #endif // UNIT_TEST
 
-#include "kamstrup303wa02.h"
+#include "kamstrup_303wa02.h"
 
 using std::vector;
 

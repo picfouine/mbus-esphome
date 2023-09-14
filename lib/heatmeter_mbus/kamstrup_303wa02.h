@@ -16,34 +16,34 @@ namespace warmtemetermbus {
 class Kamstrup303WA02 {
   public:
     typedef enum Function : uint8_t {
-      instantaneous = 0,
-      maximum = 1,
-      minimum = 2,
-      during_error_state = 3
+      INSTANTANEOUS = 0,
+      MAXIMUM = 1,
+      MINIMUM = 2,
+      DURING_ERROR_STATE = 3
     } Function;
 
     enum class Unit {
-      Wh,
+      WH,
       J,
-      cubic_meter,
-      kg,
-      seconds,
-      minutes,
-      hours,
-      days,
+      CUBIC_METER,
+      KG,
+      SECONDS,
+      MINUTES,
+      HOURS,
+      DAYS,
       W,
-      J_per_hour,
-      cubic_meter_per_hour,
-      cubic_meter_per_minute,
-      cubic_meter_per_second,
-      kg_per_hour,
-      degrees_celsius,
+      J_PER_HOUR,
+      CUBIC_METER_PER_HOUR,
+      CUBIC_METER_PER_MINUTE,
+      CUBIC_METER_PER_SECOND,
+      KG_PER_HOUR,
+      DEGREES_CELSIUS,
       K,
-      bar,
-      date,
-      time_and_date,
-      manufacturer_specific,
-      dimensionless
+      BAR,
+      DATE,
+      TIME_AND_DATE,
+      MANUFACTURER_SPECIFIC,
+      DIMENSIONLESS
     };
 
     typedef struct DataBlock {
@@ -67,6 +67,13 @@ class Kamstrup303WA02 {
       private:
         void deallocate_data_blocks();
     } MbusMeterData;
+
+    enum class CiSlaveToMasterCode {
+      GENERAL_APPLICATION_ERRORS = 0,
+      ALARM_STATUS = 1,
+      VARIABLE_DATA_RESPOND = 2,
+      FIXED_DATA_RESPOND = 3
+    };
 
     static const uint8_t FIXED_DATA_HEADER_SIZE = 12;
 
@@ -115,7 +122,7 @@ class Kamstrup303WA02 {
 
     Kamstrup303WA02(UartInterface* uart_interface);
 
-    bool read_meter_data(MbusMeterData* meter_data, uint8_t address);
+    bool read_meter_data(MbusMeterData* meter_data, const uint8_t address);
 
   protected:
     DataLinkLayer* data_link_layer_;

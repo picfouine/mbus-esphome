@@ -17,7 +17,7 @@ copy %SrcDir%\heat_meter_mbus.cpp %customComponentsTargetDir%
 copy %SrcDir%\heat_meter_mbus.h %customComponentsTargetDir%
 copy %SrcDir%\i_mbus_sensor.h %customComponentsTargetDir%
 copy %SrcDir%\kamstrup303wa02.cpp %customComponentsTargetDir%
-copy %SrcDir%\kamstrup303wa02.h %customComponentsTargetDir%
+copy %SrcDir%\kamstrup_303wa02.h %customComponentsTargetDir%
 copy %SrcDir%\mbus_sensor.cpp %customComponentsTargetDir%
 copy %SrcDir%\mbus_sensor.h %customComponentsTargetDir%
 copy %SrcDir%\pwm.cpp %customComponentsTargetDir%

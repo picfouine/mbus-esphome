@@ -1,4 +1,4 @@
-#include "kamstrup303wa02.h"
+#include "kamstrup_303wa02.h"
 
 #include <Arduino.h>
 #include <freertos/FreeRTOS.h>
@@ -43,7 +43,7 @@ Kamstrup303WA02::Kamstrup303WA02(UartInterface* uart_interface) {
   this->data_link_layer_ = new DataLinkLayer(uart_interface);
 }
 
-bool Kamstrup303WA02::read_meter_data(Kamstrup303WA02::MbusMeterData* meter_data, uint8_t address) {
+bool Kamstrup303WA02::read_meter_data(Kamstrup303WA02::MbusMeterData* meter_data, const uint8_t address) {
   ESP_LOGI(TAG, "read_meter_data - enter");
 
   bool success { false };
@@ -64,13 +64,13 @@ bool Kamstrup303WA02::read_meter_data(Kamstrup303WA02::MbusMeterData* meter_data
 
   // Check type of response
   switch (response_to_req_ud2.ci & 0x03) {
-    case 0:
+    case CiSlaveToMasterCode::GENERAL_APPLICATION_ERRORS:
       ESP_LOGE(TAG, "General App Error");
       break;
-    case 1:
+    case CiSlaveToMasterCode::ALARM_STATUS:
       ESP_LOGI(TAG, "Alarm Status");
       break;
-    case 2: {
+    case CiSlaveToMasterCode::VARIABLE_DATA_RESPOND: {
       ESP_LOGI(TAG, "Variable data response");
       DataBlockReader data_block_reader;
       auto data_blocks = data_block_reader.read_data_blocks_from_long_frame(&response_to_req_ud2);
@@ -78,7 +78,7 @@ bool Kamstrup303WA02::read_meter_data(Kamstrup303WA02::MbusMeterData* meter_data
       success = true;
       break;
     }
-    case 3:
+    case CiSlaveToMasterCode::FIXED_DATA_RESPOND:
       ESP_LOGI(TAG, "Fixed data response");
       break;
   }

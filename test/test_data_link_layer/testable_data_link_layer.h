@@ -8,7 +8,7 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 
-#include <kamstrup303wa02.h>
+#include <kamstrup_303wa02.h>
 #include <test_includes.h>
 #include <uart_interface.h>
 

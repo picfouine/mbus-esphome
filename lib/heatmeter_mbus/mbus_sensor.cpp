@@ -7,7 +7,7 @@
 #include "esphome/core/datatypes.h"
 #include "esphome/core/log.h"
 
-#include "kamstrup303wa02.h"
+#include "kamstrup_303wa02.h"
 
 using namespace std; 
 

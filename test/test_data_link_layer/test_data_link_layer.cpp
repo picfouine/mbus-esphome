@@ -3,7 +3,7 @@
 #include <freertos/task.h>
 #include <unity.h>
 
-#include "kamstrup303wa02.h"
+#include "kamstrup_303wa02.h"
 #include <test_includes.h>
 #include <testable_data_link_layer.h>
 

@@ -6,7 +6,7 @@
 #include <unity.h>
 
 #include <data_block_reader.h>
-#include <kamstrup303wa02.h>
+#include <kamstrup_303wa02.h>
 #include <test_data_link_layer/testable_data_link_layer.h>
 #include <test_includes.h>
 #include <testable_kamstrup303wa02.h>

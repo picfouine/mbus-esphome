@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include "kamstrup303wa02.h"
+#include "kamstrup_303wa02.h"
 
 namespace esphome {
 namespace warmtemetermbus {
