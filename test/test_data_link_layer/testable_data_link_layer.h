@@ -8,9 +8,9 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 
-#include <Kamstrup303WA02.h>
+#include <kamstrup303wa02.h>
 #include <test_includes.h>
-#include <UartInterface.h>
+#include <uart_interface.h>
 
 using std::vector;
 using std::queue;

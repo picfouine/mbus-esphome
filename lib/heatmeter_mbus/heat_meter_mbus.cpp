@@ -1,16 +1,16 @@
 #ifndef UNIT_TEST
 
-#include "HeatMeterMbus.h"
+#include "heat_meter_mbus.h"
 
 #include "esphome/core/log.h"
 #include "esp_err.h"
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 
-#include "Esp32ArduinoUartInterface.h"
-#include "IMbusSensor.h"
-#include "Kamstrup303WA02.h"
-#include "Pwm.h"
+#include "esp32_arduino_uart_interface.h"
+#include "i_mbus_sensor.h"
+#include "kamstrup303wa02.h"
+#include "pwm.h"
 
 using namespace std; 
 

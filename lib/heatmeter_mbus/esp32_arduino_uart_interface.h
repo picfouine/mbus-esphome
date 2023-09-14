@@ -4,7 +4,7 @@
 #include "esphome/core/datatypes.h"
 #include "esphome/components/uart/uart.h"
 
-#include "UartInterface.h"
+#include "uart_interface.h"
 
 namespace esphome {
 namespace warmtemetermbus {

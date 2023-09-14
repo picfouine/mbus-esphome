@@ -1,4 +1,4 @@
-#include "DataBlockReader.h"
+#include "data_block_reader.h"
 
 #include <vector>
 
@@ -11,7 +11,7 @@
 #include <test_includes.h>
 #endif // UNIT_TEST
 
-#include "Kamstrup303WA02.h"
+#include "kamstrup303wa02.h"
 
 using std::vector;
 

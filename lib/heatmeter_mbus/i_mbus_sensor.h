@@ -1,7 +1,7 @@
 #ifndef IMBUSSENSOR_H_
 #define IMBUSSENSOR_H_
 
-#include "Kamstrup303WA02.h"
+#include "kamstrup303wa02.h"
 
 namespace esphome {
 namespace warmtemetermbus {

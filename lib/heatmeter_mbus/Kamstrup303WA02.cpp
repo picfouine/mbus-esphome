@@ -1,4 +1,4 @@
-#include "Kamstrup303WA02.h"
+#include "kamstrup303wa02.h"
 
 #include <Arduino.h>
 #include <freertos/FreeRTOS.h>
@@ -10,8 +10,8 @@
 #include "esphome/core/log.h"
 #endif // UNIT_TEST
 
-#include "DataBlockReader.h"
-#include "UartInterface.h"
+#include "data_block_reader.h"
+#include "uart_interface.h"
 
 
 

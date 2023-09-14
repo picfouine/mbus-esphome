@@ -3,8 +3,8 @@
 
 #include "esphome/components/sensor/sensor.h"
 
-#include "IMbusSensor.h"
-#include "Kamstrup303WA02.h"
+#include "i_mbus_sensor.h"
+#include "kamstrup303wa02.h"
 
 namespace esphome {
 namespace warmtemetermbus {

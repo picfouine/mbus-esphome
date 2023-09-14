@@ -5,8 +5,8 @@
 #include <freertos/task.h>
 #include <unity.h>
 
-#include <DataBlockReader.h>
-#include <Kamstrup303WA02.h>
+#include <data_block_reader.h>
+#include <kamstrup303wa02.h>
 #include <test_data_link_layer/testable_data_link_layer.h>
 #include <test_includes.h>
 #include <testable_kamstrup303wa02.h>

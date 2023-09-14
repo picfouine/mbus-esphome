@@ -10,17 +10,17 @@ set SrcDir=.\lib\heatmeter_mbus
 set customComponentsTargetDir=%targetDir%\custom_components\heatmeter_mbus
 
 copy %SrcDir%\__init__.py %customComponentsTargetDir%
-copy %SrcDir%\DataBlockReader.h %customComponentsTargetDir%
-copy %SrcDir%\DataBlockReader.cpp %customComponentsTargetDir%
-copy %SrcDir%\Esp32ArduinoUartInterface.h %customComponentsTargetDir%
-copy %SrcDir%\HeatMeterMbus.cpp %customComponentsTargetDir%
-copy %SrcDir%\HeatMeterMbus.h %customComponentsTargetDir%
-copy %SrcDir%\IMbusSensor.h %customComponentsTargetDir%
-copy %SrcDir%\Kamstrup303WA02.cpp %customComponentsTargetDir%
-copy %SrcDir%\Kamstrup303WA02.h %customComponentsTargetDir%
-copy %SrcDir%\MbusSensor.cpp %customComponentsTargetDir%
-copy %SrcDir%\MbusSensor.h %customComponentsTargetDir%
-copy %SrcDir%\Pwm.cpp %customComponentsTargetDir%
-copy %SrcDir%\Pwm.h %customComponentsTargetDir%
+copy %SrcDir%\data_block_reader.h %customComponentsTargetDir%
+copy %SrcDir%\data_block_reader.cpp %customComponentsTargetDir%
+copy %SrcDir%\esp32_arduino_uart_interface.h %customComponentsTargetDir%
+copy %SrcDir%\heat_meter_mbus.cpp %customComponentsTargetDir%
+copy %SrcDir%\heat_meter_mbus.h %customComponentsTargetDir%
+copy %SrcDir%\i_mbus_sensor.h %customComponentsTargetDir%
+copy %SrcDir%\kamstrup303wa02.cpp %customComponentsTargetDir%
+copy %SrcDir%\kamstrup303wa02.h %customComponentsTargetDir%
+copy %SrcDir%\mbus_sensor.cpp %customComponentsTargetDir%
+copy %SrcDir%\mbus_sensor.h %customComponentsTargetDir%
+copy %SrcDir%\pwm.cpp %customComponentsTargetDir%
+copy %SrcDir%\pwm.h %customComponentsTargetDir%
 copy %SrcDir%\sensor.py %customComponentsTargetDir%
-copy %SrcDir%\UartInterface.h %customComponentsTargetDir%
+copy %SrcDir%\uart_interface.h %customComponentsTargetDir%

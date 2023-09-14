@@ -8,7 +8,7 @@
 #include "esphome/core/datatypes.h"
 #endif // UNIT_TEST
 
-#include "UartInterface.h"
+#include "uart_interface.h"
 
 namespace esphome {
 namespace warmtemetermbus {

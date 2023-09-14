@@ -7,10 +7,10 @@
 #include "esphome/core/component.h"
 #include "esphome/core/datatypes.h"
 
-#include "IMbusSensor.h"
-#include "Kamstrup303WA02.h"
-#include "MbusSensor.h"
-#include "Pwm.h"
+#include "i_mbus_sensor.h"
+#include "kamstrup303wa02.h"
+#include "mbus_sensor.h"
+#include "pwm.h"
 
 namespace esphome {
 namespace warmtemetermbus {
