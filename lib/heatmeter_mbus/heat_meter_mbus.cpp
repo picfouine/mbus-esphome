@@ -20,8 +20,8 @@ namespace esphome
   {
     static const char *TAG = "heatmetermbus.sensor";
 
-    bool pwmInitialized { false };
-    bool pwmEnabled { false };
+    bool pwm_initialized { false };
+    bool pwm_enabled { false };
 
     HeatMeterMbus::HeatMeterMbus() {
       Esp32ArduinoUartInterface *uart_interface = new Esp32ArduinoUartInterface(this);
@@ -63,7 +63,7 @@ namespace esphome
       else
       {
         ESP_LOGI(TAG, "Initialized PWM");
-        pwmInitialized = true;
+        pwm_initialized = true;
       }
 
       esp_err_t pwmEnableResult = pwm->enable();
@@ -74,7 +74,7 @@ namespace esphome
       else
       {
         ESP_LOGI(TAG, "Enabled PWM channel");
-        pwmEnabled = true;
+        pwm_enabled = true;
       }
       return pwmEnableResult;
     }
