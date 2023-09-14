@@ -1,16 +1,15 @@
 #ifndef HEATMETERMBUS_H_
 #define HEATMETERMBUS_H_
 
-#include "esphome/core/component.h"
-#include "esphome/components/sensor/sensor.h"
-//#include "esphome/components/binary_sensor/binary_sensor.h"
-#include "esphome/components/uart/uart.h"
-#include "IMbusSensor.h"
-#include "MbusSensor.h"
-#include "Kamstrup303WA02.h"
-#include "UartInterface.h"
-#include "Pwm.h"
 #include <vector>
+
+#include "esphome/components/uart/uart.h"
+#include "esphome/core/component.h"
+
+#include "IMbusSensor.h"
+#include "Kamstrup303WA02.h"
+#include "MbusSensor.h"
+#include "Pwm.h"
 
 namespace esphome {
 namespace warmtemetermbus {
