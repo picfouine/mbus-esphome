@@ -31,7 +31,7 @@ namespace esphome
     void HeatMeterMbus::setup()
     {
       ESP_LOGI(TAG, "setup()");
-      if (ESP_OK != initializeAndEnablePwm(&pwm))
+      if (ESP_OK != this->initialize_and_enable_pwm(&pwm))
       {
         ESP_LOGE(TAG, "Error initializing and enabling PWM");
         mark_failed();
@@ -52,7 +52,7 @@ namespace esphome
       }
     }
 
-    esp_err_t HeatMeterMbus::initializeAndEnablePwm(Pwm* pwm)
+    esp_err_t HeatMeterMbus::initialize_and_enable_pwm(Pwm* pwm)
     {
       esp_err_t config_result = pwm->initialize(32, 18000, 0.85f);
       if (ESP_OK != config_result)
