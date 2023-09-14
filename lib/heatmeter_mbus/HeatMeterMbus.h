@@ -1,4 +1,5 @@
-#pragma once
+#ifndef HEATMETERMBUS_H_
+#define HEATMETERMBUS_H_
 
 #include "esphome/core/component.h"
 #include "esphome/components/sensor/sensor.h"
@@ -47,3 +48,5 @@ class HeatMeterMbus : public Component, public uart::UARTDevice {
 
 } //namespace warmtemetermbus
 } //namespace esphome
+
+#endif // HEATMETERMBUS_H_
