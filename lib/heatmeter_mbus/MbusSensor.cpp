@@ -1,8 +1,13 @@
 #ifndef UNIT_TEST
 
-#include "esphome/core/log.h"
 #include "MbusSensor.h"
+
 #include <math.h>
+
+#include "esphome/core/datatypes.h"
+#include "esphome/core/log.h"
+
+#include "Kamstrup303WA02.h"
 
 using namespace std; 
 
