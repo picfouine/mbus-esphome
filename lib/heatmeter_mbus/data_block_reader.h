@@ -14,10 +14,10 @@ namespace warmtemetermbus {
 
 class DataBlockReader {
   public:
-    std::vector<Kamstrup303WA02::DataBlock*>* read_data_blocks_from_long_frame(Kamstrup303WA02::DataLinkLayer::LongFrame* long_frame);
+    std::vector<Kamstrup303WA02::DataBlock*>* read_data_blocks_from_long_frame(const Kamstrup303WA02::DataLinkLayer::LongFrame* const long_frame);
 
   protected:
-     Kamstrup303WA02::DataLinkLayer::LongFrame* long_frame_;
+     const Kamstrup303WA02::DataLinkLayer::LongFrame* long_frame_;
      uint8_t current_position_in_user_data_;
 
   private:
