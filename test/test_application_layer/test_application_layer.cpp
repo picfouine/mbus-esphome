@@ -39,11 +39,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_not_extended_d
   TEST_ASSERT_TRUE(actual_data_blocks != nullptr);
   TEST_ASSERT_EQUAL(1, actual_data_blocks->size());
   Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::instantaneous, actual_data_block->function);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(3, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::Wh, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::WH, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(4, actual_data_block->data_length);
@@ -84,11 +84,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_extended_dif_a
   // VIF: 0b0000 0110
   //  Primary VIF, Energy in Wh, 10^(6 - 3)
   Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::instantaneous, actual_data_block->function);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(2, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(11, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(3, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::Wh, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::WH, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(4, actual_data_block->data_length);
@@ -105,11 +105,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_extended_dif_a
   // VIF: 0b1111 1111
   //  Manufacturer specific, extended
   actual_data_block = actual_data_blocks->at(1);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::maximum, actual_data_block->function);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::MAXIMUM, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(0, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::manufacturer_specific, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::MANUFACTURER_SPECIFIC, actual_data_block->unit);
   TEST_ASSERT_EQUAL(1, actual_data_block->index);
   TEST_ASSERT_TRUE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -139,11 +139,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_dif_mini
   TEST_ASSERT_TRUE(actual_data_blocks != nullptr);
   TEST_ASSERT_EQUAL(1, actual_data_blocks->size());
   Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::minimum, actual_data_block->function);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::MINIMUM, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(2, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::Wh, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::WH, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(1, actual_data_block->data_length);
@@ -172,11 +172,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_dif_duri
   TEST_ASSERT_TRUE(actual_data_blocks != nullptr);
   TEST_ASSERT_EQUAL(1, actual_data_blocks->size());
   Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::during_error_state, actual_data_block->function);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::DURING_ERROR_STATE, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(2, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::Wh, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::WH, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(3, actual_data_block->data_length);
@@ -210,11 +210,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
   // Block 0
   Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::instantaneous, actual_data_block->function);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(3, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::Wh, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::WH, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(4, actual_data_block->data_length);
@@ -225,7 +225,7 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
   // Block 1
   actual_data_block = actual_data_blocks->at(1);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::instantaneous, actual_data_block->function);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(3, actual_data_block->ten_power);
@@ -263,11 +263,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
   // Block 0
   Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::instantaneous, actual_data_block->function);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(-3, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::cubic_meter, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::CUBIC_METER, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(4, actual_data_block->data_length);
@@ -304,11 +304,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
   // Block 0
   Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::instantaneous, actual_data_block->function);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(0, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::seconds, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::SECONDS, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -317,11 +317,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
   // Block 1
   actual_data_block = actual_data_blocks->at(1);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::instantaneous, actual_data_block->function);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(0, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::minutes, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::MINUTES, actual_data_block->unit);
   TEST_ASSERT_EQUAL(1, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -330,11 +330,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
   // Block 2
   actual_data_block = actual_data_blocks->at(2);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::instantaneous, actual_data_block->function);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(0, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::hours, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::HOURS, actual_data_block->unit);
   TEST_ASSERT_EQUAL(2, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -343,11 +343,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
     // Block 3
   actual_data_block = actual_data_blocks->at(3);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::instantaneous, actual_data_block->function);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(0, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::days, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::DAYS, actual_data_block->unit);
   TEST_ASSERT_EQUAL(3, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -380,7 +380,7 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
   // Block 0
   Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::instantaneous, actual_data_block->function);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(-1, actual_data_block->ten_power);
@@ -393,11 +393,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
   // Block 1
   actual_data_block = actual_data_blocks->at(1);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::instantaneous, actual_data_block->function);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(3, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::J_per_hour, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::J_PER_HOUR, actual_data_block->unit);
   TEST_ASSERT_EQUAL(1, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -431,11 +431,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
   // Block 0
   Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::instantaneous, actual_data_block->function);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(-5, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::cubic_meter_per_hour, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::CUBIC_METER_PER_HOUR, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -444,11 +444,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
   // Block 1
   actual_data_block = actual_data_blocks->at(1);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::instantaneous, actual_data_block->function);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(-2, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::cubic_meter_per_minute, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::CUBIC_METER_PER_MINUTE, actual_data_block->unit);
   TEST_ASSERT_EQUAL(1, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -457,11 +457,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
   // Block 2
   actual_data_block = actual_data_blocks->at(2);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::instantaneous, actual_data_block->function);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(-7, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::cubic_meter_per_second, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::CUBIC_METER_PER_SECOND, actual_data_block->unit);
   TEST_ASSERT_EQUAL(2, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -493,11 +493,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
   // Block 0
   Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::instantaneous, actual_data_block->function);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(0, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::degrees_celsius, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::DEGREES_CELSIUS, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -529,11 +529,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
   // Block 0
   Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::instantaneous, actual_data_block->function);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(-2, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::degrees_celsius, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::DEGREES_CELSIUS, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -565,7 +565,7 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
   // Block 0
   Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::instantaneous, actual_data_block->function);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(-2, actual_data_block->ten_power);
@@ -602,11 +602,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
   // Block 0
   Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::instantaneous, actual_data_block->function);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(0, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::date, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::DATE, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);

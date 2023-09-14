@@ -107,7 +107,7 @@ void DataBlockReader::read_vif_into_block(Kamstrup303WA02::DataBlock* data_block
     if ((unit_and_multiplier & 0b1111000) == 0b0000000) {
       // Energy in Wh
       data_block->ten_power = (unit_and_multiplier & 0b111) - 3;
-      data_block->unit = Kamstrup303WA02::Unit::Wh;
+      data_block->unit = Kamstrup303WA02::Unit::WH;
     } else if ((unit_and_multiplier & 0b1111000) == 0b0001000) {
       // Energy in J
       data_block->ten_power = unit_and_multiplier & 0b111;
@@ -115,23 +115,23 @@ void DataBlockReader::read_vif_into_block(Kamstrup303WA02::DataBlock* data_block
     } else if ((unit_and_multiplier & 0b1111000) == 0b0010000) {
       // Volume in m3
       data_block->ten_power = (unit_and_multiplier & 0b111) - 6;
-      data_block->unit = Kamstrup303WA02::Unit::cubic_meter;
+      data_block->unit = Kamstrup303WA02::Unit::CUBIC_METER;
     } else if ((unit_and_multiplier & 0b1111100) == 0b0100000) {
       // On Time
       data_block->ten_power = 0;
       const uint8_t unit_value = (unit_and_multiplier & 0b11);
       switch (unit_value) {
         case 0:
-          data_block->unit = Kamstrup303WA02::Unit::seconds;
+          data_block->unit = Kamstrup303WA02::Unit::SECONDS;
           break;
         case 1:
-          data_block->unit = Kamstrup303WA02::Unit::minutes;
+          data_block->unit = Kamstrup303WA02::Unit::MINUTES;
           break;
         case 2:
-          data_block->unit = Kamstrup303WA02::Unit::hours;
+          data_block->unit = Kamstrup303WA02::Unit::HOURS;
           break;
         case 3:
-          data_block->unit = Kamstrup303WA02::Unit::days;
+          data_block->unit = Kamstrup303WA02::Unit::DAYS;
           break;
         default:
           break;
@@ -143,27 +143,27 @@ void DataBlockReader::read_vif_into_block(Kamstrup303WA02::DataBlock* data_block
     } else if ((unit_and_multiplier & 0b1111000) == 0b0110000) {
       // Power in J/h
       data_block->ten_power = unit_and_multiplier & 0b111;
-      data_block->unit = Kamstrup303WA02::Unit::J_per_hour;
+      data_block->unit = Kamstrup303WA02::Unit::J_PER_HOUR;
     } else if ((unit_and_multiplier & 0b1111000) == 0b0111000) {
       // Volume Flow in m3/h
       data_block->ten_power = (unit_and_multiplier & 0b111) - 6;
-      data_block->unit = Kamstrup303WA02::Unit::cubic_meter_per_hour;
+      data_block->unit = Kamstrup303WA02::Unit::CUBIC_METER_PER_HOUR;
     } else if ((unit_and_multiplier & 0b1111000) == 0b1000000) {
       // Volume Flow in m3/min
       data_block->ten_power = (unit_and_multiplier & 0b111) - 7;
-      data_block->unit = Kamstrup303WA02::Unit::cubic_meter_per_minute;
+      data_block->unit = Kamstrup303WA02::Unit::CUBIC_METER_PER_MINUTE;
     } else if ((unit_and_multiplier & 0b1111000) == 0b1001000) {
       // Volume Flow in m3/s
       data_block->ten_power = (unit_and_multiplier & 0b111) - 9;
-      data_block->unit = Kamstrup303WA02::Unit::cubic_meter_per_second;
+      data_block->unit = Kamstrup303WA02::Unit::CUBIC_METER_PER_SECOND;
     } else if ((unit_and_multiplier & 0b1111100) == 0b1011000) {
       // Flow Temperature in deg C
       data_block->ten_power = (unit_and_multiplier & 0b11) - 3;
-      data_block->unit = Kamstrup303WA02::Unit::degrees_celsius;
+      data_block->unit = Kamstrup303WA02::Unit::DEGREES_CELSIUS;
     } else if ((unit_and_multiplier & 0b1111100) == 0b1011100) {
       // Return Temperature in deg C
       data_block->ten_power = (unit_and_multiplier & 0b11) - 3;
-      data_block->unit = Kamstrup303WA02::Unit::degrees_celsius;
+      data_block->unit = Kamstrup303WA02::Unit::DEGREES_CELSIUS;
     } else if ((unit_and_multiplier & 0b1111100) == 0b1100000) {
       // Temperature Difference in K
       data_block->ten_power = (unit_and_multiplier & 0b11) - 3;
@@ -171,12 +171,12 @@ void DataBlockReader::read_vif_into_block(Kamstrup303WA02::DataBlock* data_block
     } else if ((unit_and_multiplier & 0b1111110) == 0b1101100) {
       // Time Point
       data_block->ten_power = 0;
-      data_block->unit = Kamstrup303WA02::Unit::date;
+      data_block->unit = Kamstrup303WA02::Unit::DATE;
     } else {
       ESP_LOGI(TAG, "Primary VIF with unit and multiplier %x not yet supported", unit_and_multiplier);
     }
   } else if (vif_is_manufacturer_specific) {
-    data_block->unit = Kamstrup303WA02::Unit::manufacturer_specific;
+    data_block->unit = Kamstrup303WA02::Unit::MANUFACTURER_SPECIFIC;
     data_block->is_manufacturer_specific = true;
   } else {
     ESP_LOGI(TAG, "Only primary VIF or manufacturer specific supported. VIF %x unsupported.", vif);
