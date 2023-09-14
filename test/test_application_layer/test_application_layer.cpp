@@ -7,9 +7,9 @@
 
 #include <DataBlockReader.h>
 #include <Kamstrup303WA02.h>
-#include <test_data_link_layer/TestableDataLinkLayer.h>
+#include <test_data_link_layer/testable_data_link_layer.h>
 #include <test_includes.h>
-#include <TestableKamstrup303WA02.h>
+#include <testable_kamstrup303wa02.h>
 
 using std::vector;
 using namespace esphome::warmtemetermbus;
