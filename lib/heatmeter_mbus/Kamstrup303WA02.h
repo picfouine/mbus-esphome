@@ -1,12 +1,13 @@
 #ifndef KAMSTRUP303WA02_H_
 #define KAMSTRUP303WA02_H_
 
+#include <vector>
+
 #ifndef UNIT_TEST
-#include "esphome/core/datatypes.h"
 #include "esphome/components/uart/uart.h"
+#include "esphome/core/datatypes.h"
 #endif // UNIT_TEST
 
-#include <vector>
 #include "UartInterface.h"
 
 namespace esphome {

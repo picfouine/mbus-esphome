@@ -1,11 +1,20 @@
-#ifdef UNIT_TEST
-#include <test_includes.h>
-#endif // UNIT_TEST
+#include "Kamstrup303WA02.h"
+
+#include <Arduino.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
-#include "Kamstrup303WA02.h"
+#ifdef UNIT_TEST
+#include <test_includes.h>
+#else
+#include "esphome/core/datatypes.h"
+#include "esphome/core/log.h"
+#endif // UNIT_TEST
+
 #include "DataBlockReader.h"
-#include <Arduino.h>
+#include "UartInterface.h"
+
+
+
 
 namespace esphome {
 namespace warmtemetermbus {
