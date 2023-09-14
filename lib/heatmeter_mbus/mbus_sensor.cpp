@@ -18,7 +18,7 @@ namespace warmtemetermbus
 
 static const char *TAG = "MbusSensor";
 
-void MbusSensor::transform_and_publish(Kamstrup303WA02::DataBlock* data_block) {
+void MbusSensor::transform_and_publish(const Kamstrup303WA02::DataBlock * const data_block) {
   switch (data_block->data_length) {
     case 2: {
       int16_t *raw_value = reinterpret_cast<int16_t*>(data_block->binary_data);
@@ -38,7 +38,7 @@ void MbusSensor::transform_and_publish(Kamstrup303WA02::DataBlock* data_block) {
   }
 }
 
-bool MbusSensor::is_right_sensor_for_data_block(Kamstrup303WA02::DataBlock* data_block) {
+bool MbusSensor::is_right_sensor_for_data_block(const Kamstrup303WA02::DataBlock * const data_block) {
   return (this->index_ == data_block->index);
 }
 

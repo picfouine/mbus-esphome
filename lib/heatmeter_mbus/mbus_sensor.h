@@ -13,8 +13,8 @@ class MbusSensor : public sensor::Sensor, public IMbusSensor {
   public:
     MbusSensor(uint8_t index) : index_(index) {}
 
-    virtual void transform_and_publish(Kamstrup303WA02::DataBlock* data_block);
-    virtual bool is_right_sensor_for_data_block(Kamstrup303WA02::DataBlock* data_block);
+    virtual void transform_and_publish(const Kamstrup303WA02::DataBlock * const data_block);
+    virtual bool is_right_sensor_for_data_block(const Kamstrup303WA02::DataBlock * const data_block);
 
   protected:
     uint8_t index_;
