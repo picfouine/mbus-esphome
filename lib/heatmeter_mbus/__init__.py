@@ -5,6 +5,8 @@ from esphome.components import uart
 
 DEPENDENCIES = ["uart"]
 MULTI_CONF = True
+CODEOWNERS = ["@pdjong"]
+
 warmtemetermbus_ns = cg.esphome_ns.namespace('warmtemetermbus')
 
 HeatMeterMbus = warmtemetermbus_ns.class_('HeatMeterMbus', cg.Component, uart.UARTDevice)
