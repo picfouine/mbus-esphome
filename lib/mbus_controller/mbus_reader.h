@@ -86,7 +86,7 @@ class MbusReader {
       uint8_t* user_data;
     } LongFrame;
     
-    DataLinkLayer(UartInterface* uart_interface) : uart_interface_(uart_interface) {}
+    DataLinkLayer(IUartInterface* uart_interface) : uart_interface_(uart_interface) {}
 
     bool req_ud2(const uint8_t address, LongFrame* response_frame);
     bool snd_nke(const uint8_t address);
@@ -96,7 +96,7 @@ class MbusReader {
     uint8_t calculate_checksum(const LongFrame* long_frame) const;
     uint8_t calculate_checksum(const uint8_t* data, size_t length) const;
     
-    UartInterface* uart_interface_;
+    IUartInterface* uart_interface_;
     bool next_req_ud2_fcb_ { true };
     bool meter_is_initialized_ { false };
 
@@ -121,7 +121,7 @@ class MbusReader {
 
   static const uint8_t FIXED_DATA_HEADER_SIZE = 12;
 
-  MbusReader(UartInterface* uart_interface);
+  MbusReader(IUartInterface* uart_interface);
 
   bool read_meter_data(MbusMeterData* meter_data, const uint8_t address);
 

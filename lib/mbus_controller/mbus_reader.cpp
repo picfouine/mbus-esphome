@@ -36,7 +36,7 @@ void MbusReader::MbusMeterData::deallocate_data_blocks() {
   this->data_blocks = nullptr;
 }
 
-MbusReader::MbusReader(UartInterface* uart_interface) {
+MbusReader::MbusReader(IUartInterface* uart_interface) {
   this->data_link_layer_ = new DataLinkLayer(uart_interface);
 }
 

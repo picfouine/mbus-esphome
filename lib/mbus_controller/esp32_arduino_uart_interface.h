@@ -9,7 +9,7 @@
 namespace esphome {
 namespace mbus_controller {
 
-class Esp32ArduinoUartInterface : public UartInterface {
+class Esp32ArduinoUartInterface : public IUartInterface {
  public:
   Esp32ArduinoUartInterface(uart::UARTDevice* uart_device) : uart_device_(uart_device) {}
 

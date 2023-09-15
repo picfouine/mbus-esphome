@@ -10,7 +10,7 @@
 namespace esphome {
 namespace mbus_controller {
 
-class UartInterface {
+class IUartInterface {
  public:
   virtual bool read_byte(uint8_t* data) = 0;
   virtual bool read_array(uint8_t* data, size_t len) = 0;

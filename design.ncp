@@ -11,7 +11,7 @@
         <Size width="162" height="128" />
         <Collapsed>False</Collapsed>
         <Member type="Method">public void write_array()</Member>
-        <Member type="Method">public void read_byte()</Member>
+        <Member type="Method">public bool read_byte()</Member>
         <Member type="Method">public uint16_t available()</Member>
         <Modifier>None</Modifier>
       </Entity>
@@ -27,28 +27,23 @@
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
-        <Name>IDFUARTComponent</Name>
-        <Access>Public</Access>
-        <Location left="1493" top="498" />
-        <Size width="162" height="216" />
-        <Collapsed>True</Collapsed>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
         <Name>ESP32ArduinoUARTComponent</Name>
         <Access>Public</Access>
-        <Location left="1684" top="498" />
+        <Location left="1575" top="427" />
         <Size width="215" height="216" />
         <Collapsed>True</Collapsed>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
-        <Name>HeatMeterMbus</Name>
+        <Name>MbusController</Name>
         <Access>Public</Access>
-        <Location left="1145" top="539" />
-        <Size width="162" height="94" />
+        <Location left="1117" top="539" />
+        <Size width="241" height="145" />
         <Collapsed>False</Collapsed>
-        <Member type="Method">public void readMbus()</Member>
+        <Member type="Method">public void enable_mbus()</Member>
+        <Member type="Method">public void disable_mbus()</Member>
+        <Member type="Method">public void read_mbus()</Member>
+        <Member type="Method">public MbusSensor create_sensor(uint8_t index)</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
@@ -62,14 +57,12 @@
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
-        <Name>Kamstrup303WA02</Name>
+        <Name>MbusReader</Name>
         <Access>Public</Access>
-        <Location left="1078" top="719" />
-        <Size width="289" height="128" />
+        <Location left="1039" top="945" />
+        <Size width="376" height="94" />
         <Collapsed>False</Collapsed>
-        <Member type="Method">public void sndNke()</Member>
-        <Member type="Method">public bool readData(MeterData data)</Member>
-        <Member type="Method">public void read_next_data_block(DataBlock pdata_block)</Member>
+        <Member type="Method">public bool read_meter_data(MbusMeterData meter_data, uint8_t address)</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
@@ -78,7 +71,7 @@
         <Location left="791" top="539" />
         <Size width="162" height="94" />
         <Collapsed>False</Collapsed>
-        <Member type="Property">public int index { get; set; }</Member>
+        <Member type="Property">protected uint8_t index { get; set; }</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
@@ -91,21 +84,21 @@
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Comment">
-        <Text>HeatMeterMbus.readMbus() is called by an external interval.
+        <Text>MbusController.read_mbus() is called by an external interval.
 
-readMbus() uses Kamstrup303WA02 to read everything, and puts each value in an object.
+read_mbus() uses MbusReader to read everything, and puts each value in an object.
 
-After reading everything, HeatMeterMbus goes over all its sensors and uses the sensor's index to map it on a read value. Then it tells the MbusSensor the value, and to publish it.</Text>
-        <Location left="620" top="719" />
-        <Size width="353" height="128" />
+After reading everything, MbusController goes over all its sensors and uses the sensor's index to map it on a read DataBlock. Then it tells the MbusSensor to transform and publish the value in the DataBlock.</Text>
+        <Location left="724" top="735" />
+        <Size width="353" height="147" />
       </Entity>
       <Entity type="Class">
         <Name>DataBlockReader</Name>
         <Access>Public</Access>
-        <Location left="1536" top="719" />
-        <Size width="302" height="94" />
+        <Location left="532" top="945" />
+        <Size width="439" height="94" />
         <Collapsed>False</Collapsed>
-        <Member type="Method">public void read_data_blocks(LongFrame plong_frame)</Member>
+        <Member type="Method">public vector&lt;DataBlock&gt; read_data_blocks_from_long_frame(LongFrame plong_frame)</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
@@ -115,7 +108,7 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
         <Size width="331" height="111" />
         <Collapsed>False</Collapsed>
         <Member type="Method">public abstract void transform_and_publish(DataBlock data_block)</Member>
-        <Member type="Method">public bool is_right_sensor_for_data_block(DataBLock data_block)</Member>
+        <Member type="Method">public abstract bool is_right_sensor_for_data_block(DataBLock data_block)</Member>
         <Modifier>Abstract</Modifier>
       </Entity>
       <Entity type="Class">
@@ -133,9 +126,50 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
         <Location left="324" top="539" />
         <Size width="162" height="111" />
         <Collapsed>False</Collapsed>
-        <Member type="Property">public int index { get; set; }</Member>
-        <Member type="Property">public int bit { get; set; }</Member>
+        <Member type="Property">protected uint8_t index { get; set; }</Member>
+        <Member type="Property">protected uint8_t bit { get; set; }</Member>
         <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Comment">
+        <Text>NOTE: NClass does not support pointers. Therefore in some occasions the mentioned types are actually pointers.</Text>
+        <Location left="1619" top="95" />
+        <Size width="263" height="71" />
+      </Entity>
+      <Entity type="Class">
+        <Name>DataLinkLayer</Name>
+        <Access>Public</Access>
+        <Location left="1527" top="945" />
+        <Size width="333" height="111" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public bool req_ud2(uint8_t address, LongFrame response_frame)</Member>
+        <Member type="Method">public bool snd_nke(uint8_t address)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>IUartInterface</Name>
+        <Access>Public</Access>
+        <Location left="1560" top="600" />
+        <Size width="252" height="162" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public abstract bool read_byte(uint8_t pData)</Member>
+        <Member type="Method">public abstract int available()</Member>
+        <Member type="Method">public abstract bool read_array(uint8_t[] data, size_t len)</Member>
+        <Member type="Method">public abstract bool write_array(uint8_t[] Data, size_t len)</Member>
+        <Member type="Method">public abstract void flush()</Member>
+        <Modifier>Abstract</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Esp32ArduinoUartInterface</Name>
+        <Access>Public</Access>
+        <Location left="1599" top="830" />
+        <Size width="185" height="77" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Comment">
+        <Text>MbusBinarySensor is not yet implemented</Text>
+        <Location left="72" top="577" />
+        <Size width="160" height="75" />
       </Entity>
     </Entities>
     <Relationships>
@@ -158,50 +192,39 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
       </Relationship>
-      <Relationship type="Generalization" first="3" second="1">
-        <StartOrientation>Vertical</StartOrientation>
-        <EndOrientation>Vertical</EndOrientation>
-      </Relationship>
-      <Relationship type="Generalization" first="4" second="5">
+      <Relationship type="Generalization" first="3" second="4">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="True">
           <X>1207</X>
           <Y>514</Y>
         </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>1112</X>
+          <Y>381</Y>
+        </BendPoint>
       </Relationship>
-      <Relationship type="Association" first="4" second="0">
+      <Relationship type="Association" first="3" second="0">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>1241</X>
-          <Y>497</Y>
+          <X>1264</X>
+          <Y>504</Y>
         </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
       </Relationship>
-      <Relationship type="Association" first="4" second="6">
+      <Relationship type="Association" first="3" second="5">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>1177</X>
-          <Y>662</Y>
+          <X>1228</X>
+          <Y>709</Y>
         </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Composition</AssociationType>
       </Relationship>
-      <Relationship type="Association" first="6" second="4">
-        <Label>uartDevice</Label>
-        <StartOrientation>Vertical</StartOrientation>
-        <EndOrientation>Vertical</EndOrientation>
-        <BendPoint relativeToStartShape="False">
-          <X>1267</X>
-          <Y>660</Y>
-        </BendPoint>
-        <Direction>Unidirectional</Direction>
-        <AssociationType>Association</AssociationType>
-      </Relationship>
-      <Relationship type="Generalization" first="7" second="8">
+      <Relationship type="Generalization" first="6" second="7">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="True">
@@ -209,7 +232,7 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
           <Y>501</Y>
         </BendPoint>
       </Relationship>
-      <Relationship type="Association" first="4" second="7">
+      <Relationship type="Association" first="3" second="6">
         <Label>
         </Label>
         <StartOrientation>Horizontal</StartOrientation>
@@ -217,7 +240,7 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
         <Direction>Unidirectional</Direction>
         <AssociationType>Aggregation</AssociationType>
       </Relationship>
-      <Relationship type="Association" first="6" second="10">
+      <Relationship type="Association" first="5" second="9">
         <Label>
         </Label>
         <StartOrientation>Horizontal</StartOrientation>
@@ -225,7 +248,7 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
       </Relationship>
-      <Relationship type="Association" first="7" second="11">
+      <Relationship type="Association" first="6" second="10">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="True">
@@ -239,7 +262,7 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
       </Relationship>
-      <Relationship type="Generalization" first="13" second="12">
+      <Relationship type="Generalization" first="12" second="11">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="True">
@@ -247,7 +270,7 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
           <Y>512</Y>
         </BendPoint>
       </Relationship>
-      <Relationship type="Association" first="13" second="11">
+      <Relationship type="Association" first="12" second="10">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="True">
@@ -261,11 +284,11 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
       </Relationship>
-      <Relationship type="Association" first="4" second="13">
+      <Relationship type="Association" first="3" second="12">
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>1104</X>
+          <X>1076</X>
           <Y>623</Y>
         </BendPoint>
         <BendPoint relativeToStartShape="False">
@@ -274,6 +297,59 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
         </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Aggregation</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="5" second="14">
+        <Label>data_link_layer_</Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1443</X>
+          <Y>995</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>1502</X>
+          <Y>995</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Composition</AssociationType>
+      </Relationship>
+      <Relationship type="Generalization" first="16" second="15">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Association" first="16" second="3">
+        <Label>uart_device_</Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1550</X>
+          <Y>867</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>1399</X>
+          <Y>596</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="14" second="15">
+        <Label>uart_interface_</Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1939</X>
+          <Y>992</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>1871</X>
+          <Y>691</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Comment" first="17" second="12">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
       </Relationship>
     </Relationships>
   </ProjectItem>
@@ -284,7 +360,7 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
       <Entity type="Class">
         <Name>DataBlock</Name>
         <Access>Public</Access>
-        <Location left="243" top="364" />
+        <Location left="74" top="214" />
         <Size width="162" height="77" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -292,7 +368,7 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
       <Entity type="Class">
         <Name>DataRecordHeader</Name>
         <Access>Public</Access>
-        <Location left="561" top="297" />
+        <Location left="392" top="147" />
         <Size width="162" height="77" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -300,7 +376,7 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
       <Entity type="Class">
         <Name>Data</Name>
         <Access>Public</Access>
-        <Location left="561" top="441" />
+        <Location left="392" top="291" />
         <Size width="162" height="77" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -308,7 +384,7 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
       <Entity type="Class">
         <Name>DataInformationBlock</Name>
         <Access>Public</Access>
-        <Location left="855" top="189" />
+        <Location left="686" top="39" />
         <Size width="190" height="145" />
         <Collapsed>False</Collapsed>
         <Member type="Property">public int Data { get; set; }</Member>
@@ -320,7 +396,7 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
       <Entity type="Class">
         <Name>ValueInformationBlock</Name>
         <Access>Public</Access>
-        <Location left="855" top="378" />
+        <Location left="686" top="228" />
         <Size width="162" height="111" />
         <Collapsed>False</Collapsed>
         <Member type="Property">public int Unit { get; set; }</Member>
@@ -328,14 +404,16 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Comment">
-        <Text>Top: Representation of the binary data in the user data part of the telegram.</Text>
-        <Location left="1236" top="333" />
+        <Text>Top: Representation of the binary data in the user data part of the telegram.
+
+Bottom: Representation of the data model in code.</Text>
+        <Location left="1067" top="183" />
         <Size width="177" height="100" />
       </Entity>
       <Entity type="Class">
         <Name>DataBlock</Name>
         <Access>Public</Access>
-        <Location left="432" top="999" />
+        <Location left="38" top="602" />
         <Size width="232" height="213" />
         <Collapsed>False</Collapsed>
         <Member type="Property">public int Function { get; set; }</Member>
@@ -351,7 +429,7 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
       <Entity type="Class">
         <Name>MeterData</Name>
         <Access>Public</Access>
-        <Location left="467" top="816" />
+        <Location left="73" top="419" />
         <Size width="162" height="77" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -362,8 +440,8 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>435</X>
-          <Y>377</Y>
+          <X>266</X>
+          <Y>227</Y>
         </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Composition</AssociationType>
@@ -373,8 +451,8 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>431</X>
-          <Y>425</Y>
+          <X>262</X>
+          <Y>275</Y>
         </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Composition</AssociationType>
@@ -384,12 +462,12 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>754</X>
-          <Y>312</Y>
+          <X>585</X>
+          <Y>162</Y>
         </BendPoint>
         <BendPoint relativeToStartShape="False">
-          <X>830</X>
-          <Y>269</Y>
+          <X>661</X>
+          <Y>119</Y>
         </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Composition</AssociationType>
@@ -398,8 +476,8 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>756</X>
-          <Y>361</Y>
+          <X>587</X>
+          <Y>211</Y>
         </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Composition</AssociationType>
@@ -415,101 +493,101 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
     </Relationships>
   </ProjectItem>
   <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
-    <Name>Kamstrup303WA02</Name>
+    <Name>DataLinkLayer</Name>
     <Language>CSharp</Language>
     <Entities>
       <Entity type="Class">
         <Name>DataLinkLayer</Name>
         <Access>Public</Access>
-        <Location left="442" top="146" />
-        <Size width="320" height="216" />
+        <Location left="398" top="76" />
+        <Size width="333" height="264" />
         <Collapsed>False</Collapsed>
-        <Member type="Method">public void req_ud2()</Member>
-        <Member type="Method">bool try_send_short_frame()</Member>
-        <Member type="Method">private void flush_rx_buffer()</Member>
-        <Member type="Method">private void send_short_frame()</Member>
+        <Member type="Method">public bool req_ud2(uint8_t address, LongFrame response_frame)</Member>
+        <Member type="Method">public bool snd_nke(uint8_t address)</Member>
+        <Member type="Method">protected bool try_send_short_frame(uint8_t c, uint8_t a)</Member>
+        <Member type="Method">protected uint8_t calculate_checksum(LongFrame long_frame)</Member>
+        <Member type="Method">protected uint8_t calculate_checksum(uint8_t data, size_t length)</Member>
+        <Member type="Method">private bool initialize_meter(uint8_t address)</Member>
+        <Member type="Method">private bool parse_long_frame_response(LongFrame longFrame)</Member>
+        <Member type="Method">private void send_short_frame(uint8_t c, uint8_t a)</Member>
         <Member type="Method">private bool wait_for_incoming_data()</Member>
-        <Member type="Method">protected uint8_t calculate_checksum(uint8_t pData, size_t length)</Member>
+        <Member type="Method">private void flush_rx_buffer()</Member>
+        <Member type="Method">private bool read_next_byte(uint8_t received_byte)</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>UARTDevice</Name>
         <Access>Public</Access>
-        <Location left="1694" top="347" />
-        <Size width="162" height="162" />
-        <Collapsed>False</Collapsed>
-        <Member type="Method">public void read_byte()</Member>
-        <Member type="Method">public void available()</Member>
-        <Member type="Method">public void read_array()</Member>
-        <Member type="Method">public void write_array()</Member>
-        <Member type="Method">public void flush()</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>UARTComponent</Name>
-        <Access>Public</Access>
-        <Location left="1972" top="347" />
-        <Size width="162" height="162" />
-        <Collapsed>False</Collapsed>
-        <Member type="Method">public void read_byte()</Member>
-        <Member type="Method">public void available()</Member>
-        <Member type="Method">public void read_array()</Member>
-        <Member type="Method">public void write_array()</Member>
-        <Member type="Method">public void flush()</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>FakeUartInterface</Name>
-        <Access>Public</Access>
-        <Location left="1003" top="388" />
-        <Size width="251" height="145" />
-        <Collapsed>False</Collapsed>
-        <Member type="Method">public bool write_array(uint8_t[] data, size_t len)</Member>
-        <Member type="Method">public bool read_array(uint8_t[] data, size_t len)</Member>
-        <Member type="Method">public int available()</Member>
-        <Member type="Method">public void flush()</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Comment">
-        <Text>For unit testing</Text>
-        <Location left="1095" top="649" />
-        <Size width="160" height="75" />
-      </Entity>
-      <Entity type="Class">
-        <Name>TestableDataLinkLayer</Name>
-        <Access>Public</Access>
-        <Location left="442" top="471" />
-        <Size width="342" height="216" />
-        <Collapsed>False</Collapsed>
-        <Member type="Method">public void call_try_send_short_frame()</Member>
-        <Member type="Method">public uint8_t call_calculate_checksum(uint8_t pData, size_t length)</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>UartInterface</Name>
-        <Access>Public</Access>
-        <Location left="1157" top="146" />
-        <Size width="252" height="162" />
-        <Collapsed>False</Collapsed>
-        <Member type="Method">public bool read_byte(uint8_t pData)</Member>
-        <Member type="Method">public int available()</Member>
-        <Member type="Method">public bool read_array(uint8_t[] data, size_t len)</Member>
-        <Member type="Method">public bool write_array(uint8_t[] Data, size_t len)</Member>
-        <Member type="Method">public void flush()</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>EspUartInterface</Name>
-        <Access>Public</Access>
-        <Location left="1430" top="388" />
+        <Location left="1448" top="325" />
         <Size width="162" height="77" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
-        <Name>HeatMeterMbus</Name>
+        <Name>UARTComponent</Name>
         <Access>Public</Access>
-        <Location left="1694" top="600" />
+        <Location left="1711" top="325" />
+        <Size width="162" height="77" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>FakeUartInterface</Name>
+        <Access>Public</Access>
+        <Location left="853" top="325" />
+        <Size width="251" height="162" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public bool read_byte(uint8_t data)</Member>
+        <Member type="Method">public bool read_array(uint8_t data, size_t len)</Member>
+        <Member type="Method">public void write_array(uint8_t data, size_t len)</Member>
+        <Member type="Method">public int available()</Member>
+        <Member type="Method">public void flush()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Comment">
+        <Text>A FakeUartInterface instance is injected in the TestableDataLinkLayer for unit testing.</Text>
+        <Location left="945" top="586" />
+        <Size width="210" height="74" />
+      </Entity>
+      <Entity type="Class">
+        <Name>TestableDataLinkLayer</Name>
+        <Access>Public</Access>
+        <Location left="398" top="398" />
+        <Size width="342" height="179" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public TestableDataLinkLayer(FakeUartInterface uart_interface)</Member>
+        <Member type="Method">public bool call_try_send_short_frame(uint8_t c, uint8_t a)</Member>
+        <Member type="Method">public uint8_t call_calculate_checksum(uint8_t data, size_t length)</Member>
+        <Member type="Method">public uint8_t call_calculate_checksum(LongFrame long_frame)</Member>
+        <Member type="Method">public bool get_next_req_ud2_fcb()</Member>
+        <Member type="Method">public void set_meter_is_initialized(bool is_initialized)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>IUartInterface</Name>
+        <Access>Public</Access>
+        <Location left="1004" top="83" />
+        <Size width="242" height="162" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public abstract bool read_byte(uint8_t data)</Member>
+        <Member type="Method">public abstract bool read_array(uint8_t data, size_t len)</Member>
+        <Member type="Method">public abstract void write_array(uint8_t data, size_t len)</Member>
+        <Member type="Method">public abstract int available()</Member>
+        <Member type="Method">public abstract void flush()</Member>
+        <Modifier>Abstract</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>EspUartInterface</Name>
+        <Access>Public</Access>
+        <Location left="1206" top="325" />
+        <Size width="162" height="77" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>MbusController</Name>
+        <Access>Public</Access>
+        <Location left="1448" top="538" />
         <Size width="162" height="77" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -527,12 +605,12 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>1165</X>
-          <Y>624</Y>
+          <X>1015</X>
+          <Y>561</Y>
         </BendPoint>
         <BendPoint relativeToStartShape="False">
-          <X>1167</X>
-          <Y>569</Y>
+          <X>1017</X>
+          <Y>523</Y>
         </BendPoint>
       </Relationship>
       <Relationship type="Generalization" first="5" second="0">
@@ -572,7 +650,7 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
       <Entity type="Class">
         <Name>DataBlockReader</Name>
         <Access>Public</Access>
-        <Location left="805" top="816" />
+        <Location left="523" top="598" />
         <Size width="275" height="94" />
         <Collapsed>False</Collapsed>
         <Member type="Method">public void read_data_blocks(LongFrame plong_frame)</Member>
@@ -581,7 +659,7 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
       <Entity type="Class">
         <Name>Sensor</Name>
         <Access>Public</Access>
-        <Location left="399" top="165" />
+        <Location left="117" top="48" />
         <Size width="162" height="94" />
         <Collapsed>False</Collapsed>
         <Member type="Method">public void publish_state()</Member>
@@ -590,57 +668,50 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
       <Entity type="Class">
         <Name>MbusSensor</Name>
         <Access>Public</Access>
-        <Location left="399" top="464" />
+        <Location left="117" top="246" />
         <Size width="162" height="94" />
         <Collapsed>False</Collapsed>
-        <Member type="Property">public int index { get; set; }</Member>
+        <Member type="Property">protected int index { get; set; }</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
-        <Name>Kamstrup303WA02</Name>
+        <Name>MbusReader</Name>
         <Access>Public</Access>
-        <Location left="686" top="644" />
-        <Size width="289" height="128" />
+        <Location left="361" top="426" />
+        <Size width="376" height="94" />
         <Collapsed>False</Collapsed>
-        <Member type="Method">public void sndNke()</Member>
-        <Member type="Method">public bool readData(MeterData data)</Member>
-        <Member type="Method">public void read_next_data_block(DataBlock pdata_block)</Member>
+        <Member type="Method">public bool read_meter_data(MbusMeterData meter_data, uint8_t address)</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>Component</Name>
         <Access>Public</Access>
-        <Location left="643" top="165" />
-        <Size width="162" height="111" />
+        <Location left="361" top="48" />
+        <Size width="162" height="77" />
         <Collapsed>False</Collapsed>
-        <Member type="Method">public void setup()</Member>
-        <Member type="Method">public void loop()</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
-        <Name>HeatMeterMbus</Name>
+        <Name>MbusController</Name>
         <Access>Public</Access>
-        <Location left="753" top="464" />
+        <Location left="471" top="246" />
         <Size width="162" height="94" />
         <Collapsed>False</Collapsed>
-        <Member type="Method">public void readMbus()</Member>
+        <Member type="Method">public void read_mbus()</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>UARTDevice</Name>
         <Access>Public</Access>
-        <Location left="887" top="165" />
-        <Size width="162" height="128" />
+        <Location left="601" top="48" />
+        <Size width="162" height="77" />
         <Collapsed>False</Collapsed>
-        <Member type="Method">public void write_array()</Member>
-        <Member type="Method">public void read_byte()</Member>
-        <Member type="Method">public uint16_t available()</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>DataLinkLayer</Name>
         <Access>Public</Access>
-        <Location left="805" top="1034" />
+        <Location left="523" top="816" />
         <Size width="162" height="94" />
         <Collapsed>False</Collapsed>
         <Member type="Method">public void req_ud2()</Member>
@@ -649,7 +720,7 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
       <Entity type="Class">
         <Name>MbusMeterData</Name>
         <Access>Public</Access>
-        <Location left="1292" top="478" />
+        <Location left="1010" top="260" />
         <Size width="162" height="77" />
         <Collapsed>True</Collapsed>
         <Modifier>None</Modifier>
@@ -657,7 +728,7 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
       <Entity type="Class">
         <Name>LongFrame</Name>
         <Access>Public</Access>
-        <Location left="1292" top="644" />
+        <Location left="1010" top="426" />
         <Size width="162" height="77" />
         <Collapsed>True</Collapsed>
         <Modifier>None</Modifier>
@@ -665,20 +736,20 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
       <Entity type="Class">
         <Name>user_data</Name>
         <Access>Public</Access>
-        <Location left="1292" top="1060" />
+        <Location left="1010" top="842" />
         <Size width="162" height="216" />
         <Collapsed>True</Collapsed>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Comment">
-        <Text>LongFrame.user_data is deallocated by Kamstrup303WA02.read_meter_data.</Text>
-        <Location left="1256" top="1166" />
+        <Text>LongFrame.user_data is deallocated by MbusReader.read_meter_data.</Text>
+        <Location left="974" top="948" />
         <Size width="245" height="60" />
       </Entity>
       <Entity type="Class">
         <Name>data_blocks</Name>
         <Access>Public</Access>
-        <Location left="1292" top="738" />
+        <Location left="1010" top="520" />
         <Size width="162" height="77" />
         <Collapsed>True</Collapsed>
         <Modifier>None</Modifier>
@@ -686,7 +757,7 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
       <Entity type="Class">
         <Name>DataBlock</Name>
         <Access>Public</Access>
-        <Location left="1292" top="841" />
+        <Location left="1010" top="623" />
         <Size width="162" height="216" />
         <Collapsed>True</Collapsed>
         <Modifier>None</Modifier>
@@ -694,17 +765,17 @@ After reading everything, HeatMeterMbus goes over all its sensors and uses the s
       <Entity type="Class">
         <Name>binary_data</Name>
         <Access>Public</Access>
-        <Location left="1292" top="931" />
+        <Location left="1010" top="713" />
         <Size width="162" height="77" />
         <Collapsed>True</Collapsed>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Comment">
-        <Text>Kamstrup303WA02.read_meter_data puts data_blocks in MbusMeterData
+        <Text>MbusReader.read_meter_data puts data_blocks in MbusMeterData
 
-MbusMeterData deallocates binary_data, DataBlocks and data_blocks </Text>
-        <Location left="1037" top="523" />
-        <Size width="224" height="92" />
+MbusMeterData deallocates binary_data, DataBlocks and data_blocks in its destructor (when it goes out of scope in read_meter_data)</Text>
+        <Location left="737" top="303" />
+        <Size width="256" height="106" />
       </Entity>
     </Entities>
     <Relationships>
@@ -714,12 +785,12 @@ MbusMeterData deallocates binary_data, DataBlocks and data_blocks </Text>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>777</X>
-          <Y>800</Y>
+          <X>452</X>
+          <Y>548</Y>
         </BendPoint>
         <BendPoint relativeToStartShape="False">
-          <X>777</X>
-          <Y>863</Y>
+          <X>495</X>
+          <Y>645</Y>
         </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
@@ -741,8 +812,8 @@ MbusMeterData deallocates binary_data, DataBlocks and data_blocks </Text>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="False">
-          <X>875</X>
-          <Y>585</Y>
+          <X>593</X>
+          <Y>367</Y>
         </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
@@ -751,8 +822,8 @@ MbusMeterData deallocates binary_data, DataBlocks and data_blocks </Text>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>785</X>
-          <Y>587</Y>
+          <X>503</X>
+          <Y>369</Y>
         </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Composition</AssociationType>
@@ -761,8 +832,8 @@ MbusMeterData deallocates binary_data, DataBlocks and data_blocks </Text>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>835</X>
-          <Y>422</Y>
+          <X>568</X>
+          <Y>221</Y>
         </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
@@ -770,17 +841,21 @@ MbusMeterData deallocates binary_data, DataBlocks and data_blocks </Text>
       <Relationship type="Generalization" first="5" second="4">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>537</X>
+          <Y>220</Y>
+        </BendPoint>
       </Relationship>
       <Relationship type="Association" first="3" second="7">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>741</X>
-          <Y>841</Y>
+          <X>416</X>
+          <Y>589</Y>
         </BendPoint>
         <BendPoint relativeToStartShape="False">
-          <X>780</X>
-          <Y>1088</Y>
+          <X>498</X>
+          <Y>870</Y>
         </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
@@ -797,8 +872,8 @@ MbusMeterData deallocates binary_data, DataBlocks and data_blocks </Text>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <BendPoint relativeToStartShape="False">
-          <X>1230</X>
-          <Y>664</Y>
+          <X>948</X>
+          <Y>446</Y>
         </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
@@ -814,12 +889,12 @@ MbusMeterData deallocates binary_data, DataBlocks and data_blocks </Text>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>1521</X>
-          <Y>668</Y>
+          <X>1239</X>
+          <Y>450</Y>
         </BendPoint>
         <BendPoint relativeToStartShape="False">
-          <X>1510</X>
-          <Y>1082</Y>
+          <X>1228</X>
+          <Y>864</Y>
         </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
@@ -828,12 +903,12 @@ MbusMeterData deallocates binary_data, DataBlocks and data_blocks </Text>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>1378</X>
-          <Y>1141</Y>
+          <X>1096</X>
+          <Y>923</Y>
         </BendPoint>
         <BendPoint relativeToStartShape="False">
-          <X>1378</X>
-          <Y>1130</Y>
+          <X>1096</X>
+          <Y>912</Y>
         </BendPoint>
       </Relationship>
       <Relationship type="Association" first="0" second="12">
@@ -841,12 +916,12 @@ MbusMeterData deallocates binary_data, DataBlocks and data_blocks </Text>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>1105</X>
-          <Y>833</Y>
+          <X>823</X>
+          <Y>615</Y>
         </BendPoint>
         <BendPoint relativeToStartShape="False">
-          <X>1146</X>
-          <Y>760</Y>
+          <X>864</X>
+          <Y>542</Y>
         </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
@@ -862,8 +937,8 @@ MbusMeterData deallocates binary_data, DataBlocks and data_blocks </Text>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="False">
-          <X>1373</X>
-          <Y>816</Y>
+          <X>1091</X>
+          <Y>598</Y>
         </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Aggregation</AssociationType>
@@ -872,8 +947,8 @@ MbusMeterData deallocates binary_data, DataBlocks and data_blocks </Text>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="False">
-          <X>1374</X>
-          <Y>906</Y>
+          <X>1092</X>
+          <Y>688</Y>
         </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
@@ -883,12 +958,12 @@ MbusMeterData deallocates binary_data, DataBlocks and data_blocks </Text>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>1106</X>
-          <Y>892</Y>
+          <X>824</X>
+          <Y>674</Y>
         </BendPoint>
         <BendPoint relativeToStartShape="False">
-          <X>1149</X>
-          <Y>955</Y>
+          <X>867</X>
+          <Y>737</Y>
         </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
@@ -896,25 +971,29 @@ MbusMeterData deallocates binary_data, DataBlocks and data_blocks </Text>
       <Relationship type="Comment" first="15" second="3">
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>712</X>
+          <Y>355</Y>
+        </BendPoint>
         <BendPoint relativeToStartShape="False">
-          <X>962</X>
-          <Y>583</Y>
+          <X>704</X>
+          <Y>401</Y>
         </BendPoint>
       </Relationship>
       <Relationship type="Comment" first="15" second="8">
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="False">
-          <X>1335</X>
-          <Y>566</Y>
+          <X>1053</X>
+          <Y>348</Y>
         </BendPoint>
       </Relationship>
       <Relationship type="Comment" first="15" second="12">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>1174</X>
-          <Y>692</Y>
+          <X>904</X>
+          <Y>484</Y>
         </BendPoint>
       </Relationship>
       <Relationship type="Association" first="8" second="12">
@@ -923,15 +1002,186 @@ MbusMeterData deallocates binary_data, DataBlocks and data_blocks </Text>
         <StartOrientation>Horizontal</StartOrientation>
         <EndOrientation>Horizontal</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>1606</X>
-          <Y>501</Y>
+          <X>1324</X>
+          <Y>283</Y>
         </BendPoint>
         <BendPoint relativeToStartShape="False">
-          <X>1564</X>
-          <Y>758</Y>
+          <X>1282</X>
+          <Y>540</Y>
         </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
+      </Relationship>
+    </Relationships>
+  </ProjectItem>
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+    <Name>Overview</Name>
+    <Language>CSharp</Language>
+    <Entities>
+      <Entity type="Class">
+        <Name>UARTDevice</Name>
+        <Access>Public</Access>
+        <Location left="1218" top="53" />
+        <Size width="162" height="128" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public void write_array()</Member>
+        <Member type="Method">public bool read_byte()</Member>
+        <Member type="Method">public uint16_t available()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Comment">
+        <Text>MbusController.read_mbus() is called by an external interval.
+
+read_mbus() uses MbusReader to read everything, and puts each value in an object.
+
+After reading everything, MbusController goes over all its sensors and uses the sensor's index to map it on a read DataBlock. Then it tells the MbusSensor to transform and publish the value in the DataBlock.</Text>
+        <Location left="662" top="420" />
+        <Size width="353" height="147" />
+      </Entity>
+      <Entity type="Class">
+        <Name>IMbusSensor</Name>
+        <Access>Public</Access>
+        <Location left="348" top="53" />
+        <Size width="331" height="111" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public abstract void transform_and_publish(DataBlock data_block)</Member>
+        <Member type="Method">public abstract bool is_right_sensor_for_data_block(DataBLock data_block)</Member>
+        <Modifier>Abstract</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>MbusReader</Name>
+        <Access>Public</Access>
+        <Location left="985" top="609" />
+        <Size width="376" height="94" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public bool read_meter_data(MbusMeterData meter_data, uint8_t address)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>MbusController</Name>
+        <Access>Public</Access>
+        <Location left="1055" top="299" />
+        <Size width="241" height="145" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public void enable_mbus()</Member>
+        <Member type="Method">public void disable_mbus()</Member>
+        <Member type="Method">public void read_mbus()</Member>
+        <Member type="Method">public MbusSensor create_sensor(uint8_t index)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>DataBlockReader</Name>
+        <Access>Public</Access>
+        <Location left="478" top="609" />
+        <Size width="439" height="94" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public vector&lt;DataBlock&gt; read_data_blocks_from_long_frame(LongFrame plong_frame)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Comment">
+        <Text>NOTE: NClass does not support pointers. Therefore in some occasions the mentioned types are actually pointers.</Text>
+        <Location left="1218" top="476" />
+        <Size width="263" height="71" />
+      </Entity>
+      <Entity type="Class">
+        <Name>Sensor</Name>
+        <Access>Public</Access>
+        <Location left="719" top="53" />
+        <Size width="185" height="94" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public void publish_state(float state)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>MbusSensor</Name>
+        <Access>Public</Access>
+        <Location left="575" top="299" />
+        <Size width="162" height="94" />
+        <Collapsed>False</Collapsed>
+        <Member type="Property">protected int index { get; set; }</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Component</Name>
+        <Access>Public</Access>
+        <Location left="974" top="53" />
+        <Size width="162" height="111" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public void setup()</Member>
+        <Member type="Method">public void loop()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+    </Entities>
+    <Relationships>
+      <Relationship type="Association" first="4" second="3">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1166</X>
+          <Y>469</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Composition</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="4" second="0">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1202</X>
+          <Y>264</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Generalization" first="4" second="9">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1145</X>
+          <Y>274</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>1051</X>
+          <Y>194</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Association" first="8" second="2">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>636</X>
+          <Y>243</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>511</X>
+          <Y>191</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="3" second="5">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="4" second="8">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Aggregation</AssociationType>
+      </Relationship>
+      <Relationship type="Generalization" first="8" second="7">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>670</X>
+          <Y>261</Y>
+        </BendPoint>
       </Relationship>
     </Relationships>
   </ProjectItem>

@@ -15,7 +15,7 @@
 using std::vector;
 using std::queue;
 
-class FakeUartInterface : public esphome::mbus_controller::UartInterface {
+class FakeUartInterface : public esphome::mbus_controller::IUartInterface {
   public:
     typedef struct WrittenArray {
       const uint8_t* data;
