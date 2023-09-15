@@ -2,6 +2,9 @@
 
 #include "mbus_controller.h"
 
+#include <map>
+#include <string>
+
 #include "esphome/core/log.h"
 #include "esp_err.h"
 #include <freertos/FreeRTOS.h>
@@ -12,13 +15,44 @@
 #include "mbus_reader.h"
 #include "pwm.h"
 
-using namespace std; 
+using namespace std;
 
 namespace esphome
 {
   namespace mbus_controller
   {
     static const char *TAG = "MbusController";
+
+    map<MbusReader::Unit, string> MbusController::unit_names_ = {
+      { MbusReader::Unit::WH, "Wh" },
+      { MbusReader::Unit::J, "J" },
+      { MbusReader::Unit::CUBIC_METER, "m3" },
+      { MbusReader::Unit::KG, "kg" },
+      { MbusReader::Unit::SECONDS, "s" },
+      { MbusReader::Unit::MINUTES, "min" },
+      { MbusReader::Unit::HOURS, "h" },
+      { MbusReader::Unit::DAYS, "days" },
+      { MbusReader::Unit::W, "W" },
+      { MbusReader::Unit::J_PER_HOUR, "J/h" },
+      { MbusReader::Unit::CUBIC_METER_PER_HOUR, "m3/h" },
+      { MbusReader::Unit::CUBIC_METER_PER_MINUTE, "m3/min" },
+      { MbusReader::Unit::CUBIC_METER_PER_SECOND, "m3/s" },
+      { MbusReader::Unit::KG_PER_HOUR, "kg/h" },
+      { MbusReader::Unit::DEGREES_CELSIUS, "deg c" },
+      { MbusReader::Unit::K, "K" },
+      { MbusReader::Unit::BAR, "bar" },
+      { MbusReader::Unit::DATE, "date" },
+      { MbusReader::Unit::TIME_AND_DATE, "time and date" },
+      { MbusReader::Unit::MANUFACTURER_SPECIFIC, "manuf. specific" },
+      { MbusReader::Unit::DIMENSIONLESS, "-" }
+    };
+
+    map<MbusReader::Function, string> MbusController::function_names_ = {
+      { MbusReader::Function::INSTANTANEOUS, "instantaneous" },
+      { MbusReader::Function::MAXIMUM, "maximum" },
+      { MbusReader::Function::MINIMUM, "minimum" },
+      { MbusReader::Function::DURING_ERROR_STATE, "during error state" }
+    };
 
     bool pwm_initialized { false };
     bool pwm_enabled { false };
@@ -127,9 +161,9 @@ namespace esphome
     void MbusController::dump_data_blocks(MbusReader::MbusMeterData* meter_data) {
       for (auto data_block : *(meter_data->data_blocks)) {
         ESP_LOGI(TAG, "-- Index:\t\t\t%d --", data_block->index);
-        ESP_LOGI(TAG, "Function:\t\t\t%d", data_block->function);
+        ESP_LOGI(TAG, "Function:\t\t\t%s", MbusController::function_names_[data_block->function].c_str());
         ESP_LOGI(TAG, "Storage number:\t\t%d", data_block->storage_number);
-        ESP_LOGI(TAG, "Unit:\t\t\t%d", data_block->unit);
+        ESP_LOGI(TAG, "Unit:\t\t\t%s", MbusController::unit_names_[data_block->unit].c_str());
         ESP_LOGI(TAG, "Ten power:\t\t\t%d", data_block->ten_power);
         ESP_LOGI(TAG, "Data length:\t\t%d", data_block->data_length);
         ESP_LOGI(TAG, "-------------------------------");

@@ -1,6 +1,8 @@
 #ifndef MBUS_CONTROLLER_H_
 #define MBUS_CONTROLLER_H_
 
+#include <map>
+#include <string>
 #include <vector>
 
 #include "esphome/components/uart/uart.h"
@@ -40,6 +42,8 @@ class MbusController : public Component, public uart::UARTDevice {
   bool update_requested_ { false };
   bool mbus_enabled_ { true };
   std::vector<IMbusSensor*> sensors_;
+  static std::map<MbusReader::Unit, std::string> unit_names_;
+  static std::map<MbusReader::Function, std::string> function_names_;
 
  private:
   static void read_mbus_task_loop(void* params);
