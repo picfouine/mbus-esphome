@@ -69,7 +69,7 @@ void test_data_link_layer_calculate_checksum_with_long_frame() {
 void test_data_link_layer_try_send_short_frame_reply_to_first_request(void) {
   // Arrange
 
-  // After the request is sent, the fake slave responds after the minimum time.
+  // After the request is sent, the fake meter responds after the minimum time.
   // What can be checked: 
   //  - return value (should be true)
   //  - sent data (should contain a full Short Frame: start, C, A, check sum, stop)
@@ -130,7 +130,7 @@ void test_data_link_layer_try_send_short_frame_reply_to_first_request(void) {
 void test_data_link_layer_try_send_short_frame_reply_to_second_request(void) {
   // Arrange
 
-  // After the request is sent, the fake slave responds after the minimum time.
+  // After the request is sent, the fake meter responds after the minimum time.
   // What can be checked: 
   //  - return value (should be true)
   //  - sent data (should contain a full Short Frame: start, C, A, check sum, stop)

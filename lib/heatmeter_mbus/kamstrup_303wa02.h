@@ -68,12 +68,12 @@ class Kamstrup303WA02 {
       void deallocate_data_blocks();
   } MbusMeterData;
 
-  typedef enum CiSlaveToMasterCode : uint8_t {
+  typedef enum CiMeterToMasterCode : uint8_t {
     GENERAL_APPLICATION_ERRORS = 0,
     ALARM_STATUS = 1,
     VARIABLE_DATA_RESPOND = 2,
     FIXED_DATA_RESPOND = 3
-  } CiSlaveToMasterCode;
+  } CiMeterToMasterCode;
 
   class DataLinkLayer {
    public:

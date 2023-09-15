@@ -61,13 +61,13 @@ bool Kamstrup303WA02::read_meter_data(Kamstrup303WA02::MbusMeterData* meter_data
 
   // Check type of response
   switch (response_to_req_ud2.ci & 0x03) {
-    case CiSlaveToMasterCode::GENERAL_APPLICATION_ERRORS:
+    case CiMeterToMasterCode::GENERAL_APPLICATION_ERRORS:
       ESP_LOGE(TAG, "General App Error");
       break;
-    case CiSlaveToMasterCode::ALARM_STATUS:
+    case CiMeterToMasterCode::ALARM_STATUS:
       ESP_LOGI(TAG, "Alarm Status");
       break;
-    case CiSlaveToMasterCode::VARIABLE_DATA_RESPOND: {
+    case CiMeterToMasterCode::VARIABLE_DATA_RESPOND: {
       ESP_LOGI(TAG, "Variable data response");
       DataBlockReader data_block_reader;
       auto data_blocks = data_block_reader.read_data_blocks_from_long_frame(&response_to_req_ud2);
@@ -75,7 +75,7 @@ bool Kamstrup303WA02::read_meter_data(Kamstrup303WA02::MbusMeterData* meter_data
       success = true;
       break;
     }
-    case CiSlaveToMasterCode::FIXED_DATA_RESPOND:
+    case CiMeterToMasterCode::FIXED_DATA_RESPOND:
       ESP_LOGI(TAG, "Fixed data response");
       break;
   }
@@ -237,7 +237,7 @@ bool Kamstrup303WA02::DataLinkLayer::snd_nke(const uint8_t address) {
   return success;
 }
 
-// Slave must wait at least 11 bit times, and at max 330 bit times + 50ms before answering.
+// Meter must wait at least 11 bit times, and at max 330 bit times + 50ms before answering.
 // In case no answer within that time, retry at most twice.
 // (see 5.4 Communication Process)
 bool Kamstrup303WA02::DataLinkLayer::try_send_short_frame(const uint8_t c, const uint8_t a) {
