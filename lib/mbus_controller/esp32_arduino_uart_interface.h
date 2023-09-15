@@ -7,7 +7,7 @@
 #include "uart_interface.h"
 
 namespace esphome {
-namespace warmtemetermbus {
+namespace mbus_controller {
 
 class Esp32ArduinoUartInterface : public UartInterface {
  public:
@@ -37,7 +37,7 @@ class Esp32ArduinoUartInterface : public UartInterface {
   uart::UARTDevice* uart_device_;
 };
 
-} //namespace warmtemetermbus
+} //namespace mbus_controller
 } //namespace esphome
 
 #endif // ESP32ARDUINOUARTINTERFACE_H_

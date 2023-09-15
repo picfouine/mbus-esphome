@@ -14,7 +14,7 @@
 #include "kamstrup_303wa02.h"
 
 namespace esphome {
-namespace warmtemetermbus {
+namespace mbus_controller {
 
 using std::vector;
 using DataBlock = Kamstrup303WA02::DataBlock;
@@ -200,5 +200,5 @@ uint8_t DataBlockReader::read_next_byte() {
   return this->long_frame_->user_data[this->current_position_in_user_data_++];
 }
 
-} //namespace warmtemetermbus
+} //namespace mbus_controller
 } //namespace esphome

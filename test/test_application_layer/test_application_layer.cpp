@@ -12,7 +12,7 @@
 #include <testable_kamstrup303wa02.h>
 
 using std::vector;
-using namespace esphome::warmtemetermbus;
+using namespace esphome::mbus_controller;
 
 void setUp(void) {}
 void tearDown(void) {}

@@ -1,5 +1,5 @@
-#ifndef HEATMETERMBUS_H_
-#define HEATMETERMBUS_H_
+#ifndef MBUS_CONTROLLER_H_
+#define MBUS_CONTROLLER_H_
 
 #include <vector>
 
@@ -13,7 +13,7 @@
 #include "pwm.h"
 
 namespace esphome {
-namespace warmtemetermbus {
+namespace mbus_controller {
 
 class MbusController : public Component, public uart::UARTDevice {
  public:  
@@ -47,7 +47,7 @@ class MbusController : public Component, public uart::UARTDevice {
   static esp_err_t initialize_and_enable_pwm(Pwm* pwm);
 };
 
-} //namespace warmtemetermbus
+} //namespace mbus_controller
 } //namespace esphome
 
-#endif // HEATMETERMBUS_H_
+#endif // MBUS_CONTROLLER_H_

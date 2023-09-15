@@ -7,9 +7,9 @@ DEPENDENCIES = ["uart"]
 MULTI_CONF = True
 CODEOWNERS = ["@pdjong"]
 
-warmtemetermbus_ns = cg.esphome_ns.namespace('warmtemetermbus')
+mbus_controller_ns = cg.esphome_ns.namespace('mbus_controller')
 
-MbusController = warmtemetermbus_ns.class_('MbusController', cg.Component, uart.UARTDevice)
+MbusController = mbus_controller_ns.class_('MbusController', cg.Component, uart.UARTDevice)
 
 CONFIG_SCHEMA = cv.Schema({
   cv.GenerateID(): cv.declare_id(MbusController)

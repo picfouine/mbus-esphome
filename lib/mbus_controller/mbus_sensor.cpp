@@ -13,7 +13,7 @@ using namespace std;
 
 namespace esphome
 {
-namespace warmtemetermbus
+namespace mbus_controller
 {
 
 using DataBlock = Kamstrup303WA02::DataBlock;
@@ -44,7 +44,7 @@ bool MbusSensor::is_right_sensor_for_data_block(const DataBlock * const data_blo
   return (this->index_ == data_block->index);
 }
 
-} // namespace warmtemetermbus
+} // namespace mbus_controller
 } // namespace esphome
 
 #endif // UNIT_TEST

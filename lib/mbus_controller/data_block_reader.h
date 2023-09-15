@@ -10,7 +10,7 @@
 #include "kamstrup_303wa02.h"
 
 namespace esphome {
-namespace warmtemetermbus {
+namespace mbus_controller {
 
 using DataBlock = Kamstrup303WA02::DataBlock;
 using LongFrame = Kamstrup303WA02::DataLinkLayer::LongFrame;
@@ -41,7 +41,7 @@ class DataBlockReader {
   uint8_t read_next_byte();
 };
 
-} //namespace warmtemetermbus
+} //namespace mbus_controller
 } //namespace esphome
 
 #endif // DATABLOCKREADER_H_

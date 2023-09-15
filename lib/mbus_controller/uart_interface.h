@@ -8,7 +8,7 @@
 #endif // UNIT_TEST
 
 namespace esphome {
-namespace warmtemetermbus {
+namespace mbus_controller {
 
 class UartInterface {
  public:
@@ -19,7 +19,7 @@ class UartInterface {
   virtual void flush() = 0;
 };
 
-} //namespace warmtemetermbus
+} //namespace mbus_controller
 } //namespace esphome
 
 #endif // UARTINTERFACE_H_

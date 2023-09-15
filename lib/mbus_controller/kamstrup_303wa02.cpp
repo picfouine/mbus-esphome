@@ -14,7 +14,7 @@
 #include "uart_interface.h"
 
 namespace esphome {
-namespace warmtemetermbus {
+namespace mbus_controller {
 
 static const char * TAG {"Kamstrup303WA02"};
 
@@ -313,5 +313,5 @@ uint8_t Kamstrup303WA02::DataLinkLayer::calculate_checksum(const uint8_t* data, 
   return checksum;
 }
 
-} //namespace warmtemetermbus
+} //namespace mbus_controller
 } //namespace esphome

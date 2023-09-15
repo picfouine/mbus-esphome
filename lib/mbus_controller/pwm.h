@@ -6,7 +6,7 @@
 #include "esphome/core/datatypes.h"
 
 namespace esphome {
-namespace warmtemetermbus {
+namespace mbus_controller {
 
 class Pwm {
  public:  
@@ -27,7 +27,7 @@ class Pwm {
   Pwm(const Pwm& pwm);
 };
 
-} //namespace warmtemetermbus
+} //namespace mbus_controller
 } //namespace esphome
 
 #endif // PWM_H_

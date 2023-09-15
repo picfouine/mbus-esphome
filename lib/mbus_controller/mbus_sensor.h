@@ -7,7 +7,7 @@
 #include "kamstrup_303wa02.h"
 
 namespace esphome {
-namespace warmtemetermbus {
+namespace mbus_controller {
 
 using DataBlock = Kamstrup303WA02::DataBlock;
 
@@ -22,7 +22,7 @@ class MbusSensor : public sensor::Sensor, public IMbusSensor {
   uint8_t index_;
 };
 
-} //namespace warmtemetermbus
+} //namespace mbus_controller
 } //namespace esphome
 
 #endif // MBUSSENSOR_H_

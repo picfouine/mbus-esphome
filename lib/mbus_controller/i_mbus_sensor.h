@@ -4,7 +4,7 @@
 #include "kamstrup_303wa02.h"
 
 namespace esphome {
-namespace warmtemetermbus {
+namespace mbus_controller {
 
 using DataBlock = Kamstrup303WA02::DataBlock;
 
@@ -14,7 +14,7 @@ class IMbusSensor {
   virtual bool is_right_sensor_for_data_block(const DataBlock * const data_block) = 0;
 };
 
-} //namespace warmtemetermbus
+} //namespace mbus_controller
 } //namespace esphome
 
 #endif // IMBUSSENSOR_H_

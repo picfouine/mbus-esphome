@@ -16,7 +16,7 @@ using namespace std;
 
 namespace esphome
 {
-  namespace warmtemetermbus
+  namespace mbus_controller
   {
     static const char *TAG = "MbusController";
 
@@ -80,12 +80,12 @@ namespace esphome
 
     void MbusController::read_mbus_task_loop(void* params)
     {
-      MbusController *heat_meter_mbus = reinterpret_cast<MbusController*>(params);
+      MbusController *mbus_controller = reinterpret_cast<MbusController*>(params);
 
       while (true)
       {
-        bool should_read_now = heat_meter_mbus->update_requested && heat_meter_mbus->mbus_enabled;
-        if (heat_meter_mbus->update_requested && !heat_meter_mbus->mbus_enabled)
+        bool should_read_now = mbus_controller->update_requested && mbus_controller->mbus_enabled;
+        if (mbus_controller->update_requested && !mbus_controller->mbus_enabled)
         {
           ESP_LOGV(TAG, "Read Mbus requested but Mbus disabled");
         }
@@ -93,16 +93,16 @@ namespace esphome
         {
           // Let's request data, and wait for its results :-)
           Kamstrup303WA02::MbusMeterData mbus_meter_data;
-          bool read_is_successful { heat_meter_mbus->kamstrup->read_meter_data(&mbus_meter_data, heat_meter_mbus->address) };
+          bool read_is_successful { mbus_controller->kamstrup->read_meter_data(&mbus_meter_data, mbus_controller->address) };
 
           if (read_is_successful) {
             ESP_LOGI(TAG, "Successfully read meter data");
 
-            if (!heat_meter_mbus->have_dumped_data_blocks_) {
-              heat_meter_mbus->dump_data_blocks(&mbus_meter_data);
+            if (!mbus_controller->have_dumped_data_blocks_) {
+              mbus_controller->dump_data_blocks(&mbus_meter_data);
             }
 
-            for (auto sensor : heat_meter_mbus->sensors_) {
+            for (auto sensor : mbus_controller->sensors_) {
               for (auto data_block : *(mbus_meter_data.data_blocks)) {
                 if (sensor->is_right_sensor_for_data_block(data_block)) {
                   ESP_LOGD(TAG, "Found matching data block");
@@ -115,7 +115,7 @@ namespace esphome
           else {
             ESP_LOGW(TAG, "Did not successfully read meter data");
           }
-          heat_meter_mbus->update_requested = false;
+          mbus_controller->update_requested = false;
         }
         else
         {
@@ -165,7 +165,7 @@ namespace esphome
     {
       ESP_LOGCONFIG(TAG, "MbusController sensor");
     }
-  } // namespace warmtemetermbus
+  } // namespace mbus_controller
 } // namespace esphome
 
 #endif // UNIT_TEST

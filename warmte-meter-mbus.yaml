@@ -23,15 +23,15 @@ logger:
   level: INFO 
   logs:
     sensor: INFO
-    warmtemetermbus.sensor: INFO
+    MbusController: INFO
 
 # Enable Home Assistant API
 api:
 #   encryption:
 #     key: "PsKaCvrdD8AjEdWsv7b32V2KGBf7kicJAqhE+/zU1H8="
 
-# ota:
-#   password: "e5264b2500ef5b812b82d4342c5a60f6"
+ota:
+  password: "e5264b2500ef5b812b82d4342c5a60f6"
 
 wifi:
 # Next two lines for building locally with ESPHome
@@ -66,10 +66,10 @@ switch:
     id: readmbus
     turn_on_action:
     - lambda: |-
-        id(heatmetermbus).enable_mbus();
+        id(mbuscontroller).enable_mbus();
     turn_off_action:
     - lambda: |-
-        id(heatmetermbus).disable_mbus();
+        id(mbuscontroller).disable_mbus();
 
 button:
   - platform: restart
@@ -81,10 +81,10 @@ interval:
   - interval: 8sec
     then:
       - lambda: |-
-            id(heatmetermbus).read_mbus();
+            id(mbuscontroller).read_mbus();
 
-heatmeter_mbus:
-  id: heatmetermbus
+mbus_controller:
+  id: mbuscontroller
 
 # Time for uptime
 time:
@@ -101,21 +101,21 @@ debug:
   update_interval: 5s
 
 sensor:
-  - platform: heatmeter_mbus
+  - platform: mbus_controller
     name: "${friendly_name} T1"
     index: 6
     accuracy_decimals: 2
     unit_of_measurement: "°C"
     device_class: "temperature"
     icon: "mdi:thermometer"
-  - platform: heatmeter_mbus
+  - platform: mbus_controller
     name: "${friendly_name} T2"
     index: 7
     accuracy_decimals: 2
     unit_of_measurement: "°C"
     device_class: "temperature"
     icon: "mdi:thermometer"
-  - platform: heatmeter_mbus
+  - platform: mbus_controller
     name: "${friendly_name} Flow"
     index: 11
     accuracy_decimals: 0

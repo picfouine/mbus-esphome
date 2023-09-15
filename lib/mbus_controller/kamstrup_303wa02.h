@@ -11,7 +11,7 @@
 #include "uart_interface.h"
 
 namespace esphome {
-namespace warmtemetermbus {
+namespace mbus_controller {
 
 class Kamstrup303WA02 {
  public:
@@ -129,7 +129,7 @@ class Kamstrup303WA02 {
   DataLinkLayer* data_link_layer_;
 };
 
-} //namespace warmtemetermbus
+} //namespace mbus_controller
 } //namespace esphome
 
 #endif // KAMSTRUP303WA02_H_

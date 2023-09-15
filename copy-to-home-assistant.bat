@@ -6,8 +6,8 @@ set ymlFile=.\warmte-meter-mbus.yaml
 copy %ymlFile% %targetDir%
 
 REM Component files
-set SrcDir=.\lib\heatmeter_mbus
-set customComponentsTargetDir=%targetDir%\custom_components\heatmeter_mbus
+set SrcDir=.\lib\mbus_controller
+set customComponentsTargetDir=%targetDir%\custom_components\mbus_controller
 
 copy %SrcDir%\__init__.py %customComponentsTargetDir%
 copy %SrcDir%\data_block_reader.h %customComponentsTargetDir%

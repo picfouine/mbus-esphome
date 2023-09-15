@@ -7,7 +7,7 @@
 #include <test_includes.h>
 #include <testable_data_link_layer.h>
 
-using namespace esphome::warmtemetermbus;
+using namespace esphome::mbus_controller;
 
 void setUp(void) {}
 void tearDown(void) {}

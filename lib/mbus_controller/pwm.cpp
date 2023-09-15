@@ -13,7 +13,7 @@ using namespace std;
 
 namespace esphome
 {
-  namespace warmtemetermbus
+  namespace mbus_controller
   {
     esp_err_t Pwm::initialize(uint8_t gpio_pin, uint32_t frequency, float duty_cycle)
     {
@@ -68,7 +68,7 @@ namespace esphome
       }
       return ledc_update_duty(this->channel_config_.speed_mode, this->channel_config_.channel);
     }
-  } // namespace warmtemetermbus
+  } // namespace mbus_controller
 } // namespace esphome
 
 #endif // UNIT_TEST
