@@ -18,7 +18,7 @@ namespace esphome
 {
   namespace warmtemetermbus
   {
-    static const char *TAG = "heatmetermbus.sensor";
+    static const char *TAG = "HeatMeterMbus";
 
     bool pwm_initialized { false };
     bool pwm_enabled { false };
