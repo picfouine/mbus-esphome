@@ -2,7 +2,7 @@ import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import sensor
 from esphome.const import CONF_ID
-from . import HeatMeterMbus, warmtemetermbus_ns
+from . import MbusController, warmtemetermbus_ns
 
 DEPENDENCIES = ["heatmeter_mbus"]
 
@@ -11,7 +11,7 @@ CONF_HEATMETERMBUS_ID = 'heatmeter_mbus_id'
 CONF_INDEX = 'index'
 
 CONFIG_SCHEMA = sensor.sensor_schema(MbusSensor).extend({
-    cv.GenerateID(CONF_HEATMETERMBUS_ID): cv.use_id(HeatMeterMbus),
+    cv.GenerateID(CONF_HEATMETERMBUS_ID): cv.use_id(MbusController),
     cv.Required(CONF_INDEX): int
 })
 

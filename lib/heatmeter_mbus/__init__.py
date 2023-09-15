@@ -9,14 +9,14 @@ CODEOWNERS = ["@pdjong"]
 
 warmtemetermbus_ns = cg.esphome_ns.namespace('warmtemetermbus')
 
-HeatMeterMbus = warmtemetermbus_ns.class_('HeatMeterMbus', cg.Component, uart.UARTDevice)
+MbusController = warmtemetermbus_ns.class_('MbusController', cg.Component, uart.UARTDevice)
 
 CONFIG_SCHEMA = cv.Schema({
-  cv.GenerateID(): cv.declare_id(HeatMeterMbus)
+  cv.GenerateID(): cv.declare_id(MbusController)
 }).extend(cv.COMPONENT_SCHEMA).extend(uart.UART_DEVICE_SCHEMA)
 
 async def to_code(config):
-  rhs = HeatMeterMbus.new()
+  rhs = MbusController.new()
   var = cg.Pvariable(config[CONF_ID], rhs)
   await cg.register_component(var, config)
   await uart.register_uart_device(var, config)

@@ -15,9 +15,9 @@
 namespace esphome {
 namespace warmtemetermbus {
 
-class HeatMeterMbus : public Component, public uart::UARTDevice {
+class MbusController : public Component, public uart::UARTDevice {
  public:  
-  HeatMeterMbus();
+  MbusController();
   
   void setup() override;
   void dump_config() override;

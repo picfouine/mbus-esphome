@@ -1,6 +1,6 @@
 #ifndef UNIT_TEST
 
-#include "heat_meter_mbus.h"
+#include "mbus_controller.h"
 
 #include "esphome/core/log.h"
 #include "esp_err.h"
@@ -18,17 +18,17 @@ namespace esphome
 {
   namespace warmtemetermbus
   {
-    static const char *TAG = "HeatMeterMbus";
+    static const char *TAG = "MbusController";
 
     bool pwm_initialized { false };
     bool pwm_enabled { false };
 
-    HeatMeterMbus::HeatMeterMbus() {
+    MbusController::MbusController() {
       Esp32ArduinoUartInterface *uart_interface = new Esp32ArduinoUartInterface(this);
       this->kamstrup = new Kamstrup303WA02(uart_interface);
     }
 
-    void HeatMeterMbus::setup()
+    void MbusController::setup()
     {
       if (ESP_OK != this->initialize_and_enable_pwm(&pwm))
       {
@@ -37,7 +37,7 @@ namespace esphome
         return;
       }
 
-      if (xTaskCreatePinnedToCore(HeatMeterMbus::read_mbus_task_loop,
+      if (xTaskCreatePinnedToCore(MbusController::read_mbus_task_loop,
                                   "mbus_task", // name
                                   10000,       // stack size (in words)
                                   this,        // input params
@@ -51,7 +51,7 @@ namespace esphome
       }
     }
 
-    esp_err_t HeatMeterMbus::initialize_and_enable_pwm(Pwm* pwm)
+    esp_err_t MbusController::initialize_and_enable_pwm(Pwm* pwm)
     {
       esp_err_t config_result = pwm->initialize(32, 18000, 0.85f);
       if (ESP_OK != config_result)
@@ -78,9 +78,9 @@ namespace esphome
       return pwm_enable_result;
     }
 
-    void HeatMeterMbus::read_mbus_task_loop(void* params)
+    void MbusController::read_mbus_task_loop(void* params)
     {
-      HeatMeterMbus *heat_meter_mbus = reinterpret_cast<HeatMeterMbus*>(params);
+      MbusController *heat_meter_mbus = reinterpret_cast<MbusController*>(params);
 
       while (true)
       {
@@ -124,7 +124,7 @@ namespace esphome
       }
     }
 
-    void HeatMeterMbus::dump_data_blocks(Kamstrup303WA02::MbusMeterData* meter_data) {
+    void MbusController::dump_data_blocks(Kamstrup303WA02::MbusMeterData* meter_data) {
       for (auto data_block : *(meter_data->data_blocks)) {
         ESP_LOGI(TAG, "-- Index:\t\t\t%d --", data_block->index);
         ESP_LOGI(TAG, "Function:\t\t\t%d", data_block->function);
@@ -137,33 +137,33 @@ namespace esphome
       this->have_dumped_data_blocks_ = true;
     }
 
-    void HeatMeterMbus::enable_mbus() {
+    void MbusController::enable_mbus() {
       ESP_LOGI(TAG, "Enabling Mbus");
       this->pwm.enable();
       this->mbus_enabled = true;
     }
 
-    void HeatMeterMbus::disable_mbus() {
+    void MbusController::disable_mbus() {
       ESP_LOGI(TAG, "Disabling Mbus");
       this->pwm.disable();
       this->mbus_enabled = false;
       this->have_dumped_data_blocks_ = false;
     }
 
-    void HeatMeterMbus::read_mbus()
+    void MbusController::read_mbus()
     {
       this->update_requested = true;
     }
 
-    float HeatMeterMbus::get_setup_priority() const
+    float MbusController::get_setup_priority() const
     {
       // After UART bus
       return setup_priority::BUS - 1.0f;
     }
 
-    void HeatMeterMbus::dump_config()
+    void MbusController::dump_config()
     {
-      ESP_LOGCONFIG(TAG, "HeatMeterMbus sensor");
+      ESP_LOGCONFIG(TAG, "MbusController sensor");
     }
   } // namespace warmtemetermbus
 } // namespace esphome
