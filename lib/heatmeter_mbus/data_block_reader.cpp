@@ -135,8 +135,6 @@ void DataBlockReader::read_vif_into_block(DataBlock* data_block) {
         case 3:
           data_block->unit = Kamstrup303WA02::Unit::DAYS;
           break;
-        default:
-          break;
       }
     } else if ((unit_and_multiplier & 0b1111000) == 0b0101000) {
       // Power in W
