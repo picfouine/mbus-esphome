@@ -93,9 +93,6 @@ class MbusReader {
 
    protected:
     bool try_send_short_frame(const uint8_t c, const uint8_t a);
-    void flush_rx_buffer();
-    void send_short_frame(const uint8_t c, const uint8_t a);
-    bool wait_for_incoming_data();
     uint8_t calculate_checksum(const LongFrame* long_frame) const;
     uint8_t calculate_checksum(const uint8_t* data, size_t length) const;
     
@@ -116,6 +113,9 @@ class MbusReader {
 
     bool initialize_meter(const uint8_t address);
     bool parse_long_frame_response(LongFrame* longFrame);
+    void send_short_frame(const uint8_t c, const uint8_t a);
+    bool wait_for_incoming_data();
+    void flush_rx_buffer();
     bool read_next_byte(uint8_t* received_byte);
   };
 
