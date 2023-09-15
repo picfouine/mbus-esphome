@@ -12,12 +12,15 @@
 namespace esphome {
 namespace warmtemetermbus {
 
+using DataBlock = Kamstrup303WA02::DataBlock;
+using LongFrame = Kamstrup303WA02::DataLinkLayer::LongFrame;
+
 class DataBlockReader {
  public:
-  std::vector<Kamstrup303WA02::DataBlock*>* read_data_blocks_from_long_frame(const Kamstrup303WA02::DataLinkLayer::LongFrame* const long_frame);
+  std::vector<DataBlock*>* read_data_blocks_from_long_frame(const LongFrame* const long_frame);
 
  protected:
-  const Kamstrup303WA02::DataLinkLayer::LongFrame* long_frame_;
+  const LongFrame* long_frame_;
   uint8_t current_position_in_user_data_;
 
  private:
@@ -31,10 +34,10 @@ class DataBlockReader {
   static const uint8_t VIF_BITS_UNIT_AND_MULTIPLIER = 0x7F;
   static const uint8_t VIF_BIT_EXTENDED = 7;
 
-  Kamstrup303WA02::DataBlock* read_next_data_block();
-  void read_dif_into_block(Kamstrup303WA02::DataBlock* data_block);
-  void read_vif_into_block(Kamstrup303WA02::DataBlock* data_block);
-  void read_data_into_block(Kamstrup303WA02::DataBlock* data_block);
+  DataBlock* read_next_data_block();
+  void read_dif_into_block(DataBlock* data_block);
+  void read_vif_into_block(DataBlock* data_block);
+  void read_data_into_block(DataBlock* data_block);
   uint8_t read_next_byte();
 };
 

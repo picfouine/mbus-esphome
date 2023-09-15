@@ -13,15 +13,17 @@
 
 #include "kamstrup_303wa02.h"
 
-using std::vector;
-
 namespace esphome {
 namespace warmtemetermbus {
 
+using std::vector;
+using DataBlock = Kamstrup303WA02::DataBlock;
+using LongFrame = Kamstrup303WA02::DataLinkLayer::LongFrame;
+
 static const char * TAG {"DataBlockReader"};
 
-vector<Kamstrup303WA02::DataBlock*>* DataBlockReader::read_data_blocks_from_long_frame(const Kamstrup303WA02::DataLinkLayer::LongFrame* const long_frame) {
-  auto *data_blocks = new vector<Kamstrup303WA02::DataBlock*>();
+vector<DataBlock*>* DataBlockReader::read_data_blocks_from_long_frame(const LongFrame* const long_frame) {
+  auto *data_blocks = new vector<DataBlock*>();
 
   this->long_frame_ = long_frame;
   current_position_in_user_data_ = Kamstrup303WA02::FIXED_DATA_HEADER_SIZE;
@@ -29,7 +31,7 @@ vector<Kamstrup303WA02::DataBlock*>* DataBlockReader::read_data_blocks_from_long
 
   uint8_t data_block_index = 0;
   while (current_position_in_user_data_ < USER_DATA_LENGTH) {
-     Kamstrup303WA02::DataBlock *next_data_block = this->read_next_data_block();
+     DataBlock *next_data_block = this->read_next_data_block();
      next_data_block->index = data_block_index++;
      data_blocks->push_back(next_data_block);
   }
@@ -37,8 +39,8 @@ vector<Kamstrup303WA02::DataBlock*>* DataBlockReader::read_data_blocks_from_long
   return data_blocks;
 }
 
-Kamstrup303WA02::DataBlock* DataBlockReader::read_next_data_block() {
-  auto *data_block = new Kamstrup303WA02::DataBlock();
+DataBlock* DataBlockReader::read_next_data_block() {
+  auto *data_block = new DataBlock();
 
   this->read_dif_into_block(data_block);
   this->read_vif_into_block(data_block);
@@ -47,7 +49,7 @@ Kamstrup303WA02::DataBlock* DataBlockReader::read_next_data_block() {
   return data_block;
 }
 
-void DataBlockReader::read_dif_into_block(Kamstrup303WA02::DataBlock* data_block) {
+void DataBlockReader::read_dif_into_block(DataBlock* data_block) {
   const uint8_t dif = this->read_next_byte();
   data_block->storage_number = (dif & (1 << DIF_BIT_LSB_STORAGE_NUMBER)) >> DIF_BIT_LSB_STORAGE_NUMBER;
   data_block->function = static_cast<Kamstrup303WA02::Function>((dif & (0b11u << DIF_BIT_FUNCTION_FIELD_LOW_BIT)) >> DIF_BIT_FUNCTION_FIELD_LOW_BIT);
@@ -97,7 +99,7 @@ void DataBlockReader::read_dif_into_block(Kamstrup303WA02::DataBlock* data_block
   }
 }
 
-void DataBlockReader::read_vif_into_block(Kamstrup303WA02::DataBlock* data_block) {
+void DataBlockReader::read_vif_into_block(DataBlock* data_block) {
   uint8_t vif = this->read_next_byte();
   uint8_t unit_and_multiplier = vif & VIF_BITS_UNIT_AND_MULTIPLIER;
   
@@ -190,7 +192,7 @@ void DataBlockReader::read_vif_into_block(Kamstrup303WA02::DataBlock* data_block
   }
 }
 
-void DataBlockReader::read_data_into_block(Kamstrup303WA02::DataBlock* data_block) {
+void DataBlockReader::read_data_into_block(DataBlock* data_block) {
   for (uint8_t i = 0; i < data_block->data_length; ++i) {
     data_block->binary_data[i] = this->read_next_byte();
   }

@@ -6,10 +6,12 @@
 namespace esphome {
 namespace warmtemetermbus {
 
+using DataBlock = Kamstrup303WA02::DataBlock;
+
 class IMbusSensor {
  public:
-  virtual void transform_and_publish(const Kamstrup303WA02::DataBlock * const data_block) = 0;
-  virtual bool is_right_sensor_for_data_block(const Kamstrup303WA02::DataBlock * const data_block) = 0;
+  virtual void transform_and_publish(const DataBlock * const data_block) = 0;
+  virtual bool is_right_sensor_for_data_block(const DataBlock * const data_block) = 0;
 };
 
 } //namespace warmtemetermbus
