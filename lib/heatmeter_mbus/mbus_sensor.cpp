@@ -35,7 +35,7 @@ void MbusSensor::transform_and_publish(const DataBlock * const data_block) {
       break;
     }
     default:
-      ESP_LOGI(TAG, "Unsupported data length");
+      ESP_LOGW(TAG, "Unsupported data length");
       break;
   }
 }

@@ -30,7 +30,6 @@ namespace esphome
 
     void HeatMeterMbus::setup()
     {
-      ESP_LOGI(TAG, "setup()");
       if (ESP_OK != this->initialize_and_enable_pwm(&pwm))
       {
         ESP_LOGE(TAG, "Error initializing and enabling PWM");
@@ -62,7 +61,7 @@ namespace esphome
       }
       else
       {
-        ESP_LOGI(TAG, "Initialized PWM");
+        ESP_LOGD(TAG, "Initialized PWM");
         pwm_initialized = true;
       }
 
@@ -73,7 +72,7 @@ namespace esphome
       }
       else
       {
-        ESP_LOGI(TAG, "Enabled PWM channel");
+        ESP_LOGD(TAG, "Enabled PWM channel");
         pwm_enabled = true;
       }
       return pwm_enable_result;
@@ -88,7 +87,7 @@ namespace esphome
         bool should_read_now = heat_meter_mbus->update_requested && heat_meter_mbus->mbus_enabled;
         if (heat_meter_mbus->update_requested && !heat_meter_mbus->mbus_enabled)
         {
-          ESP_LOGD(TAG, "Read Mbus requested but Mbus disabled");
+          ESP_LOGV(TAG, "Read Mbus requested but Mbus disabled");
         }
         if (should_read_now)
         {
@@ -106,7 +105,7 @@ namespace esphome
             for (auto sensor : heat_meter_mbus->sensors_) {
               for (auto data_block : *(mbus_meter_data.data_blocks)) {
                 if (sensor->is_right_sensor_for_data_block(data_block)) {
-                  ESP_LOGI(TAG, "Found matching data block");
+                  ESP_LOGD(TAG, "Found matching data block");
                   sensor->transform_and_publish(data_block);
                   break;
                 }
@@ -114,7 +113,7 @@ namespace esphome
             }
           }
           else {
-            ESP_LOGE(TAG, "Did not successfully read meter data");
+            ESP_LOGW(TAG, "Did not successfully read meter data");
           }
           heat_meter_mbus->update_requested = false;
         }

@@ -76,7 +76,7 @@ void DataBlockReader::read_dif_into_block(DataBlock* data_block) {
       data_block->binary_data = new uint8_t[4];
       break;
     default:
-      ESP_LOGI(TAG, "Data Field %x not supported", data_field);
+      ESP_LOGW(TAG, "Data Field %x not supported", data_field);
       data_block->data_length = 0;
       data_block->binary_data = nullptr;
       break;
@@ -173,13 +173,13 @@ void DataBlockReader::read_vif_into_block(DataBlock* data_block) {
       data_block->ten_power = 0;
       data_block->unit = Kamstrup303WA02::Unit::DATE;
     } else {
-      ESP_LOGI(TAG, "Primary VIF with unit and multiplier %x not yet supported", unit_and_multiplier);
+      ESP_LOGW(TAG, "Primary VIF with unit and multiplier %x not yet supported", unit_and_multiplier);
     }
   } else if (vif_is_manufacturer_specific) {
     data_block->unit = Kamstrup303WA02::Unit::MANUFACTURER_SPECIFIC;
     data_block->is_manufacturer_specific = true;
   } else {
-    ESP_LOGI(TAG, "Only primary VIF or manufacturer specific supported. VIF %x unsupported.", vif);
+    ESP_LOGW(TAG, "Only primary VIF or manufacturer specific supported. VIF %x unsupported.", vif);
   }
 
   // Ignore the VIF extension; just skip over it

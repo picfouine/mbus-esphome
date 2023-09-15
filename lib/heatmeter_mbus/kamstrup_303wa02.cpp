@@ -41,12 +41,10 @@ Kamstrup303WA02::Kamstrup303WA02(UartInterface* uart_interface) {
 }
 
 bool Kamstrup303WA02::read_meter_data(Kamstrup303WA02::MbusMeterData* meter_data, const uint8_t address) {
-  ESP_LOGI(TAG, "read_meter_data - enter");
-
   bool success { false };
   DataLinkLayer::LongFrame response_to_req_ud2;
   if (!this->data_link_layer_->req_ud2(address, &response_to_req_ud2)) {
-    ESP_LOGI(TAG, "req_ud2: fail");
+    ESP_LOGW(TAG, "req_ud2: fail");
     if (response_to_req_ud2.user_data != nullptr) {
       // Deallocate user_data, allocated by data link layer
       delete[] response_to_req_ud2.user_data;
@@ -56,19 +54,19 @@ bool Kamstrup303WA02::read_meter_data(Kamstrup303WA02::MbusMeterData* meter_data
 
   // Check upper nibble CI
   if ((response_to_req_ud2.ci & 0xF0) != 0x70) {
-    ESP_LOGI(TAG, "CI not as expected");
+    ESP_LOGW(TAG, "CI not as expected");
   }
 
   // Check type of response
   switch (response_to_req_ud2.ci & 0x03) {
     case CiMeterToMasterCode::GENERAL_APPLICATION_ERRORS:
-      ESP_LOGE(TAG, "General App Error");
+      ESP_LOGW(TAG, "General App Error");
       break;
     case CiMeterToMasterCode::ALARM_STATUS:
-      ESP_LOGI(TAG, "Alarm Status");
+      ESP_LOGW(TAG, "Alarm Status");
       break;
     case CiMeterToMasterCode::VARIABLE_DATA_RESPOND: {
-      ESP_LOGI(TAG, "Variable data response");
+      ESP_LOGV(TAG, "Variable data response");
       DataBlockReader data_block_reader;
       auto data_blocks = data_block_reader.read_data_blocks_from_long_frame(&response_to_req_ud2);
       meter_data->data_blocks = data_blocks;
@@ -76,7 +74,7 @@ bool Kamstrup303WA02::read_meter_data(Kamstrup303WA02::MbusMeterData* meter_data
       break;
     }
     case CiMeterToMasterCode::FIXED_DATA_RESPOND:
-      ESP_LOGI(TAG, "Fixed data response");
+      ESP_LOGW(TAG, "Fixed data response");
       break;
   }
   // Deallocate user_data, allocated by data link layer
@@ -89,7 +87,7 @@ bool Kamstrup303WA02::DataLinkLayer::req_ud2(const uint8_t address, LongFrame* r
   bool success { false };
 
   if (!this->meter_is_initialized_ && !this->initialize_meter(address)) {
-    ESP_LOGI(TAG, "Could not initialize meter");
+    ESP_LOGW(TAG, "Could not initialize meter");
     return false;
   }
 
@@ -208,7 +206,7 @@ bool Kamstrup303WA02::DataLinkLayer::read_next_byte(uint8_t* received_byte) {
   while (this->uart_interface_->available() == 0) {
     delay(1);
     if (millis() - time_before_starting_to_wait > 150) {
-      ESP_LOGE(TAG, "No data available after timeout");
+      ESP_LOGW(TAG, "No data available after timeout");
       return false;
     }
   }
@@ -228,10 +226,10 @@ bool Kamstrup303WA02::DataLinkLayer::snd_nke(const uint8_t address) {
       success = true;
       this->next_req_ud2_fcb_ = true;
     } else {
-      ESP_LOGE(TAG, "Wrong answer to SND_NKE: %X", received_byte);
+      ESP_LOGW(TAG, "Wrong answer to SND_NKE: %X", received_byte);
     }
   } else {
-    ESP_LOGE(TAG, "No response to SND_NKE");
+    ESP_LOGW(TAG, "No response to SND_NKE");
   }
 
   return success;
@@ -293,7 +291,7 @@ bool Kamstrup303WA02::DataLinkLayer::wait_for_incoming_data() {
     delay(1);
   }
   if (!data_received) {
-    ESP_LOGE(TAG, "waitForIncomingData - exit - No data received");
+    ESP_LOGW(TAG, "waitForIncomingData - exit - No data received");
   }
   return data_received;
 }
