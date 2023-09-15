@@ -33,12 +33,12 @@ class MbusController : public Component, public uart::UARTDevice {
   void read_mbus();
 
  protected:
-  uint8_t address { 0x01 };
+  uint8_t address_ { 0x01 };
   bool have_dumped_data_blocks_ { false };
-  Pwm pwm;
-  MbusReader* kamstrup { nullptr };
-  bool update_requested { false };
-  bool mbus_enabled { true };
+  Pwm pwm_;
+  MbusReader* kamstrup_ { nullptr };
+  bool update_requested_ { false };
+  bool mbus_enabled_ { true };
   std::vector<IMbusSensor*> sensors_;
 
  private:

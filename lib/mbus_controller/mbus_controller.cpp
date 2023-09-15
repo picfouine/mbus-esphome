@@ -25,12 +25,12 @@ namespace esphome
 
     MbusController::MbusController() {
       Esp32ArduinoUartInterface *uart_interface = new Esp32ArduinoUartInterface(this);
-      this->kamstrup = new MbusReader(uart_interface);
+      this->kamstrup_ = new MbusReader(uart_interface);
     }
 
     void MbusController::setup()
     {
-      if (ESP_OK != this->initialize_and_enable_pwm(&pwm))
+      if (ESP_OK != this->initialize_and_enable_pwm(&this->pwm_))
       {
         ESP_LOGE(TAG, "Error initializing and enabling PWM");
         mark_failed();
@@ -84,8 +84,8 @@ namespace esphome
 
       while (true)
       {
-        bool should_read_now = mbus_controller->update_requested && mbus_controller->mbus_enabled;
-        if (mbus_controller->update_requested && !mbus_controller->mbus_enabled)
+        bool should_read_now = mbus_controller->update_requested_ && mbus_controller->mbus_enabled_;
+        if (mbus_controller->update_requested_ && !mbus_controller->mbus_enabled_)
         {
           ESP_LOGV(TAG, "Read Mbus requested but Mbus disabled");
         }
@@ -93,7 +93,7 @@ namespace esphome
         {
           // Let's request data, and wait for its results :-)
           MbusReader::MbusMeterData mbus_meter_data;
-          bool read_is_successful { mbus_controller->kamstrup->read_meter_data(&mbus_meter_data, mbus_controller->address) };
+          bool read_is_successful { mbus_controller->kamstrup_->read_meter_data(&mbus_meter_data, mbus_controller->address_) };
 
           if (read_is_successful) {
             ESP_LOGI(TAG, "Successfully read meter data");
@@ -115,7 +115,7 @@ namespace esphome
           else {
             ESP_LOGW(TAG, "Did not successfully read meter data");
           }
-          mbus_controller->update_requested = false;
+          mbus_controller->update_requested_ = false;
         }
         else
         {
@@ -139,20 +139,20 @@ namespace esphome
 
     void MbusController::enable_mbus() {
       ESP_LOGI(TAG, "Enabling Mbus");
-      this->pwm.enable();
-      this->mbus_enabled = true;
+      this->pwm_.enable();
+      this->mbus_enabled_ = true;
     }
 
     void MbusController::disable_mbus() {
       ESP_LOGI(TAG, "Disabling Mbus");
-      this->pwm.disable();
-      this->mbus_enabled = false;
+      this->pwm_.disable();
+      this->mbus_enabled_ = false;
       this->have_dumped_data_blocks_ = false;
     }
 
     void MbusController::read_mbus()
     {
-      this->update_requested = true;
+      this->update_requested_ = true;
     }
 
     float MbusController::get_setup_priority() const
