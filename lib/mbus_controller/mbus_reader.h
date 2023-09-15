@@ -13,7 +13,7 @@
 namespace esphome {
 namespace mbus_controller {
 
-class Kamstrup303WA02 {
+class MbusReader {
  public:
   typedef enum Function : uint8_t {
     INSTANTANEOUS = 0,
@@ -121,7 +121,7 @@ class Kamstrup303WA02 {
 
   static const uint8_t FIXED_DATA_HEADER_SIZE = 12;
 
-  Kamstrup303WA02(UartInterface* uart_interface);
+  MbusReader(UartInterface* uart_interface);
 
   bool read_meter_data(MbusMeterData* meter_data, const uint8_t address);
 

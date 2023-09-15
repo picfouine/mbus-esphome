@@ -4,12 +4,12 @@
 #include "esphome/components/sensor/sensor.h"
 
 #include "i_mbus_sensor.h"
-#include "kamstrup_303wa02.h"
+#include "mbus_reader.h"
 
 namespace esphome {
 namespace mbus_controller {
 
-using DataBlock = Kamstrup303WA02::DataBlock;
+using DataBlock = MbusReader::DataBlock;
 
 class MbusSensor : public sensor::Sensor, public IMbusSensor {
  public:

@@ -8,7 +8,7 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 
-#include <kamstrup_303wa02.h>
+#include <mbus_reader.h>
 #include <test_includes.h>
 #include <uart_interface.h>
 
@@ -78,9 +78,9 @@ class FakeUartInterface : public esphome::mbus_controller::UartInterface {
     uint8_t write_array_call_count_ { 0 };
 };
 
-class TestableDataLinkLayer : public esphome::mbus_controller::Kamstrup303WA02::DataLinkLayer {
+class TestableDataLinkLayer : public esphome::mbus_controller::MbusReader::DataLinkLayer {
   public:
-    TestableDataLinkLayer(FakeUartInterface* uart_interface) : esphome::mbus_controller::Kamstrup303WA02::DataLinkLayer(uart_interface) {}
+    TestableDataLinkLayer(FakeUartInterface* uart_interface) : esphome::mbus_controller::MbusReader::DataLinkLayer(uart_interface) {}
 
     bool call_try_send_short_frame(const uint8_t c, const uint8_t a) {
       return this->try_send_short_frame(c, a);

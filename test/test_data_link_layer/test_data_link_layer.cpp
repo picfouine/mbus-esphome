@@ -3,7 +3,7 @@
 #include <freertos/task.h>
 #include <unity.h>
 
-#include "kamstrup_303wa02.h"
+#include "mbus_reader.h"
 #include <test_includes.h>
 #include <testable_data_link_layer.h>
 
@@ -53,7 +53,7 @@ void test_data_link_layer_calculate_checksum_with_long_frame() {
   FakeUartInterface fake_uart_interface;
   TestableDataLinkLayer data_link_layer(&fake_uart_interface);
 
-  Kamstrup303WA02::DataLinkLayer::LongFrame long_frame {
+  MbusReader::DataLinkLayer::LongFrame long_frame {
     .l = 6,
     .c = 0x08,
     .a = 0x54,
@@ -340,7 +340,7 @@ void test_data_link_layer_req_ud2_check_sending_correct_data(void) {
 
   // Act
   const uint8_t a = 0xB2;
-  Kamstrup303WA02::DataLinkLayer::LongFrame response_frame;
+  MbusReader::DataLinkLayer::LongFrame response_frame;
   const bool actual_return_value = data_link_layer.req_ud2(a, &response_frame);
 
   // Assert
@@ -402,7 +402,7 @@ void test_data_link_layer_req_ud2_check_snd_nke_to_init(void) {
 
   // Act
   const uint8_t a = 0xB2;
-  Kamstrup303WA02::DataLinkLayer::LongFrame response_frame;
+  MbusReader::DataLinkLayer::LongFrame response_frame;
   const bool actual_return_value = data_link_layer.req_ud2(a, &response_frame);
 
   // Assert
@@ -455,7 +455,7 @@ void test_data_link_layer_req_ud2_correct_response(void) {
 
   // Act
   const uint8_t a = 0xB2;
-  Kamstrup303WA02::DataLinkLayer::LongFrame response_frame;
+  MbusReader::DataLinkLayer::LongFrame response_frame;
   const bool actual_return_value = data_link_layer.req_ud2(a, &response_frame);
 
   // Assert
@@ -479,7 +479,7 @@ void test_data_link_layer_req_ud2_no_response(void) {
 
   // Act
   const uint8_t a = 0xB2;
-  Kamstrup303WA02::DataLinkLayer::LongFrame response_frame;
+  MbusReader::DataLinkLayer::LongFrame response_frame;
   const bool actual_return_value = data_link_layer.req_ud2(a, &response_frame);
 
   // Assert
@@ -511,7 +511,7 @@ void test_data_link_layer_req_ud2_incorrect_a_field(void) {
 
   // Act
   const uint8_t a = 0xB2;
-  Kamstrup303WA02::DataLinkLayer::LongFrame response_frame;
+  MbusReader::DataLinkLayer::LongFrame response_frame;
   const bool actual_return_value = data_link_layer.req_ud2(a, &response_frame);
 
   // Assert
@@ -543,7 +543,7 @@ void test_data_link_layer_req_ud2_incorrect_function(void) {
 
   // Act
   const uint8_t a = 0xB2;
-  Kamstrup303WA02::DataLinkLayer::LongFrame response_frame;
+  MbusReader::DataLinkLayer::LongFrame response_frame;
   const bool actual_return_value = data_link_layer.req_ud2(a, &response_frame);
 
   // Assert
@@ -575,7 +575,7 @@ void test_data_link_layer_req_ud2_incorrect_check_sum(void) {
 
   // Act
   const uint8_t a = 0xB2;
-  Kamstrup303WA02::DataLinkLayer::LongFrame response_frame;
+  MbusReader::DataLinkLayer::LongFrame response_frame;
   const bool actual_return_value = data_link_layer.req_ud2(a, &response_frame);
 
   // Assert
@@ -607,7 +607,7 @@ void test_data_link_layer_req_ud2_different_l_fields(void) {
 
   // Act
   const uint8_t a = 0xB2;
-  Kamstrup303WA02::DataLinkLayer::LongFrame response_frame;
+  MbusReader::DataLinkLayer::LongFrame response_frame;
   const bool actual_return_value = data_link_layer.req_ud2(a, &response_frame);
 
   // Assert

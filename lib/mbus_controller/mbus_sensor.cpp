@@ -7,7 +7,7 @@
 #include "esphome/core/datatypes.h"
 #include "esphome/core/log.h"
 
-#include "kamstrup_303wa02.h"
+#include "mbus_reader.h"
 
 using namespace std; 
 
@@ -16,7 +16,7 @@ namespace esphome
 namespace mbus_controller
 {
 
-using DataBlock = Kamstrup303WA02::DataBlock;
+using DataBlock = MbusReader::DataBlock;
 
 static const char *TAG = "MbusSensor";
 

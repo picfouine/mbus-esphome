@@ -7,13 +7,13 @@
 
 #include <vector>
 
-#include "kamstrup_303wa02.h"
+#include "mbus_reader.h"
 
 namespace esphome {
 namespace mbus_controller {
 
-using DataBlock = Kamstrup303WA02::DataBlock;
-using LongFrame = Kamstrup303WA02::DataLinkLayer::LongFrame;
+using DataBlock = MbusReader::DataBlock;
+using LongFrame = MbusReader::DataLinkLayer::LongFrame;
 
 class DataBlockReader {
  public:

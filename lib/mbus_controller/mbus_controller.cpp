@@ -9,7 +9,7 @@
 
 #include "esp32_arduino_uart_interface.h"
 #include "i_mbus_sensor.h"
-#include "kamstrup_303wa02.h"
+#include "mbus_reader.h"
 #include "pwm.h"
 
 using namespace std; 
@@ -25,7 +25,7 @@ namespace esphome
 
     MbusController::MbusController() {
       Esp32ArduinoUartInterface *uart_interface = new Esp32ArduinoUartInterface(this);
-      this->kamstrup = new Kamstrup303WA02(uart_interface);
+      this->kamstrup = new MbusReader(uart_interface);
     }
 
     void MbusController::setup()
@@ -92,7 +92,7 @@ namespace esphome
         if (should_read_now)
         {
           // Let's request data, and wait for its results :-)
-          Kamstrup303WA02::MbusMeterData mbus_meter_data;
+          MbusReader::MbusMeterData mbus_meter_data;
           bool read_is_successful { mbus_controller->kamstrup->read_meter_data(&mbus_meter_data, mbus_controller->address) };
 
           if (read_is_successful) {
@@ -124,7 +124,7 @@ namespace esphome
       }
     }
 
-    void MbusController::dump_data_blocks(Kamstrup303WA02::MbusMeterData* meter_data) {
+    void MbusController::dump_data_blocks(MbusReader::MbusMeterData* meter_data) {
       for (auto data_block : *(meter_data->data_blocks)) {
         ESP_LOGI(TAG, "-- Index:\t\t\t%d --", data_block->index);
         ESP_LOGI(TAG, "Function:\t\t\t%d", data_block->function);

@@ -11,14 +11,14 @@
 #include <test_includes.h>
 #endif // UNIT_TEST
 
-#include "kamstrup_303wa02.h"
+#include "mbus_reader.h"
 
 namespace esphome {
 namespace mbus_controller {
 
 using std::vector;
-using DataBlock = Kamstrup303WA02::DataBlock;
-using LongFrame = Kamstrup303WA02::DataLinkLayer::LongFrame;
+using DataBlock = MbusReader::DataBlock;
+using LongFrame = MbusReader::DataLinkLayer::LongFrame;
 
 static const char * TAG {"DataBlockReader"};
 
@@ -26,7 +26,7 @@ vector<DataBlock*>* DataBlockReader::read_data_blocks_from_long_frame(const Long
   auto *data_blocks = new vector<DataBlock*>();
 
   this->long_frame_ = long_frame;
-  current_position_in_user_data_ = Kamstrup303WA02::FIXED_DATA_HEADER_SIZE;
+  current_position_in_user_data_ = MbusReader::FIXED_DATA_HEADER_SIZE;
   const uint8_t USER_DATA_LENGTH = long_frame->l - 3;
 
   uint8_t data_block_index = 0;
@@ -52,7 +52,7 @@ DataBlock* DataBlockReader::read_next_data_block() {
 void DataBlockReader::read_dif_into_block(DataBlock* data_block) {
   const uint8_t dif = this->read_next_byte();
   data_block->storage_number = (dif & (1 << DIF_BIT_LSB_STORAGE_NUMBER)) >> DIF_BIT_LSB_STORAGE_NUMBER;
-  data_block->function = static_cast<Kamstrup303WA02::Function>((dif & (0b11u << DIF_BIT_FUNCTION_FIELD_LOW_BIT)) >> DIF_BIT_FUNCTION_FIELD_LOW_BIT);
+  data_block->function = static_cast<MbusReader::Function>((dif & (0b11u << DIF_BIT_FUNCTION_FIELD_LOW_BIT)) >> DIF_BIT_FUNCTION_FIELD_LOW_BIT);
   const uint8_t data_field = dif & DIF_BITS_DATA_FIELD;
   switch (data_field) {
     case 0:
@@ -109,74 +109,74 @@ void DataBlockReader::read_vif_into_block(DataBlock* data_block) {
     if ((unit_and_multiplier & 0b1111000) == 0b0000000) {
       // Energy in Wh
       data_block->ten_power = (unit_and_multiplier & 0b111) - 3;
-      data_block->unit = Kamstrup303WA02::Unit::WH;
+      data_block->unit = MbusReader::Unit::WH;
     } else if ((unit_and_multiplier & 0b1111000) == 0b0001000) {
       // Energy in J
       data_block->ten_power = unit_and_multiplier & 0b111;
-      data_block->unit = Kamstrup303WA02::Unit::J;
+      data_block->unit = MbusReader::Unit::J;
     } else if ((unit_and_multiplier & 0b1111000) == 0b0010000) {
       // Volume in m3
       data_block->ten_power = (unit_and_multiplier & 0b111) - 6;
-      data_block->unit = Kamstrup303WA02::Unit::CUBIC_METER;
+      data_block->unit = MbusReader::Unit::CUBIC_METER;
     } else if ((unit_and_multiplier & 0b1111100) == 0b0100000) {
       // On Time
       data_block->ten_power = 0;
       const uint8_t unit_value = (unit_and_multiplier & 0b11);
       switch (unit_value) {
         case 0:
-          data_block->unit = Kamstrup303WA02::Unit::SECONDS;
+          data_block->unit = MbusReader::Unit::SECONDS;
           break;
         case 1:
-          data_block->unit = Kamstrup303WA02::Unit::MINUTES;
+          data_block->unit = MbusReader::Unit::MINUTES;
           break;
         case 2:
-          data_block->unit = Kamstrup303WA02::Unit::HOURS;
+          data_block->unit = MbusReader::Unit::HOURS;
           break;
         case 3:
-          data_block->unit = Kamstrup303WA02::Unit::DAYS;
+          data_block->unit = MbusReader::Unit::DAYS;
           break;
       }
     } else if ((unit_and_multiplier & 0b1111000) == 0b0101000) {
       // Power in W
       data_block->ten_power = (unit_and_multiplier & 0b111) - 3;
-      data_block->unit = Kamstrup303WA02::Unit::W;
+      data_block->unit = MbusReader::Unit::W;
     } else if ((unit_and_multiplier & 0b1111000) == 0b0110000) {
       // Power in J/h
       data_block->ten_power = unit_and_multiplier & 0b111;
-      data_block->unit = Kamstrup303WA02::Unit::J_PER_HOUR;
+      data_block->unit = MbusReader::Unit::J_PER_HOUR;
     } else if ((unit_and_multiplier & 0b1111000) == 0b0111000) {
       // Volume Flow in m3/h
       data_block->ten_power = (unit_and_multiplier & 0b111) - 6;
-      data_block->unit = Kamstrup303WA02::Unit::CUBIC_METER_PER_HOUR;
+      data_block->unit = MbusReader::Unit::CUBIC_METER_PER_HOUR;
     } else if ((unit_and_multiplier & 0b1111000) == 0b1000000) {
       // Volume Flow in m3/min
       data_block->ten_power = (unit_and_multiplier & 0b111) - 7;
-      data_block->unit = Kamstrup303WA02::Unit::CUBIC_METER_PER_MINUTE;
+      data_block->unit = MbusReader::Unit::CUBIC_METER_PER_MINUTE;
     } else if ((unit_and_multiplier & 0b1111000) == 0b1001000) {
       // Volume Flow in m3/s
       data_block->ten_power = (unit_and_multiplier & 0b111) - 9;
-      data_block->unit = Kamstrup303WA02::Unit::CUBIC_METER_PER_SECOND;
+      data_block->unit = MbusReader::Unit::CUBIC_METER_PER_SECOND;
     } else if ((unit_and_multiplier & 0b1111100) == 0b1011000) {
       // Flow Temperature in deg C
       data_block->ten_power = (unit_and_multiplier & 0b11) - 3;
-      data_block->unit = Kamstrup303WA02::Unit::DEGREES_CELSIUS;
+      data_block->unit = MbusReader::Unit::DEGREES_CELSIUS;
     } else if ((unit_and_multiplier & 0b1111100) == 0b1011100) {
       // Return Temperature in deg C
       data_block->ten_power = (unit_and_multiplier & 0b11) - 3;
-      data_block->unit = Kamstrup303WA02::Unit::DEGREES_CELSIUS;
+      data_block->unit = MbusReader::Unit::DEGREES_CELSIUS;
     } else if ((unit_and_multiplier & 0b1111100) == 0b1100000) {
       // Temperature Difference in K
       data_block->ten_power = (unit_and_multiplier & 0b11) - 3;
-      data_block->unit = Kamstrup303WA02::Unit::K;
+      data_block->unit = MbusReader::Unit::K;
     } else if ((unit_and_multiplier & 0b1111110) == 0b1101100) {
       // Time Point
       data_block->ten_power = 0;
-      data_block->unit = Kamstrup303WA02::Unit::DATE;
+      data_block->unit = MbusReader::Unit::DATE;
     } else {
       ESP_LOGW(TAG, "Primary VIF with unit and multiplier %x not yet supported", unit_and_multiplier);
     }
   } else if (vif_is_manufacturer_specific) {
-    data_block->unit = Kamstrup303WA02::Unit::MANUFACTURER_SPECIFIC;
+    data_block->unit = MbusReader::Unit::MANUFACTURER_SPECIFIC;
     data_block->is_manufacturer_specific = true;
   } else {
     ESP_LOGW(TAG, "Only primary VIF or manufacturer specific supported. VIF %x unsupported.", vif);

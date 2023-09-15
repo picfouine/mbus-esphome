@@ -1,4 +1,4 @@
-#include "kamstrup_303wa02.h"
+#include "mbus_reader.h"
 
 #include <Arduino.h>
 #include <freertos/FreeRTOS.h>
@@ -16,15 +16,15 @@
 namespace esphome {
 namespace mbus_controller {
 
-static const char * TAG {"Kamstrup303WA02"};
+static const char * TAG {"MbusReader"};
 
-Kamstrup303WA02::MbusMeterData::~MbusMeterData() {
+MbusReader::MbusMeterData::~MbusMeterData() {
   if (this->data_blocks != nullptr) {
     this->deallocate_data_blocks();
   }
 }
 
-void Kamstrup303WA02::MbusMeterData::deallocate_data_blocks() {
+void MbusReader::MbusMeterData::deallocate_data_blocks() {
   for (auto data_block : *(this->data_blocks)) {
     if (data_block->binary_data != nullptr) {
       delete[] data_block->binary_data;
@@ -36,11 +36,11 @@ void Kamstrup303WA02::MbusMeterData::deallocate_data_blocks() {
   this->data_blocks = nullptr;
 }
 
-Kamstrup303WA02::Kamstrup303WA02(UartInterface* uart_interface) {
+MbusReader::MbusReader(UartInterface* uart_interface) {
   this->data_link_layer_ = new DataLinkLayer(uart_interface);
 }
 
-bool Kamstrup303WA02::read_meter_data(Kamstrup303WA02::MbusMeterData* meter_data, const uint8_t address) {
+bool MbusReader::read_meter_data(MbusReader::MbusMeterData* meter_data, const uint8_t address) {
   bool success { false };
   DataLinkLayer::LongFrame response_to_req_ud2;
   if (!this->data_link_layer_->req_ud2(address, &response_to_req_ud2)) {
@@ -83,7 +83,7 @@ bool Kamstrup303WA02::read_meter_data(Kamstrup303WA02::MbusMeterData* meter_data
   return success;
 }
 
-bool Kamstrup303WA02::DataLinkLayer::req_ud2(const uint8_t address, LongFrame* response_frame) {
+bool MbusReader::DataLinkLayer::req_ud2(const uint8_t address, LongFrame* response_frame) {
   bool success { false };
 
   if (!this->meter_is_initialized_ && !this->initialize_meter(address)) {
@@ -107,7 +107,7 @@ bool Kamstrup303WA02::DataLinkLayer::req_ud2(const uint8_t address, LongFrame* r
   return success;
 }
 
-bool Kamstrup303WA02::DataLinkLayer::initialize_meter(const uint8_t address) {
+bool MbusReader::DataLinkLayer::initialize_meter(const uint8_t address) {
   if (this->snd_nke(address)) {
     this->meter_is_initialized_ = true;
     return true;
@@ -117,7 +117,7 @@ bool Kamstrup303WA02::DataLinkLayer::initialize_meter(const uint8_t address) {
   }
 }
 
-bool Kamstrup303WA02::DataLinkLayer::parse_long_frame_response(Kamstrup303WA02::DataLinkLayer::LongFrame* long_frame) {
+bool MbusReader::DataLinkLayer::parse_long_frame_response(MbusReader::DataLinkLayer::LongFrame* long_frame) {
   long_frame->user_data = nullptr;
 
   uint8_t current_byte { 0 };
@@ -201,7 +201,7 @@ bool Kamstrup303WA02::DataLinkLayer::parse_long_frame_response(Kamstrup303WA02::
   return true;
 }
 
-bool Kamstrup303WA02::DataLinkLayer::read_next_byte(uint8_t* received_byte) {
+bool MbusReader::DataLinkLayer::read_next_byte(uint8_t* received_byte) {
   const uint32_t time_before_starting_to_wait { millis() };
   while (this->uart_interface_->available() == 0) {
     delay(1);
@@ -214,7 +214,7 @@ bool Kamstrup303WA02::DataLinkLayer::read_next_byte(uint8_t* received_byte) {
 	return true;
 }
 
-bool Kamstrup303WA02::DataLinkLayer::snd_nke(const uint8_t address) {
+bool MbusReader::DataLinkLayer::snd_nke(const uint8_t address) {
   bool success { false };
 
   const uint8_t c = (1 << C_FIELD_BIT_DIRECTION) | (C_FIELD_FUNCTION_SND_NKE);
@@ -238,7 +238,7 @@ bool Kamstrup303WA02::DataLinkLayer::snd_nke(const uint8_t address) {
 // Meter must wait at least 11 bit times, and at max 330 bit times + 50ms before answering.
 // In case no answer within that time, retry at most twice.
 // (see 5.4 Communication Process)
-bool Kamstrup303WA02::DataLinkLayer::try_send_short_frame(const uint8_t c, const uint8_t a) {
+bool MbusReader::DataLinkLayer::try_send_short_frame(const uint8_t c, const uint8_t a) {
   bool success { false };
   bool data_is_received { false };
   this->flush_rx_buffer();
@@ -255,7 +255,7 @@ bool Kamstrup303WA02::DataLinkLayer::try_send_short_frame(const uint8_t c, const
   return success;
 }
 
-void Kamstrup303WA02::DataLinkLayer::flush_rx_buffer() {
+void MbusReader::DataLinkLayer::flush_rx_buffer() {
   while (this->uart_interface_->available()) {
     int32_t byte_count_in_buffer {this->uart_interface_->available()};
     if (byte_count_in_buffer > 255) {
@@ -266,7 +266,7 @@ void Kamstrup303WA02::DataLinkLayer::flush_rx_buffer() {
   }
 }
 
-void Kamstrup303WA02::DataLinkLayer::send_short_frame(const uint8_t c, const uint8_t a) {
+void MbusReader::DataLinkLayer::send_short_frame(const uint8_t c, const uint8_t a) {
   const uint8_t data[] = { c, a };
   const uint8_t checksum { this->calculate_checksum(data, 2) };
   const uint8_t short_frame[] = { START_BYTE_SHORT_FRAME, c, a, checksum, STOP_BYTE };
@@ -276,7 +276,7 @@ void Kamstrup303WA02::DataLinkLayer::send_short_frame(const uint8_t c, const uin
   delay(1);
 }
 
-bool Kamstrup303WA02::DataLinkLayer::wait_for_incoming_data() {
+bool MbusReader::DataLinkLayer::wait_for_incoming_data() {
   bool data_received {false};
   // 330 bits + 50ms = 330 * 1000 / 2400 + 50 ms = 187,5 ms
   // Wait at least 11 bit times = 5ms
@@ -296,7 +296,7 @@ bool Kamstrup303WA02::DataLinkLayer::wait_for_incoming_data() {
   return data_received;
 }
 
-uint8_t Kamstrup303WA02::DataLinkLayer::calculate_checksum(const LongFrame* long_frame) const {
+uint8_t MbusReader::DataLinkLayer::calculate_checksum(const LongFrame* long_frame) const {
   const uint8_t user_data_len = long_frame->l - 3;
   uint8_t checksum = this->calculate_checksum(long_frame->user_data, user_data_len);
   checksum += long_frame->c;
@@ -305,7 +305,7 @@ uint8_t Kamstrup303WA02::DataLinkLayer::calculate_checksum(const LongFrame* long
   return checksum;
 }
 
-uint8_t Kamstrup303WA02::DataLinkLayer::calculate_checksum(const uint8_t* data, size_t length) const {
+uint8_t MbusReader::DataLinkLayer::calculate_checksum(const uint8_t* data, size_t length) const {
   uint8_t checksum { 0 };
   for (size_t i = 0; i < length; ++i) {
     checksum += data[i];

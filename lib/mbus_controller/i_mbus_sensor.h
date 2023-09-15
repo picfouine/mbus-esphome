@@ -1,12 +1,12 @@
 #ifndef IMBUSSENSOR_H_
 #define IMBUSSENSOR_H_
 
-#include "kamstrup_303wa02.h"
+#include "mbus_reader.h"
 
 namespace esphome {
 namespace mbus_controller {
 
-using DataBlock = Kamstrup303WA02::DataBlock;
+using DataBlock = MbusReader::DataBlock;
 
 class IMbusSensor {
  public:

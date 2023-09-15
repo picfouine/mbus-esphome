@@ -6,7 +6,7 @@
 #include <unity.h>
 
 #include <data_block_reader.h>
-#include <kamstrup_303wa02.h>
+#include <mbus_reader.h>
 #include <test_data_link_layer/testable_data_link_layer.h>
 #include <test_includes.h>
 #include <testable_kamstrup303wa02.h>
@@ -24,7 +24,7 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_not_extended_d
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Fixed data header
     0x04, 0x06, 0x78, 0x56, 0x34, 0x12 // data block: instantaneous, 32 bit integer, Energy in 10^(6-3) Wh (=kWh), value 0x12345678
   };
-  Kamstrup303WA02::DataLinkLayer::LongFrame long_frame = {
+  MbusReader::DataLinkLayer::LongFrame long_frame = {
     .l = 21,
     .c = 0x08,
     .a = 0x0A,
@@ -33,17 +33,17 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_not_extended_d
   };
 
   // Act
-  vector<Kamstrup303WA02::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
+  vector<MbusReader::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
 
   // Assert
   TEST_ASSERT_TRUE(actual_data_blocks != nullptr);
   TEST_ASSERT_EQUAL(1, actual_data_blocks->size());
-  Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
+  MbusReader::DataBlock *actual_data_block = actual_data_blocks->at(0);
+  TEST_ASSERT_EQUAL(MbusReader::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(3, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::WH, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(MbusReader::Unit::WH, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(4, actual_data_block->data_length);
@@ -61,7 +61,7 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_extended_dif_a
     0x84, 0xB1, 0x20, 0x06, 0x25, 0x0F, 0x00, 0x00, // data block: instantaneous, 32 bit integer, Energy in 10^(6-3) Wh (=kWh), value 0x00000F25; storage number 0b10 = 2, tariff 0b1011 = 0xB
     0x12, 0xFF, 0x07, 0xC4, 0x81 // data block: maximum, 16 bit integer, manufacturer specific, value 0x81C4
   };
-  Kamstrup303WA02::DataLinkLayer::LongFrame long_frame = {
+  MbusReader::DataLinkLayer::LongFrame long_frame = {
     .l = 28,
     .c = 0x08,
     .a = 0x0A,
@@ -70,7 +70,7 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_extended_dif_a
   };
 
   // Act
-  vector<Kamstrup303WA02::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
+  vector<MbusReader::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
 
   // Assert
   TEST_ASSERT_TRUE(actual_data_blocks != nullptr);
@@ -83,12 +83,12 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_extended_dif_a
   //  Tariff: 0b1011 = 11
   // VIF: 0b0000 0110
   //  Primary VIF, Energy in Wh, 10^(6 - 3)
-  Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
+  MbusReader::DataBlock *actual_data_block = actual_data_blocks->at(0);
+  TEST_ASSERT_EQUAL(MbusReader::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(2, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(11, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(3, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::WH, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(MbusReader::Unit::WH, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(4, actual_data_block->data_length);
@@ -105,11 +105,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_extended_dif_a
   // VIF: 0b1111 1111
   //  Manufacturer specific, extended
   actual_data_block = actual_data_blocks->at(1);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::MAXIMUM, actual_data_block->function);
+  TEST_ASSERT_EQUAL(MbusReader::Function::MAXIMUM, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(0, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::MANUFACTURER_SPECIFIC, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(MbusReader::Unit::MANUFACTURER_SPECIFIC, actual_data_block->unit);
   TEST_ASSERT_EQUAL(1, actual_data_block->index);
   TEST_ASSERT_TRUE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -124,7 +124,7 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_dif_mini
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Fixed data header
     0x21, 0x05, 0x12 // data block: minimum, 8 bit integer, Energy in 10^(5-3) Wh (=kWh), value 0x12
   };
-  Kamstrup303WA02::DataLinkLayer::LongFrame long_frame = {
+  MbusReader::DataLinkLayer::LongFrame long_frame = {
     .l = 18,
     .c = 0x08,
     .a = 0x0A,
@@ -133,17 +133,17 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_dif_mini
   };
 
   // Act
-  vector<Kamstrup303WA02::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
+  vector<MbusReader::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
 
   // Assert
   TEST_ASSERT_TRUE(actual_data_blocks != nullptr);
   TEST_ASSERT_EQUAL(1, actual_data_blocks->size());
-  Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::MINIMUM, actual_data_block->function);
+  MbusReader::DataBlock *actual_data_block = actual_data_blocks->at(0);
+  TEST_ASSERT_EQUAL(MbusReader::Function::MINIMUM, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(2, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::WH, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(MbusReader::Unit::WH, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(1, actual_data_block->data_length);
@@ -157,7 +157,7 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_dif_duri
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Fixed data header
     0x33, 0x05, 0x12, 0x34, 0x56 // data block: during error state, 24 bit integer, Energy in 10^(5-3) Wh (=kWh), value 0x563412
   };
-  Kamstrup303WA02::DataLinkLayer::LongFrame long_frame = {
+  MbusReader::DataLinkLayer::LongFrame long_frame = {
     .l = 20,
     .c = 0x08,
     .a = 0x0A,
@@ -166,17 +166,17 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_dif_duri
   };
 
   // Act
-  vector<Kamstrup303WA02::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
+  vector<MbusReader::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
 
   // Assert
   TEST_ASSERT_TRUE(actual_data_blocks != nullptr);
   TEST_ASSERT_EQUAL(1, actual_data_blocks->size());
-  Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::DURING_ERROR_STATE, actual_data_block->function);
+  MbusReader::DataBlock *actual_data_block = actual_data_blocks->at(0);
+  TEST_ASSERT_EQUAL(MbusReader::Function::DURING_ERROR_STATE, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(2, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::WH, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(MbusReader::Unit::WH, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(3, actual_data_block->data_length);
@@ -193,7 +193,7 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
     0x04, 0x06, 0x78, 0x56, 0x34, 0x12, // data block: instantaneous, 32 bit integer, Energy in 10^(6-3) Wh (=kWh), value 0x12345678
     0x04, 0x0B, 0x78, 0x56, 0x34, 0x12, // data block: instantaneous, 32 bit integer, Energy in 10^(3) J (=kJ), value 0x12345678
   };
-  Kamstrup303WA02::DataLinkLayer::LongFrame long_frame = {
+  MbusReader::DataLinkLayer::LongFrame long_frame = {
     .l = 27,
     .c = 0x08,
     .a = 0x0A,
@@ -202,19 +202,19 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
   };
 
   // Act
-  vector<Kamstrup303WA02::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
+  vector<MbusReader::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
 
   // Assert
   TEST_ASSERT_TRUE(actual_data_blocks != nullptr);
   TEST_ASSERT_EQUAL(2, actual_data_blocks->size());
 
   // Block 0
-  Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
+  MbusReader::DataBlock *actual_data_block = actual_data_blocks->at(0);
+  TEST_ASSERT_EQUAL(MbusReader::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(3, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::WH, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(MbusReader::Unit::WH, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(4, actual_data_block->data_length);
@@ -225,11 +225,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
   // Block 1
   actual_data_block = actual_data_blocks->at(1);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
+  TEST_ASSERT_EQUAL(MbusReader::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(3, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::J, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(MbusReader::Unit::J, actual_data_block->unit);
   TEST_ASSERT_EQUAL(1, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(4, actual_data_block->data_length);
@@ -246,7 +246,7 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Fixed data header
     0x04, 0x13, 0x78, 0x56, 0x34, 0x12 // data block: instantaneous, 32 bit integer, Volume in 10^(3-6) m3 (=l), value 0x12345678
   };
-  Kamstrup303WA02::DataLinkLayer::LongFrame long_frame = {
+  MbusReader::DataLinkLayer::LongFrame long_frame = {
     .l = 21,
     .c = 0x08,
     .a = 0x0A,
@@ -255,19 +255,19 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
   };
 
   // Act
-  vector<Kamstrup303WA02::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
+  vector<MbusReader::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
 
   // Assert
   TEST_ASSERT_TRUE(actual_data_blocks != nullptr);
   TEST_ASSERT_EQUAL(1, actual_data_blocks->size());
 
   // Block 0
-  Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
+  MbusReader::DataBlock *actual_data_block = actual_data_blocks->at(0);
+  TEST_ASSERT_EQUAL(MbusReader::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(-3, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::CUBIC_METER, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(MbusReader::Unit::CUBIC_METER, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(4, actual_data_block->data_length);
@@ -287,7 +287,7 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
     0x02, 0x22, 0x34, 0x12, // data block: instantaneous, 16 bit integer, On Time in hours, value 0x1234
     0x02, 0x23, 0x23, 0x01  // data block: instantaneous, 16 bit integer, On Time in days, value 0x0123
   };
-  Kamstrup303WA02::DataLinkLayer::LongFrame long_frame = {
+  MbusReader::DataLinkLayer::LongFrame long_frame = {
     .l = 31,
     .c = 0x08,
     .a = 0x0A,
@@ -296,19 +296,19 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
   };
 
   // Act
-  vector<Kamstrup303WA02::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
+  vector<MbusReader::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
 
   // Assert
   TEST_ASSERT_TRUE(actual_data_blocks != nullptr);
   TEST_ASSERT_EQUAL(4, actual_data_blocks->size());
 
   // Block 0
-  Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
+  MbusReader::DataBlock *actual_data_block = actual_data_blocks->at(0);
+  TEST_ASSERT_EQUAL(MbusReader::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(0, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::SECONDS, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(MbusReader::Unit::SECONDS, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -317,11 +317,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
   // Block 1
   actual_data_block = actual_data_blocks->at(1);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
+  TEST_ASSERT_EQUAL(MbusReader::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(0, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::MINUTES, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(MbusReader::Unit::MINUTES, actual_data_block->unit);
   TEST_ASSERT_EQUAL(1, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -330,11 +330,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
   // Block 2
   actual_data_block = actual_data_blocks->at(2);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
+  TEST_ASSERT_EQUAL(MbusReader::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(0, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::HOURS, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(MbusReader::Unit::HOURS, actual_data_block->unit);
   TEST_ASSERT_EQUAL(2, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -343,11 +343,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
     // Block 3
   actual_data_block = actual_data_blocks->at(3);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
+  TEST_ASSERT_EQUAL(MbusReader::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(0, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::DAYS, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(MbusReader::Unit::DAYS, actual_data_block->unit);
   TEST_ASSERT_EQUAL(3, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -363,7 +363,7 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
     0x02, 0x2A, 0x34, 0x12, // data block: instantaneous, 16 bit integer, Power in 10^(2-3) W, value 0x1234
     0x02, 0x33, 0x12, 0x00 // data block: instantaneous, 16 bit integer, Power in 10^3 J/h, value 0x0012
   };
-  Kamstrup303WA02::DataLinkLayer::LongFrame long_frame = {
+  MbusReader::DataLinkLayer::LongFrame long_frame = {
     .l = 23,
     .c = 0x08,
     .a = 0x0A,
@@ -372,19 +372,19 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
   };
 
   // Act
-  vector<Kamstrup303WA02::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
+  vector<MbusReader::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
 
   // Assert
   TEST_ASSERT_TRUE(actual_data_blocks != nullptr);
   TEST_ASSERT_EQUAL(2, actual_data_blocks->size());
 
   // Block 0
-  Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
+  MbusReader::DataBlock *actual_data_block = actual_data_blocks->at(0);
+  TEST_ASSERT_EQUAL(MbusReader::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(-1, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::W, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(MbusReader::Unit::W, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -393,11 +393,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
   // Block 1
   actual_data_block = actual_data_blocks->at(1);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
+  TEST_ASSERT_EQUAL(MbusReader::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(3, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::J_PER_HOUR, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(MbusReader::Unit::J_PER_HOUR, actual_data_block->unit);
   TEST_ASSERT_EQUAL(1, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -414,7 +414,7 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
     0x02, 0x45, 0x10, 0x02, // data block: instantaneous, 16 bit integer, Volume Flow in 10^(5-7) m3/min, value 0x1234
     0x02, 0x4A, 0x34, 0x12 // data block: instantaneous, 16 bit integer, Volume Flow in 10^(2-9) m3/s, value 0x1234
   };
-  Kamstrup303WA02::DataLinkLayer::LongFrame long_frame = {
+  MbusReader::DataLinkLayer::LongFrame long_frame = {
     .l = 27,
     .c = 0x08,
     .a = 0x0A,
@@ -423,19 +423,19 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
   };
 
   // Act
-  vector<Kamstrup303WA02::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
+  vector<MbusReader::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
 
   // Assert
   TEST_ASSERT_TRUE(actual_data_blocks != nullptr);
   TEST_ASSERT_EQUAL(3, actual_data_blocks->size());
 
   // Block 0
-  Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
+  MbusReader::DataBlock *actual_data_block = actual_data_blocks->at(0);
+  TEST_ASSERT_EQUAL(MbusReader::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(-5, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::CUBIC_METER_PER_HOUR, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(MbusReader::Unit::CUBIC_METER_PER_HOUR, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -444,11 +444,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
   // Block 1
   actual_data_block = actual_data_blocks->at(1);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
+  TEST_ASSERT_EQUAL(MbusReader::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(-2, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::CUBIC_METER_PER_MINUTE, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(MbusReader::Unit::CUBIC_METER_PER_MINUTE, actual_data_block->unit);
   TEST_ASSERT_EQUAL(1, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -457,11 +457,11 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
 
   // Block 2
   actual_data_block = actual_data_blocks->at(2);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
+  TEST_ASSERT_EQUAL(MbusReader::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(-7, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::CUBIC_METER_PER_SECOND, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(MbusReader::Unit::CUBIC_METER_PER_SECOND, actual_data_block->unit);
   TEST_ASSERT_EQUAL(2, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -476,7 +476,7 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Fixed data header
     0x02, 0x5B, 0x34, 0x12 // data block: instantaneous, 16 bit integer, Flow Temperature in 10^(3-3) deg C, value 0x1234
   };
-  Kamstrup303WA02::DataLinkLayer::LongFrame long_frame = {
+  MbusReader::DataLinkLayer::LongFrame long_frame = {
     .l = 19,
     .c = 0x08,
     .a = 0x0A,
@@ -485,19 +485,19 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
   };
 
   // Act
-  vector<Kamstrup303WA02::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
+  vector<MbusReader::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
 
   // Assert
   TEST_ASSERT_TRUE(actual_data_blocks != nullptr);
   TEST_ASSERT_EQUAL(1, actual_data_blocks->size());
 
   // Block 0
-  Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
+  MbusReader::DataBlock *actual_data_block = actual_data_blocks->at(0);
+  TEST_ASSERT_EQUAL(MbusReader::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(0, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::DEGREES_CELSIUS, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(MbusReader::Unit::DEGREES_CELSIUS, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -512,7 +512,7 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Fixed data header
     0x02, 0x5D, 0x34, 0x12 // data block: instantaneous, 16 bit integer, Return Temperature in 10^(1-3) deg C, value 0x1234
   };
-  Kamstrup303WA02::DataLinkLayer::LongFrame long_frame = {
+  MbusReader::DataLinkLayer::LongFrame long_frame = {
     .l = 19,
     .c = 0x08,
     .a = 0x0A,
@@ -521,19 +521,19 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
   };
 
   // Act
-  vector<Kamstrup303WA02::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
+  vector<MbusReader::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
 
   // Assert
   TEST_ASSERT_TRUE(actual_data_blocks != nullptr);
   TEST_ASSERT_EQUAL(1, actual_data_blocks->size());
 
   // Block 0
-  Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
+  MbusReader::DataBlock *actual_data_block = actual_data_blocks->at(0);
+  TEST_ASSERT_EQUAL(MbusReader::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(-2, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::DEGREES_CELSIUS, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(MbusReader::Unit::DEGREES_CELSIUS, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -548,7 +548,7 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Fixed data header
     0x02, 0x61, 0x34, 0x12 // data block: instantaneous, 16 bit integer, Temperature Difference in 10^(1-3) K, value 0x1234
   };
-  Kamstrup303WA02::DataLinkLayer::LongFrame long_frame = {
+  MbusReader::DataLinkLayer::LongFrame long_frame = {
     .l = 19,
     .c = 0x08,
     .a = 0x0A,
@@ -557,19 +557,19 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
   };
 
   // Act
-  vector<Kamstrup303WA02::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
+  vector<MbusReader::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
 
   // Assert
   TEST_ASSERT_TRUE(actual_data_blocks != nullptr);
   TEST_ASSERT_EQUAL(1, actual_data_blocks->size());
 
   // Block 0
-  Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
+  MbusReader::DataBlock *actual_data_block = actual_data_blocks->at(0);
+  TEST_ASSERT_EQUAL(MbusReader::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(-2, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::K, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(MbusReader::Unit::K, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -585,7 +585,7 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
     0x02, 0x6C, 0xE1, 0x21 // data block: instantaneous, 16 bit integer, Time Point date only,
     // value 01 Jan 2023: 0b YYYY MMMM YYYD DDDD = 0b 0010 0001 1110 0001 = 0x21E1
   };
-  Kamstrup303WA02::DataLinkLayer::LongFrame long_frame = {
+  MbusReader::DataLinkLayer::LongFrame long_frame = {
     .l = 19,
     .c = 0x08,
     .a = 0x0A,
@@ -594,19 +594,19 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
   };
 
   // Act
-  vector<Kamstrup303WA02::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
+  vector<MbusReader::DataBlock*>* actual_data_blocks = data_block_reader.read_data_blocks_from_long_frame(&long_frame);
 
   // Assert
   TEST_ASSERT_TRUE(actual_data_blocks != nullptr);
   TEST_ASSERT_EQUAL(1, actual_data_blocks->size());
 
   // Block 0
-  Kamstrup303WA02::DataBlock *actual_data_block = actual_data_blocks->at(0);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Function::INSTANTANEOUS, actual_data_block->function);
+  MbusReader::DataBlock *actual_data_block = actual_data_blocks->at(0);
+  TEST_ASSERT_EQUAL(MbusReader::Function::INSTANTANEOUS, actual_data_block->function);
   TEST_ASSERT_EQUAL(0, actual_data_block->storage_number);
   TEST_ASSERT_EQUAL(0, actual_data_block->tariff);
   TEST_ASSERT_EQUAL(0, actual_data_block->ten_power);
-  TEST_ASSERT_EQUAL(Kamstrup303WA02::Unit::DATE, actual_data_block->unit);
+  TEST_ASSERT_EQUAL(MbusReader::Unit::DATE, actual_data_block->unit);
   TEST_ASSERT_EQUAL(0, actual_data_block->index);
   TEST_ASSERT_FALSE(actual_data_block->is_manufacturer_specific);
   TEST_ASSERT_EQUAL(2, actual_data_block->data_length);
@@ -659,7 +659,7 @@ void test_kamstrup303wa02_read_data(void) {
   TestableKamstrup303WA02 kamstrup303wa02(&uart_interface);
 
   // Act
-  Kamstrup303WA02::MbusMeterData meter_data;
+  MbusReader::MbusMeterData meter_data;
   kamstrup303wa02.read_meter_data(&meter_data, 0xB2);
 
   // Assert
@@ -667,7 +667,7 @@ void test_kamstrup303wa02_read_data(void) {
   TEST_ASSERT_EQUAL(2, meter_data.data_blocks->size());
 
   // Block 0
-  Kamstrup303WA02::DataBlock *data_block = meter_data.data_blocks->at(0);
+  MbusReader::DataBlock *data_block = meter_data.data_blocks->at(0);
   TEST_ASSERT_EQUAL(0, data_block->index);
   TEST_ASSERT_EQUAL(4, data_block->data_length);
   TEST_ASSERT_EQUAL(0x25, data_block->binary_data[0]);
