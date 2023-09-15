@@ -85,6 +85,7 @@ interval:
 
 mbus_controller:
   id: mbuscontroller
+  address: 0x01
 
 # Time for uptime
 time:

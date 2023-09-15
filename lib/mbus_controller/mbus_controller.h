@@ -17,7 +17,7 @@ namespace mbus_controller {
 
 class MbusController : public Component, public uart::UARTDevice {
  public:  
-  MbusController();
+  MbusController(uint8_t address);
   
   void setup() override;
   void dump_config() override;

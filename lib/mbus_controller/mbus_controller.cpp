@@ -23,7 +23,7 @@ namespace esphome
     bool pwm_initialized { false };
     bool pwm_enabled { false };
 
-    MbusController::MbusController() {
+    MbusController::MbusController(uint8_t address) : address_(address) {
       Esp32ArduinoUartInterface *uart_interface = new Esp32ArduinoUartInterface(this);
       this->kamstrup_ = new MbusReader(uart_interface);
     }
