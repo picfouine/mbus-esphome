@@ -186,7 +186,9 @@ Supported primary VIFs:
 ## Structure of this repository
 
 This repository is a PlatformIO project to allow unit testing of part of the code.  
-Normally a PlatformIO project can be built and it will result in a binary. This is NOT the intention of this project!
+Normally a PlatformIO project can be built and it will result in a binary. This is NOT the intention of this project!  
+
+I highly recommend the PlatformIO extension for VSCode to run unit tests.
   
 Below follows the structure of this repository:
 
@@ -225,3 +227,13 @@ The entire component resides in /components/mbus_controller
 Unit test files are in /test  
 Design diagrams are in design.ncp, which can be opened in [NClass](https://nclass.sourceforge.net/)  
 An example YAML file can be found in example.yaml
+
+## Unit Testing - What does it look like
+
+Using PlatformIO one can execute the unit tests, with the following results (at moment of writing this):
+
+![Alt text](unit_testing_result.png)
+
+## Design
+
+TODO
