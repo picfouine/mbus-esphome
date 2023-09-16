@@ -9,7 +9,7 @@
 #include <mbus_reader.h>
 #include <test_data_link_layer/testable_data_link_layer.h>
 #include <test_includes.h>
-#include <testable_kamstrup303wa02.h>
+#include <testable_mbus_reader.h>
 
 using std::vector;
 using namespace esphome::mbus_controller;
@@ -614,7 +614,7 @@ void test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_
   TEST_ASSERT_EQUAL(0x21, actual_data_block->binary_data[1]);
 }
 
-void test_kamstrup303wa02_read_data(void) {
+void test_mbus_reader_read_data(void) {
   // Arrange
   FakeUartInterface uart_interface;
   const uint8_t fake_data[] = { 0xE5 };
@@ -656,11 +656,11 @@ void test_kamstrup303wa02_read_data(void) {
                     nullptr,                     // Handle, not needed
                     0                            // core
   );
-  TestableKamstrup303WA02 kamstrup303wa02(&uart_interface);
+  TestableMbusReader mbus_reader(&uart_interface);
 
   // Act
   MbusReader::MbusMeterData meter_data;
-  kamstrup303wa02.read_meter_data(&meter_data, 0xB2);
+  mbus_reader.read_meter_data(&meter_data, 0xB2);
 
   // Assert
   TEST_ASSERT_NOT_NULL(meter_data.data_blocks);
@@ -704,7 +704,7 @@ int runUnityTests(void) {
   RUN_TEST(test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_vif_temperature_difference);
   RUN_TEST(test_datablockreader_read_data_blocks_from_long_frame_single_block_primary_vif_time_point_date);
 
-  RUN_TEST(test_kamstrup303wa02_read_data);
+  RUN_TEST(test_mbus_reader_read_data);
 
   return UNITY_END();
 }

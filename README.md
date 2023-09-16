@@ -209,7 +209,7 @@ Below follows the structure of this repository:
     ├── test
     │   ├── test_application_layer
     │   │   ├── test_application_layer.cpp
-    │   │   └── testable_kamstrup303wa02.h
+    │   │   └── testable_mbus_reader.h
     │   ├── test_data_link_layer
     │   │   ├── test_data_link_layer.cpp
     │   │   └── testable_data_link_layer.h
