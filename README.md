@@ -185,4 +185,43 @@ Supported primary VIFs:
 
 ## Structure of this repository
 
-TODO
+This repository is a PlatformIO project to allow unit testing of part of the code.  
+Normally a PlatformIO project can be built and it will result in a binary. This is NOT the intention of this project!
+  
+Below follows the structure of this repository:
+
+    mbus-esphome
+    ├── components
+    │   ├── mbus_controller
+    │   │   ├── __init__.py
+    │   │   ├── sensor.py
+    │   │   ├── mbus_controller.cpp
+    │   │   ├── mbus_controller.h
+    │   │   ├── ... (code files)
+    │   ├── test_includes
+    │   │   ├── _stdint.h
+    |   │   └── test_includes.h
+    |   └── README
+    ├── spice_model
+    │   └── (LTSpice model files)
+    ├── src
+    │   └── main.cpp
+    ├── test
+    │   ├── test_application_layer
+    │   │   ├── test_application_layer.cpp
+    │   │   └── testable_kamstrup303wa02.h
+    │   ├── test_data_link_layer
+    │   │   ├── test_data_link_layer.cpp
+    │   │   └── testable_data_link_layer.h
+    │   └── README
+    ├── .gitignore
+    ├── design.ncp
+    ├── kamstrup_data_blocks.txt
+    ├── platformio.ini
+    ├── README.md
+    └── example.yaml
+
+The entire component resides in /components/mbus_controller  
+Unit test files are in /test  
+Design diagrams are in design.ncp, which can be opened in [NClass](https://nclass.sourceforge.net/)  
+An example YAML file can be found in example.yaml
