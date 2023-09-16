@@ -20,6 +20,10 @@ using DataBlock = MbusReader::DataBlock;
 
 static const char *TAG = "MbusSensor";
 
+uint8_t MbusSensor::get_index() const {
+  return this->index_;
+}
+
 void MbusSensor::transform_and_publish(const DataBlock * const data_block) {
   switch (data_block->data_length) {
     case 2: {

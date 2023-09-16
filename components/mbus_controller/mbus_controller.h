@@ -9,7 +9,6 @@
 #include "esphome/core/component.h"
 #include "esphome/core/datatypes.h"
 
-#include "i_mbus_sensor.h"
 #include "mbus_reader.h"
 #include "mbus_sensor.h"
 #include "pwm.h"
@@ -41,7 +40,7 @@ class MbusController : public Component, public uart::UARTDevice {
   MbusReader* kamstrup_ { nullptr };
   bool update_requested_ { false };
   bool mbus_enabled_ { true };
-  std::vector<IMbusSensor*> sensors_;
+  std::vector<MbusSensor*> sensors_;
   static std::map<MbusReader::Unit, std::string> unit_names_;
   static std::map<MbusReader::Function, std::string> function_names_;
 

@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 
+#include "esphome/components/sensor/sensor.h"
 #include "esphome/core/log.h"
 #include "esp_err.h"
 #include <freertos/FreeRTOS.h>
@@ -192,12 +193,20 @@ namespace esphome
     float MbusController::get_setup_priority() const
     {
       // After UART bus
-      return setup_priority::BUS - 1.0f;
+      return setup_priority::AFTER_CONNECTION;
     }
 
     void MbusController::dump_config()
     {
-      ESP_LOGCONFIG(TAG, "MbusController sensor");
+      ESP_LOGCONFIG(TAG, "MbusController config:");
+      if (this->is_failed()) {
+        ESP_LOGE(TAG, "MbusController not able to function properly");
+      } else {
+        for (auto sensor : this->sensors_) {
+          LOG_SENSOR("  ", "MbusSensor", sensor);
+          ESP_LOGCONFIG(TAG, "    index: %d", sensor->get_index());
+        }
+      }
     }
   } // namespace mbus_controller
 } // namespace esphome

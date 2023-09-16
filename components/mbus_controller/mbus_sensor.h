@@ -17,7 +17,8 @@ class MbusSensor : public sensor::Sensor, public IMbusSensor {
 
   virtual void transform_and_publish(const DataBlock * const data_block);
   virtual bool is_right_sensor_for_data_block(const DataBlock * const data_block);
-
+  uint8_t get_index() const;
+  
  protected:
   uint8_t index_;
 };
