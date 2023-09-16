@@ -2,14 +2,15 @@
 
 ## What is this all about?
 
-This repository contains an integration for Mbus in ESPHome.
+This repository contains an integration for an Mbus meter in ESPHome.
 It allows a user to configure the mbus_controller component in /components as an external component.
 
 ## How to use it
 
 ### Hardware
 
-First of all, some hardware is required. I have designed a PCB that needs to be powered using a USB micro-B connector. One Mbus meter can be connected to the board using a detachable screw terminal (one part of the connector sits on the PCB, the meter wires are fastened with screws in the other part). An ESP32 WROVER module is part of the PCB, which takes care of the ESPHome integration.
+First of all, some hardware is required. I have designed a PCB that needs to be powered using a micro USB B connector.  
+One Mbus meter can be connected to the board using a detachable screw terminal (one part of the connector sits on the PCB, the meter wires are fastened with screws in the other part). An ESP32 WROVER module is part of the PCB, which takes care of the ESPHome integration.
 
 I have a few of these boards available, and can produce more on demand for a fair price.
 
@@ -19,10 +20,12 @@ This repository contains the mbus_controller component. It requires the meter ad
 
 The Mbus protocol does not tell you the exact semantics of the values it returns. E.g.: if it returns two temperatures (temperature of out-flow, and temperature of in-flow) it merely indicates that both values are temperatures with a certain unit and multiplier, but not which one is the in-flow or the out-flow. The integration assumes that the meter consistently returns its sensor values in the same order. That is why the sensor configuration requires an index to map it to a returned value.
 
-My experience with this is limited to a single type of meter so far: the Kamstrup heat meter, type 303WA02DB. If other meters behave differently, changes are required.
+My experience with this is limited to a single type of meter so far: the Kamstrup heat meter, type 303WA02DB. If other meters behave differently, changes are required (but I highly doubt this will be the case).
 
 ### Example YAML
 
+This YAML is not complete. It also requires things like ota, wifi, api etc.  
+It is merely intended to show the parts relevant for this integration.
 ```
 esp32: 
   board: esp32dev
