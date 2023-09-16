@@ -205,7 +205,7 @@ Below follows the structure of this repository:
     |   │   └── test_includes.h
     |   └── README
     ├── spice_model
-    │   └── (LTSpice model files)
+    │   └── mbus-spice-model.asc (LTSpice model)
     ├── src
     │   └── main.cpp
     ├── test
