@@ -256,3 +256,5 @@ Unit test code instantiates FakeUartInterface and passes that to the code under 
 The MbusController code instantiates Esp32ArduinoUartInterface while passing itself as a UARTDevice, and passes that to the MbusReader.
 
 That way the Esp32ArduinoUartInterface actually uses the real hardware, while the FakeUartInterface does not.
+
+![IUartInterface](iuartinterface.png)

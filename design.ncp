@@ -513,7 +513,7 @@ Bottom: Representation of the data model in code.</Text>
       <Entity type="Class">
         <Name>DataLinkLayer</Name>
         <Access>Public</Access>
-        <Location left="398" top="76" />
+        <Location left="208" top="91" />
         <Size width="333" height="264" />
         <Collapsed>False</Collapsed>
         <Member type="Method">public bool req_ud2(uint8_t address, LongFrame response_frame)</Member>
@@ -532,7 +532,7 @@ Bottom: Representation of the data model in code.</Text>
       <Entity type="Class">
         <Name>UARTDevice</Name>
         <Access>Public</Access>
-        <Location left="1448" top="325" />
+        <Location left="1100" top="333" />
         <Size width="162" height="77" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -540,7 +540,7 @@ Bottom: Representation of the data model in code.</Text>
       <Entity type="Class">
         <Name>UARTComponent</Name>
         <Access>Public</Access>
-        <Location left="1711" top="325" />
+        <Location left="1333" top="333" />
         <Size width="162" height="77" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -548,7 +548,7 @@ Bottom: Representation of the data model in code.</Text>
       <Entity type="Class">
         <Name>FakeUartInterface</Name>
         <Access>Public</Access>
-        <Location left="853" top="325" />
+        <Location left="566" top="333" />
         <Size width="251" height="162" />
         <Collapsed>False</Collapsed>
         <Member type="Method">public bool read_byte(uint8_t data)</Member>
@@ -560,13 +560,13 @@ Bottom: Representation of the data model in code.</Text>
       </Entity>
       <Entity type="Comment">
         <Text>A FakeUartInterface instance is injected in the TestableDataLinkLayer for unit testing.</Text>
-        <Location left="945" top="586" />
+        <Location left="852" top="503" />
         <Size width="210" height="74" />
       </Entity>
       <Entity type="Class">
         <Name>TestableDataLinkLayer</Name>
         <Access>Public</Access>
-        <Location left="398" top="398" />
+        <Location left="208" top="413" />
         <Size width="342" height="179" />
         <Collapsed>False</Collapsed>
         <Member type="Constructor">public TestableDataLinkLayer(FakeUartInterface uart_interface)</Member>
@@ -580,7 +580,7 @@ Bottom: Representation of the data model in code.</Text>
       <Entity type="Class">
         <Name>IUartInterface</Name>
         <Access>Public</Access>
-        <Location left="1004" top="83" />
+        <Location left="698" top="91" />
         <Size width="242" height="162" />
         <Collapsed>False</Collapsed>
         <Member type="Method">public abstract bool read_byte(uint8_t data)</Member>
@@ -593,7 +593,7 @@ Bottom: Representation of the data model in code.</Text>
       <Entity type="Class">
         <Name>Esp32ArduinoUartInterface</Name>
         <Access>Public</Access>
-        <Location left="1186" top="325" />
+        <Location left="852" top="333" />
         <Size width="185" height="77" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -601,7 +601,7 @@ Bottom: Representation of the data model in code.</Text>
       <Entity type="Class">
         <Name>MbusController</Name>
         <Access>Public</Access>
-        <Location left="1448" top="538" />
+        <Location left="1100" top="503" />
         <Size width="162" height="77" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
@@ -617,14 +617,14 @@ Bottom: Representation of the data model in code.</Text>
       </Relationship>
       <Relationship type="Comment" first="4" second="3">
         <StartOrientation>Vertical</StartOrientation>
-        <EndOrientation>Vertical</EndOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
         <BendPoint relativeToStartShape="True">
-          <X>1015</X>
-          <Y>561</Y>
+          <X>922</X>
+          <Y>478</Y>
         </BendPoint>
         <BendPoint relativeToStartShape="False">
-          <X>1017</X>
-          <Y>523</Y>
+          <X>842</X>
+          <Y>458</Y>
         </BendPoint>
       </Relationship>
       <Relationship type="Generalization" first="5" second="0">
