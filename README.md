@@ -136,3 +136,53 @@ While the Mbus protocol supports much more, this is the basis that is required f
 Meter data is sent in so-called data blocks. Each data block contains meta data about the value it contains. The data block indicates the size of the actual data, and its data type (e.g. 16-bit binary integer). Next to that it contains information on the semantics of the data. E.g. whether the value is an instantaneous value or some maximum or minimum value, whether the value is the most recent one or an older value. Even more important: it contains the type of physical quantity (e.g. energy, volume, volume flow, etc.) with the unit (e.g. Wh or J, m3, m3/h or m3/min or m3/s) and the power of ten with which the raw value has to be multiplied (e.g.: a volume with unit m3, and ten-power -3, is in 0.001 cubic meters, which is liters).
 
 See [Meter-Bus on Wikipedia](https://en.wikipedia.org/wiki/Meter-Bus), and for much more in-depth information see [m-bus.com](https://m-bus.com/).
+
+## What is supported, and what not
+
+First of all, this information is not complete.  
+When the text below mentions a bit, it is zero-based (e.g.: bit 1 is the 2nd bit).
+
+### Assumptions
+
+- Mode is 1: data is transfered Least Significant Byte first for multi byte records.  
+This means that bit 2 of the CI field is expected to be 0.
+- There are no manufacturer specific data structures at the end of the user data
+- Baud rate is fixed at 2400
+
+### Unsupported Mbus features
+
+- Selecting specific fields for readout. Only the standard telegram can be read out.
+- Multi-telegram user data messages. In case the last data block indicates more follows in a next telegram, the Application layer should request another user data telegram from the Data link layer. This is NOT supported currently.
+- Actions (see paragraph 6.5 on [m-bus.com - Application Layer](https://m-bus.com/documentation-wired/06-application-layer))
+- ACD / DFC bits in Data link layer
+- Fixed data structure
+- Sub-unit of device in DIF extension
+
+### Supported DIF Data Field values
+
+- 2: 16 bit integer
+- 4: 32 bit integer
+
+Other values need to be implemented in the relevant IMbusSensor class, and the Data link layer.
+
+### Supported VIF
+
+Supported VIF types:
+- Primary VIF (VIF extension bits are skipped / ignored)
+- Manufacturer specific (VIF extension bits are skipped / ignored)
+
+Supported primary VIFs:
+- Energy
+- Volume
+- On Time / Operating Time
+- Power
+- Volume Flow
+- Flow Temperature
+- Return Temperature
+- Temperature Difference
+- External Temperature
+- Time Point, only date, data type G
+
+## Structure of this repository
+
+TODO
