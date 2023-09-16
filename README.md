@@ -12,6 +12,8 @@ It allows a user to configure the mbus_controller component in /components as an
 First of all, some hardware is required. I have designed a PCB that needs to be powered using a micro USB B connector.  
 One Mbus meter can be connected to the board using a detachable screw terminal (one part of the connector sits on the PCB, the meter wires are fastened with screws in the other part). An ESP32 WROVER module is part of the PCB, which takes care of the ESPHome integration.
 
+Currently the PCB is not perfect and has an issue that I am currently working on.
+
 I have a few of these boards available, and can produce more on demand for a fair price.
 
 ### Software
