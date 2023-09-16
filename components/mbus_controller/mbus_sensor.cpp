@@ -29,12 +29,14 @@ void MbusSensor::transform_and_publish(const DataBlock * const data_block) {
     case 2: {
       int16_t *raw_value = reinterpret_cast<int16_t*>(data_block->binary_data);
       float value = static_cast<float>(*raw_value * pow(10, data_block->ten_power));
+      ESP_LOGD(TAG, "Sensor '%s' -- Raw value: %d, publish value: %f", this->get_name().c_str(), *raw_value, value);
       this->publish_state(value);
       break;
     }
     case 4: {
       int32_t *raw_value = reinterpret_cast<int32_t*>(data_block->binary_data);
       float value = static_cast<float>(*raw_value * pow(10, data_block->ten_power));
+      ESP_LOGD(TAG, "Sensor '%s' -- Raw value: %d, publish value: %f", this->get_name().c_str(), *raw_value, value);
       this->publish_state(value);
       break;
     }
