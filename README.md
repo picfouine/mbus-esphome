@@ -232,8 +232,27 @@ An example YAML file can be found in example.yaml
 
 Using PlatformIO one can execute the unit tests, with the following results (at moment of writing this):
 
-![Alt text](unit_testing_result.png)
+![Unit testing result](unit_testing_result.png)
 
 ## Design
 
-TODO
+### Design Overview
+
+See below diagram (taken from [design.ncp](https://github.com/pdjong/mbus-esphome/blob/main/design.ncp))
+
+MbusController is a Component that starts a FreeRTOS task in which it reads out the meter if required, and passes the read data to its MbusSensors. Those transform the raw binary data to a sensor value and then publish this value.
+
+MbusReader uses its DataLinkLayer to read out the meter's binary data in the form of a Long Frame telegram. It then passes this telegram to the DataBlockReader, which knows how to read the variable data blocks from the binary user data in the telegram.
+
+MbusController needs to know what data block each sensor requires. Therefore the sensors implement an interface that provides a way for the MbusController to see if a given data block fits the sensor.
+
+![Design overview](design_overview.png)
+
+### IUartInterface
+
+The DataLinkLayer does not directly use the UARTDevice, but uses an interface instead. This is to enable unit testing of the DataLinkLayer and MbusReader classes.
+
+Unit test code instantiates FakeUartInterface and passes that to the code under test (MbusReader or DataLinkLayer).  
+The MbusController code instantiates Esp32ArduinoUartInterface while passing itself as a UARTDevice, and passes that to the MbusReader.
+
+That way the Esp32ArduinoUartInterface actually uses the real hardware, while the FakeUartInterface does not.
