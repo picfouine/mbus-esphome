@@ -11,7 +11,6 @@
 
 #include "mbus_reader.h"
 #include "mbus_sensor.h"
-#include "pwm.h"
 
 namespace esphome {
 namespace mbus_controller {
@@ -36,7 +35,6 @@ class MbusController : public Component, public uart::UARTDevice {
  protected:
   uint8_t address_ { 0x01 };
   bool have_dumped_data_blocks_ { false };
-  Pwm pwm_;
   MbusReader* kamstrup_ { nullptr };
   bool update_requested_ { false };
   bool mbus_enabled_ { true };
@@ -47,7 +45,6 @@ class MbusController : public Component, public uart::UARTDevice {
  private:
   static void read_mbus_task_loop(void* params);
   void dump_data_blocks(MbusReader::MbusMeterData* meter_data);
-  static esp_err_t initialize_and_enable_pwm(Pwm* pwm);
 };
 
 } //namespace mbus_controller
