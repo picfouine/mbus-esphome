@@ -1,6 +1,6 @@
 substitutions:
-  device_name: warmte-meter-mbus-v-1-2
-  friendly_name: MBus v1.2
+  device_name: mbus-v13-second
+  friendly_name: M-Bus V1.3 2e
   time_timezone: "Europe/Amsterdam"
 
 esphome:
@@ -14,10 +14,12 @@ esp32:
 
 external_components:
   - source:
-      type: git
-      url: https://github.com/pdjong/mbus-esphome
-      ref: tryout-external-component-in-github
-    refresh: 0s
+    #  type: git
+    #  url: https://github.com/pdjong/mbus-esphome
+    #  ref: tryout-external-component-in-github
+      type: local
+      path: components
+    #refresh: 0s
     
 # Enable logging
 logger:
@@ -37,15 +39,14 @@ ota:
 
 wifi:
 # Next two lines for building locally with ESPHome
-  # ssid: "?"
-  # password: "?"
+  ssid: "?"
+  password: "?"
 # Next two lines for building on Home Assistant OS, ESPHome
- ssid: !secret wifi_ssid
- password: !secret wifi_password
-
+ #ssid: !secret wifi_ssid
+ #password: !secret wifi_password
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "Warmte-Meter-Mbus-v-1-2"
+    ssid: "Warmte-Meter-Mbus-v-1-3-second"
     password: "MHcfSqvZc6fe"
 
 uart:
@@ -57,17 +58,11 @@ uart:
   stop_bits: 1
 
 switch:
-  - platform: template
-    name: MbusSwitch
-    optimistic: true
-    restore_mode: RESTORE_DEFAULT_OFF
-    id: readmbus
-    turn_on_action:
-    - lambda: |-
-        id(mbuscontroller).enable_mbus();
-    turn_off_action:
-    - lambda: |-
-        id(mbuscontroller).disable_mbus();
+  - platform: gpio
+    pin: 32
+    name: "MBus Power"
+    id: enable_boost_controller
+    restore_mode: RESTORE_DEFAULT_ON
 
 button:
   - platform: restart
@@ -78,8 +73,26 @@ button:
 interval:
   - interval: 8sec
     then:
-      - lambda: |-
-            id(mbuscontroller).read_mbus();
+      - if:
+          condition: 
+            switch.is_on: enable_boost_controller
+          then:
+            - lambda: |-
+                  id(mbuscontroller).read_mbus();
+            - light.turn_on: readout_light
+            - delay: 250ms
+            - light.turn_off: readout_light
+
+light:
+  - platform: binary
+    id: readout_light
+    output: readout_light_output
+
+output:
+  - id: readout_light_output
+    platform: gpio
+    pin: GPIO25
+
 
 mbus_controller:
   id: mbuscontroller
@@ -127,14 +140,6 @@ sensor:
     name: "${friendly_name} WiFi Signal"
     update_interval: 300s
     id: sensor_wifi_signal
-  #Debug sensors
-  - platform: debug
-    free:
-      name: "Heap Free"
-    block:
-      name: "Heap Max Block"
-    loop_time:
-      name: "Loop Time"
   #Uptime
   - platform: uptime
     id: sensor_uptime      
@@ -158,10 +163,7 @@ text_sensor:
       icon: "mdi:network-outline"
     ssid:
       name: "${friendly_name} Connected SSID"
-    bssid:
-      name: "${friendly_name} Connected BSSID"
-  - platform: debug
-    device:
-      name: "Device Info"
-    reset_reason:
-      name: "Reset Reason"
+
+status_led:
+  pin:
+    number: GPIO26
