@@ -23,6 +23,8 @@ namespace esphome
   {
     static const char *TAG = "MbusController";
 
+    // correction de map< en std::map<
+    
     std::map<MbusReader::Unit, std::string> MbusController::unit_names_ = {
       { MbusReader::Unit::WH, "Wh" },
       { MbusReader::Unit::J, "J" },
@@ -46,6 +48,8 @@ namespace esphome
       { MbusReader::Unit::MANUFACTURER_SPECIFIC, "manuf. specific" },
       { MbusReader::Unit::DIMENSIONLESS, "-" }
     };
+
+    // correction de map< en std::map<
 
     std::map<MbusReader::Function, std::string> MbusController::function_names_ = {
       { MbusReader::Function::INSTANTANEOUS, "instantaneous" },
@@ -172,4 +176,5 @@ namespace esphome
 } // namespace esphome
 
 #endif // UNIT_TEST
+
 
