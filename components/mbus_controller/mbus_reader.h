@@ -56,6 +56,8 @@ class MbusReader {
     int8_t ten_power;
     Unit unit;
     bool is_manufacturer_specific;
+    // *** Ajouté pour stocker la valeur décodée (binaire ou BCD)
+    float value{0.0f};
   } DataBlock;
 
   typedef struct MbusMeterData {
