@@ -65,6 +65,7 @@ namespace esphome
 
     void MbusController::setup()
     {
+      ESP_LOGI("MbusController", ">>> TEST LOG depuis mbus_controller.cpp <<<");
       if (xTaskCreatePinnedToCore(MbusController::read_mbus_task_loop,
                                   "mbus_task", // name
                                   10000,       // stack size (in words)
@@ -102,6 +103,19 @@ namespace esphome
             if (!mbus_controller->have_dumped_data_blocks_) {
               mbus_controller->dump_data_blocks(&mbus_meter_data);
             }
+
+            // Block ajoute par Pic
+            for (auto data_block : *(mbus_meter_data.data_blocks)) {
+              uint32_t raw_value = 0;
+              if (data_block->data_length == 4 && data_block->binary_data != nullptr) {
+                raw_value = (data_block->binary_data[0]) |
+                            (data_block->binary_data[1] << 8) |
+                            (data_block->binary_data[2] << 16) |
+                            (data_block->binary_data[3] << 24);
+              }
+            }
+            // Block ajoute par Pic
+
 
             for (auto sensor : mbus_controller->sensors_) {
               for (auto data_block : *(mbus_meter_data.data_blocks)) {
@@ -151,6 +165,7 @@ namespace esphome
 
     void MbusController::read_mbus()
     {
+      ESP_LOGI(TAG, "Reading mbus");
       this->update_requested_ = true;
     }
 
